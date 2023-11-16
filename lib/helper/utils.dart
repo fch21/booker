@@ -1,0 +1,75 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+
+import 'dart:html' as html;
+
+
+class Utils {
+  static void showSnackBar(BuildContext context, String error) {
+    print("showSnackBar = $error");
+    if(context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error),));
+  }
+
+  static DateTime? getDateTimeFromFormattedStrings(String date, String time) {
+
+    DateTime? dateTime;
+
+    var dateList = date.split("/");
+    var timeList = time.split(":");
+
+    if(dateList.length == 3 && timeList.length == 2){
+
+      int? year = int.tryParse(dateList[2]);
+      int? month = int.tryParse(dateList[1]);
+      int? day = int.tryParse(dateList[0]);
+      int? hour = int.tryParse(timeList[0]);
+      int? minute = int.tryParse(timeList[1]);
+
+      if(year != null && month != null && day != null && hour != null && minute != null){
+        dateTime = DateTime(year + 2000, month, day, hour, minute);
+      }
+    }
+
+    return dateTime;
+  }
+
+  /*
+  static Future<File?> getImage(String source) async {
+    File? image;
+    final picker = ImagePicker();
+
+    switch (source) {
+      case Strings.CAMERA:
+        final pickedFileCamera = await picker.pickImage(
+          source: ImageSource.camera,
+          imageQuality: 15,
+        );
+        image = File(pickedFileCamera?.path ?? "");
+        break;
+      case Strings.GALLERY:
+        final pickedFileGallery = await picker.pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 15,
+        );
+        image = File(pickedFileGallery?.path ?? "");
+        break;
+    }
+
+    return image;
+  }
+
+   */
+  static Future<html.File> getImageWeb() async {
+    final input = html.FileUploadInputElement()..accept = 'image/*';
+
+    final completer = Completer<html.File>();
+    input.onChange.listen((event) {
+      final file = input.files!.first;
+      completer.complete(file);
+    });
+
+    input.click();
+    return completer.future;
+  }
+
+}

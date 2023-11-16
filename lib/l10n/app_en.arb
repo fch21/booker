@@ -1,0 +1,496 @@
+{
+    "helloworld": "Hello world!",
+
+
+    "drinks": "Drinks",
+    "error": "Error",
+    "search": "Search",
+    "my_drinks": "My drinks",
+    "required_field": "Required field",
+    "confirm": "Confirm",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "remove": "Remove",
+    "loading_error": "Error while loading data",
+    "loading": "Loading data...",
+    "money": "R$",
+    "logout": "Logout",
+    "camera": "Camera",
+    "gallery": "Gallery",
+    "explore": "Explore",
+    "profile": "Profile",
+    "calendar": "Calendar",
+    "help": "Help",
+    "details": "Details",
+    "not_valid": "Not valid",
+    "ok": "Ok",
+    "start": "Start",
+    "invalid_data": "Invalid data",
+
+
+    "country": "Country",
+    "state": "State",
+    "city": "City",
+
+
+    "presentation_hi": "Hi ",
+    "presentation_slide_1": ", welcome to Drinqr! The app where you can buy your drink directly from your phone, without waiting in lines!",
+    "presentation_slide_2": "Choose your drink directly through the app.",
+    "presentation_slide_3": "Select the payment method to be used after picking up your drink and receive your QR code.",
+    "presentation_slide_4": "Present your QR code at the bar, grab your drink, and pay only after picking it up!",
+
+
+    "search_filter_category": "Category",
+    "search_filter_state": "State",
+    "search_filter_all": "All",
+    "search_filter_business": "Business",
+    "search_filter_art": "Arts & Culture",
+    "search_filter_sports": "Sports",
+    "search_filter_parties": "Parties & Concerts",
+    "search_filter_geek": "Geek",
+    "search_filter_others": "Other",
+
+
+    "menu_config": "Settings",
+    "menu_new_event": "Create event",
+    "menu_my_events": "My events",
+    "menu_search_users": "Search users",
+    "menu_friend_requests": "Friend requests",
+
+
+    "explore_loading_data": "Loading events",
+    "explore_no_events": "No event found",
+    "explore_no_friends_in_event": "No friends in the event",
+    "explore_no_drinks_in_event": "No drinks in the event",
+
+
+    "create_event_appbar": "Create event",
+    "create_event_appbar_edit": "Edit event",
+    "create_event_name": "Event name",
+    "create_event_category": "Category",
+    "create_event_date_start": "Start date",
+    "create_event_do_not_set_date": "Do not set date",
+    "create_event_time_start": "Start time",
+    "create_event_date_end": "End date",
+    "create_event_time_end": "End time",
+    "create_event_date_example": "21/08/20",
+    "create_event_time_example": "09:00",
+    "create_event_number_of_drinks_per_user": "Limit number of drinks per user",
+    "create_event_producer_name": "Event producer",
+    "create_event_producer_email": "Contact e-mail",
+    "create_event_producer_tell": "Contact phone number",
+    "create_event_description": "Description",
+    "create_event_address": "Address",
+    "create_event_button_text_create": "Create event",
+    "create_event_button_text_edit": "Save event",
+    "create_event_invalid_dates_message": "Invalid event dates",
+    "create_event_error_adding_producer_message": "Error adding producer",
+    "create_event_error_creating_event_message": "Erro creating event",
+
+
+    "create_event_drinks_change_picture": "Change event picture",
+    "create_event_drinks": "Drinks",
+    "create_event_drinks_address": "Address: ",
+    "create_event_drinks_add_drinks": "Add drink",
+    "create_event_drinks_add_drinks_in_category": "Add drink in category",
+    "create_event_drinks_producers": "Producers",
+    "create_event_drinks_add_producers": "Add producer",
+    "create_event_drinks_drink_validators": "Drink validators",
+    "create_event_drinks_add_drink_validators": "Add drink validator",
+    "create_event_drinks_button_text_publish": "Publish event",
+    "create_event_drinks_delete_event": "Delete event",
+    "create_event_drinks_exit_event": "Exit event",
+    "create_event_drinks_loading_data": "Loading drinks",
+    "create_event_drinks_no_drinks": "No drinks",
+    "create_event_drinks_no_producers": "No producers",
+    "create_event_drinks_no_drink_validators": "No drink validators ",
+    "create_event_drinks_add_one_drink_message": "Add at least one drink to the event",
+    "create_event_drinks_confirm_message_delete_event": "Do you really want to delete the event?",
+    "create_event_drinks_confirm_message_user_is_already_producer": "This user is already a producer of the event.",
+    "create_event_drinks_confirm_message_user_is_already_drink_validator": "This user is already a drink validator of the event.",
+    "create_event_drinks_confirm_message_add_producer":
+      "Do you want to add this user to the event producers? He will be able to access and change any event information and validate drinks purchases at the event",
+    "create_event_drinks_confirm_message_add_drink_validator":
+      "Do you want to add this user to the event beverage validators? He will be able to validate beverage purchases at the event, but will not be able to access private information or change event information",
+    "create_event_drinks_confirm_message_remove_producer":
+      "Do you really want to remove this user from the event producers? He will no longer be able to make any changes to the event information, access the private information or validate drink purchases at the event",
+    "create_event_drinks_confirm_message_remove_drink_validator":
+      "Do you really want to remove this user from the event drink validators? He will no longer be able to validate drink purchases at the event",
+    "create_event_drinks_confirm_message_remove_current_user":
+      "Do you really want to exit this event? you will no longer be able to make any changes to the event, allow people to enter the event or access the event's private information",
+    "create_event_drinks_message_last_producer":
+      "You can't leave this event, because you're the last producer at it.",
+    "create_event_drinks_qrcode_in_gallery_message":
+      "A QRCode was saved in your image gallery that when scanned takes users directly to the event's page.",
+    "create_event_drinks_error_saving_qrcode_in_gallery_message":
+      "Error while saving QRCode image to gallery.",
+
+
+    "menu_event_drinks_edit_data": "Edit data",
+    "menu_event_drinks_validate_drinks": "Validate drinks",
+    "menu_event_drinks_sales_statistics": "Sales statistics",
+    "menu_event_drinks_delete_event": "Delete event",
+    "menu_event_drinks_save_qrcode": "Save event QRCode",
+
+
+    "drinks_sales_statistics_app_bar": "Sales statistics",
+    "drinks_sales_statistics_tab_sales_summary": "Summary",
+    "drinks_sales_statistics_tab_purchase_activity": "Activity",
+    "drinks_sales_statistics_sales_summary_table": "Sales table",
+    "drinks_sales_statistics_table_color_code": "Color",
+    "drinks_sales_statistics_table_drink_name": "Name",
+    "drinks_sales_statistics_table_drink_price": "Price",
+    "drinks_sales_statistics_table_drink_number_of_drinks_sold": "Sold",
+    "drinks_sales_statistics_table_drink_total_revenue": "Total",
+    "drinks_sales_statistics_table_total_revenue_graph": "Total revenue graph",
+    "drinks_sales_statistics_table_purchase_activity_graph": "Sales Activity Chart",
+    "drinks_sales_statistics_invalid_filter_data_message": "Invalid filter data",
+    "drinks_sales_statistics_use_filter": "Filter interval",
+    "drinks_sales_statistics_filter_date_start": "Start date",
+    "drinks_sales_statistics_filter_time_start": "Start time",
+    "drinks_sales_statistics_filter_date_end": "End date",
+    "drinks_sales_statistics_filter_time_end": "End time",
+    "drinks_sales_statistics_filter": "Filter",
+
+
+    "validate_drinks_appbar": "Validate drinks",
+    "validate_drinks_cancel": "Cancel",
+    "validate_drinks_button_scan_text": "Scan",
+    "validate_drinks_text_field_hint": "Enter drink code",
+    "validate_drinks_button_validate_text": "Validate code",
+    "validate_drinks_orientations": "Orientations",
+    "validate_drinks_orientation_1":"- Press the (scan) button to read the drink QRCode.",
+    "validate_drinks_orientation_2":
+        "- after scanning, the drink cannot be used again.",
+    "validate_drinks_orientation_3":
+        "- if you are unable to scan, fill in the code that is on the drink, below the QRCode, and press validate code.",
+    "qrcode_reader_valid_drink": "Valid QRCode 👍",
+    "qrcode_reader_invalid_drink_used": "Invalid QRCode (Already used)",
+    "qrcode_reader_invalid_drink_not_found": "Invalid QRCode (QRCode not found in the system)",
+    "qrcode_reader_payment_error_message": "ERROR IN MAKING THE PAYMENT",
+    "qrcode_reader_searching_qrcode": "Searching QRCode...",
+    "qrcode_reader_confirm_drink_validation": "Drink successfully validated!",
+    "qrcode_reader_confirm_drinks_validation": "Drinks successfully validated!",
+
+
+    "qrcode_view_validate": "Validate",
+
+
+    "drink_data_appbar": "Drink data",
+    "drink_data_price": "Price",
+    "drink_data_available": "Available for purchase",
+    "drink_data_available_description": "If disabled, this drink will not appear to users",
+    "drink_data_last_sale_vap": "Price in the market",
+    "drink_data_number_of_drinks_sold": "Number of drinks sold",
+    "drink_data_revenue": "Revenue",
+    "drink_data_total_revenue": "Total revenue",
+    "drink_data_revenue_resale": "Revenue through drink resale",
+    "drink_data_error_getting_data": "Error getting drink data:",
+
+
+    "create_drink_appbar": "Create drink",
+    "create_drink_edit_appbar": "Edit drink",
+    "create_drink_name": "Drink name",
+    "create_drink_name_example": "Beer, shot of vodka...",
+    "create_drink_category": "Drink category",
+    "create_drink_category_example": "Distillates, beers...",
+    "create_drink_description": "Description (optional)",
+    "create_drink_max_drinks_per_user": "Max number of drinks a user can buy",
+    "create_drink_price": "Price",
+    "create_drink_tax": "The service charge for this price is:",
+    "create_drink_total": "Total price that will be transferred to your account:",
+    "create_drink_button_text_create": "Create drink",
+    "create_drink_button_text_edit": "Save drink",
+    "create_drinks_delete_drink": "Delete drink",
+    "create_drinks_validate_not_valid": "Entered value not valid",
+    "create_drink_confirm_message_delete_drink":
+      "Do you really want to delete this drink? drinks of this type already purchased by users will not be invalidated. ",
+
+
+    "configurations_appbar": "Configurations",
+    "configurations_my_profile": " My profile",
+    "configurations_organizer_area": "Organizer Area",
+    "configurations_notifications": "Notifications",
+    "configurations_payments": "Payments",
+    "configurations_privacy": "Privacy",
+    "configurations_security": "Security",
+    "configurations_friends": "Friends",
+    "configurations_language": "Language",
+    "configurations_about": "About",
+    "configurations_help": "Help",
+
+
+    "configurations_language_update_error_message": "Error when updating language:",
+
+
+    "configurations_about_social_network": "Social Network",
+    "configurations_about_contact_email": "Contact Email",
+
+
+    "configurations_payments_user_payments_made": "Payments made",
+    "configurations_payments_user_payments_methods": "Payments methods",
+    "configurations_payments_user_payment_account_configuration": "Payments account configuration",
+
+
+    "confirmation_message_remove_payment_method": "Are you sure you want to remove this payment method?",
+
+
+    "create_connected_account_appbar": "Account",
+
+
+    "profile_config_save": "Save",
+    "profile_config_change_picture": "Change",
+    "profile_config_name": "Name",
+    "profile_config_user_name": "User name",
+    "profile_config_status": "Status",
+
+
+    "payments_config_credit_cards": "Credit cards",
+    "payments_config_bank_accounts": "Bank accounts",
+    "payments_config_stripe_account": "Account",
+    "payments_config_stripe_account_ready": "Your account is ready",
+    "payments_config_stripe_account_not_ready": "Your account is not ready",
+    "payments_config_stripe_account_pending_balance": "Amount soon to be received in your bank account:",
+    "payments_config_stripe_account_view_details": "View details",
+    "payments_config_stripe_account_edit_account": "Edit account data",
+    "payments_config_stripe_account_create_account": "Create account",
+    "payments_config_stripe_account_explication_text": "In order for us to pass on drink sales amounts to you, you must register with your personal data and your bank details.\nThis data is required for your security, fraud prevention and secure bank transfers.",
+    "payments_config_stripe_account_error_opening_popup": "Unable to open registration page automatically. You can either remove your browser's popup blocker or continue registration through the link below:",
+
+
+    "credit_cards_add_credit_card": "Add credit card",
+
+
+    "add_credit_card_number": "Number",
+    "add_credit_card_expired_date": "Expired date",
+    "add_credit_card_mmyy": "mm/yy",
+    "add_credit_card_cvv": "cvv",
+    "add_credit_card_holder": "Card holder",
+    "add_credit_card_add": "Add card",
+
+
+    "my_events_appbar": "My events",
+    "my_events_no_events": "You are not an organizer of any events",
+    "my_events_no_connected_account": "You do not have an account registered",
+    "my_events_no_connected_account_text": "To create an event you must have a bank account registered and validated.\n\nTo do this you can go to the home screen -> settings -> payments.",
+    "my_events_create_connected_account": "Go to registration",
+    "my_events_publish_text": "After publishing this event can no longer be deleted. Do you want to continue?",
+
+
+    "profile_friends": "Friends",
+    "profile_tabbar_my_events": "My events",
+    "profile_my_events_no_events": "No events",
+    "profile_my_events_no_orders": "No orders",
+    "profile_tabbar_my_orders": "My orders",
+    "my_orders_confirm_message_edit": "Do you want to edit this order?",
+    "my_orders_confirm_message_details": "Do you want to see this order details?",
+
+
+    "friend_profile_tabbar_events": "Events",
+    "friend_profile_not_friend": "You need to be friends to see the events",
+
+
+    "edit_order_appbar": "Edit order",
+    "edit_order_price": "Price",
+    "edit_order_button_text": "Save order",
+    "edit_order_delete": "Delete order",
+    "edit_order_date_time_creation": "Creation: ",
+    "edit_order_confirm_message": "Do you really want to delete this order?",
+
+
+    "friends_appbar": " My friends",
+    "friends_menu_add": " Add friends",
+
+
+   "search_users_appbar": "Search for users",
+   "search_users_appbar_add_producer": "Add producer",
+   "search_users_appbar_add_drink_validator": "Add drink validator",
+   "search_users_by_email": "Search for users by email",
+   "search_users_no_users_found": "No user with this email address was found",
+   "search_users_error_adding_producer_message": "Error adding producer:",
+   "search_users_error_adding_drink_validator_message": "Error adding drink validator:",
+   "search_users_error_removing_producer_message": "Error removing producer:",
+   "search_users_error_removing_drink_validator_message": "Error removing drink validator:",
+
+
+   "friend_requests_appbar": "Friend requests",
+   "friend_requests_no_requests": "No friend requests",
+
+
+   "login_button_text": "Login",
+   "login_subscribe": "Don't have an account? Sign in",
+   "login_forgot_password": "Forgot password?",
+   "login_forgot_password_go_to_email": "Go to your email to reset your password?",
+   "login_email": "E-mail",
+   "login_password": "Password",
+   "login_error_message": "Error when logging user in, check the fields and try again ",
+   "login_instagram_browser_message_title": "Improve Your Experience",
+   "login_instagram_browser_message": "Tap the 3 dots in the top right corner an then️ 'Open in System Browser' 🌐",
+
+
+   "reset_password_email_not_registered": "Email not registered",
+   "reset_password_appbar": "Reset Password",
+   "reset_password_send_email": "Send email",
+
+
+    "register_appbar": "Register",
+    "register_button_text": "Register",
+    "register_name": "Full name",
+    "register_user_name": "Username",
+    "register_email": "E-mail",
+    "register_password": "Password",
+    "register_confirm_password": "Confirm password",
+    "register_different_passwords": "[different password and confirmation]",
+    "register_terms_part_1": "I have read and accept the ",
+    "register_terms_of_use": "Terms of Use",
+    "register_terms_part_2": " and ",
+    "register_privacy_policy": "Privacy Police",
+    "register_must_accept_terms_message": "You must accept the Terms os Use and Privacy Police",
+    "register_unavailable_user_name_message": "The username you chose is not available",
+
+
+    "google_sign_button_text": "Sign in with Google",
+    "google_sign_error_message": "Error logging in with Google:",
+    "facebook_sign_button_text": "Sign in with Facebook",
+    "facebook_sign_error_message": "Error logging in with Facebook:",
+    "email_sign_error_message": "Error when registering user, please check the fields and try again:",
+
+
+    "error_updating_user_message": "Error updating user",
+    "error_updating_service_provided_message": "Error updating service provided",
+    "error_updating_appointment_details_message": "Error updating appointment details",
+
+
+    "waiting_email_verification": "Verify your account through the link received in the email:\n",
+    "resend_verification_email": "Resend verification email",
+    "resend_verification_email_in": "Resend verification email in: ",
+
+
+    "vap_tab_all_orders": "All orders",
+    "vap_tab_best_orders": "Best orders",
+    "vap_buy_or_sell_drink_message": "Do you want to buy or sell a drink?",
+    "buy_best_drink_option_message_p1":
+      "by clicking confirm, a buy order will be created for the price: ",
+    "buy_best_drink_option_message_p2":
+      ". this order will be executed as soon as possible and this amount will be debited from your account. If the drink is not bought quickly, you can edit the order in the \"my orders\" tab in your profile. do you want to confirm this operation?",
+    "sell_best_drink_option_message_p1":
+      "by clicking confirm, a sell order will be created at price: ",
+    "sell_best_drink_option_message_p2":
+      ". this order will be executed as soon as possible and this amount will be debited from your account. If the drink is not purchased quickly, you can edit the order in the \"my orders\" tab in your profile. would you like to confirm this operation?",
+
+
+    "order_item_type": "Type: ",
+    "order_item_type_buy": "Buy",
+    "order_item_type_sell": "Sell",
+    "order_item_price": "Price: ",
+    "order_item_status": "Status: ",
+    "order_item_executed": "Executed",
+    "order_item_awaiting": "Awaiting",
+
+
+    "my_order_details_appbar": "My order",
+    "my_order_date_time_creation": "Creation: ",
+    "my_order_price": "Price",
+
+
+    "event_details_address": "Address",
+    "event_details_category": "Category",
+    "event_details_date_time_start": "Begin: ",
+    "event_details_date_time_end": "End: ",
+    "event_details_number_of_drinks_per_user": "Limit number of drinks per user: ",
+    "event_details_produced": "Produced by ",
+    "event_details_contact": "Contact",
+    "event_details_friend_in_events": "Friends at this event",
+    "event_details_producer_email": "E-mail: ",
+    "event_details_description": "Description",
+    "event_details_drinks": "Drinks",
+    "event_details_drinks_offers": "See drink offer",
+    "event_details_button_text": "Select: $ ",
+    "event_details_select_drink_message": "Select a drink",
+    "event_details_select_drink_available_in_cart_message": "Drink available in your cart",
+    "event_details_over_the_drink_limit_message_p1": "This event only allows you to have ",
+    "event_details_over_the_drink_limit_message_p2_singular": " drink",
+    "event_details_over_the_drink_limit_message_p2_plural": " drinks",
+
+
+    "vap_search_filter": "Drink",
+    "vap_drink_dialog_title": "Select a drink",
+    "vap_button_buy_text": "Buy",
+    "vap_button_sell_text": "Sell",
+    "vap_sell_text": "Sell",
+    "vap_buy_text": "Buy",
+    "vap_number_owned_drinks": "Number of drinks owned: ",
+    "vap_total_text": "Total:",
+    "vap_number_drinks": "Number of drinks",
+    "vap_order_price": "Price",
+    "vap_button_select_option_text": "Choose buy or sell",
+    "vap_error_updating_trader_status_message": "Error updating trader status ",
+    "vap_invalid_entered_values_message": "Invalid entered values",
+    "vap_no_more_drinks_to_put_on_sale_message": "You have no more drinks to put on sale",
+    "vap_already_have_maximum_number_of_drinks_message": "You already have the maximum number of drinks per user for this event",
+    "vap_best_drink_available_text": "This is the best drink available for you to buy at the moment:",
+    "vap_best_price_to_resell_text": "This is the best price available for you to resell your drink:",
+
+
+    "my_event_drinks_event_menu": "Event menu",
+    "my_event_drinks_my_drinks": "My drinks",
+    "my_event_drinks_generate_qrcode": "Selected drinks QRCode",
+    "my_event_drinks_select_drink_message": "Select at least one of the drinks",
+
+
+    "my_drink_appbar": "My drink",
+    "my_drink_code": "Code:  ",
+    "my_drink_orientations": "Orientations",
+    "my_drink_orientation_1": "- Show this QRCode at the bar to validate payment and receive your drink.",
+    "my_drink_orientation_2": "- This QRCode can only be used once.",
+
+
+    "see_drinks_already_used": "Drinks consumed",
+    "already_used_drinks": "Drinks consumed",
+    "no_already_used_drinks": "No consumed drinks",
+
+
+    "error_buying_drinks": "Error buying drinks",
+    "error_creating_order": "Error creating order",
+    "error_canceling_order": "Error canceling order",
+    "error_updating_order": "Error updating order",
+    "error_creating_drink": "Error creating drink",
+    "payment_successful": "Payment successful",
+    "order_sent": "Order sent",
+
+
+    "add_new_card": "Add new card",
+    "confirmation_message_drink_purchase_part_1": "Total: ",
+    "confirmation_message_drink_purchase_part_2": "Nothing will be charged now",
+    "confirmation_message_drink_purchase_part_3": "Automatic payment when picking up at the bar",
+    "confirmation_message_selected_card": "Selected card:",
+    "successful_drink_purchase_message": "Drinks added!\n\nGo to your cart\n\nAutomatic payment upon collecting drinks.",
+    "payment_method_created_message": "Your payment method has been successfully added and will be available for your next purchases.",
+
+
+    "generate_event_qrcode_orientations": "Orientations",
+    "generate_event_qrcode_link": "- This is the link that takes users directly to your event on the website: ",
+    "generate_event_qrcode_orientation_1": "- This QRCode contains the link to your event.",
+    "generate_event_qrcode_orientation_2": "- By clicking the button below, you can download the poster with the QRCode of your event in pdf.",
+    "generate_event_qrcode_orientation_3": "- Our suggestion is to make this poster well visible so that customers can easily access your event by reading the QRCode.",
+    "generate_event_qrcode_button": "Download event poster",
+
+
+    "profile_time_availability": "Availability",
+    "profile_services_provided": "Services provided",
+    "profile_add_service": "Add service",
+
+
+    "service_form_create_service": "Create service",
+    "service_form_edit_service": "Edit service",
+
+
+    "no_available_times_message": "No available times for this date",
+
+
+    "no_services_provided_message": "No available services at the moment",
+
+
+    "menu_calendar_cancel_all": "Cancel all"
+}
