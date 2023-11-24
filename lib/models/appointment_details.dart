@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/user_firebase.dart';
 import 'package:booker/helper/utils.dart';
+import 'package:booker/models/app_user.dart';
 import 'package:booker/models/service_provided.dart';
 import 'package:booker/widgets/input_custom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -48,6 +49,7 @@ class AppointmentDetails {
   String userId = "";
   String serviceId = "";
   String serviceProviderUserId = "";
+  String status = Strings.APPOINTMENT_STATUS_CONFIRMED;
   DateTime day =  DateTime.fromMillisecondsSinceEpoch(0);
   DateTime from =  DateTime.fromMillisecondsSinceEpoch(0);
   DateTime to =  DateTime.fromMillisecondsSinceEpoch(0);
@@ -64,6 +66,7 @@ class AppointmentDetails {
       Strings.APPOINTMENT_USER_ID: userId,
       Strings.APPOINTMENT_SERVICE_ID: serviceId,
       Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID: serviceProviderUserId,
+      Strings.APPOINTMENT_STATUS: status,
       Strings.APPOINTMENT_DAY: day,
       Strings.APPOINTMENT_FROM: from,
       Strings.APPOINTMENT_TO: to,
@@ -78,6 +81,7 @@ class AppointmentDetails {
       Strings.APPOINTMENT_ID: id,
       Strings.APPOINTMENT_SERVICE_ID: serviceId,
       Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID: serviceProviderUserId,
+      Strings.APPOINTMENT_STATUS: status,
       Strings.APPOINTMENT_DAY: day,
       Strings.APPOINTMENT_FROM: from,
       Strings.APPOINTMENT_TO: to,
@@ -94,6 +98,7 @@ class AppointmentDetails {
       userId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_USER_ID] ?? "";
       serviceId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_ID] ?? "";
       serviceProviderUserId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID] ?? "";
+      status = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_STATUS] ?? "";
       day = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
       from = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
       to = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ??  Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
@@ -106,6 +111,7 @@ class AppointmentDetails {
       id = documentSnapshot.id;
       serviceId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_ID] ?? "";
       serviceProviderUserId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID] ?? "";
+      status = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_STATUS] ?? "";
       day = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
       from = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
       to = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ??  Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
@@ -161,7 +167,32 @@ class AppointmentDetails {
     return result;
   }
 
-  static void cancelAppointmentConfirmation(BuildContext context, {required List<AppointmentDetails> appointmentsList, bool useCancelAllMessage = false, String extraTextForCancelAll = ""}) {
+  static Future<List<AppointmentDetails>> getClientAppointmentDetails({required AppUser appUser}) async {
+    return getUserAppointmentDetails(appUser: appUser, client: true);
+  }
+
+  static Future<List<AppointmentDetails>> getServiceProviderAppointmentDetails({required AppUser appUser}) async {
+    return getUserAppointmentDetails(appUser: appUser, client: false);
+  }
+
+  static Future<List<AppointmentDetails>> getUserAppointmentDetails({required AppUser appUser, required bool client}) async {
+    List<AppointmentDetails> appointmentDetailsList = [];
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS)
+        .where(client ? Strings.APPOINTMENT_USER_ID : Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: appUser.id)
+        .get().catchError((error) {
+      print("Error getting services provided by user: $error");
+    });
+
+    for(var doc in querySnapshot.docs){
+      appointmentDetailsList.add(AppointmentDetails.fromDocumentSnapshot(doc));
+    }
+
+    return appointmentDetailsList;
+  }
+
+  static void cancelAppointmentConfirmation(BuildContext context, {required List<AppointmentDetails> appointmentsList, bool useCancelAllMessage = false, bool addCancelMessage = true, String extraTextForCancelAll = ""}) {
     print("appointmentsList.length = ${appointmentsList.length}");
     showDialog(
       context: context,
@@ -180,9 +211,12 @@ class AppointmentDetails {
             TextButton(
               child: Text('Confirmar'),
               onPressed: () {
-                // Adicione a lógica para cancelar o agendamento
+                for(var appointment in appointmentsList){
+                  appointment.status = Strings.APPOINTMENT_STATUS_CANCELED;
+                  appointment.updateAppointmentDetailsInFirestore(context);
+                }
                 Navigator.of(context).pop();
-                _cancelAppointmentAddMessage(context, useCancelAllMessage: useCancelAllMessage);
+                if(addCancelMessage) _cancelAppointmentAddMessage(context, useCancelAllMessage: useCancelAllMessage);
               },
             ),
           ],

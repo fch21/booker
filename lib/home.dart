@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:booker/views/choice_of_service.dart';
+import 'package:booker/views/configurations.dart';
 import 'package:booker/views/explore.dart';
 import 'package:booker/views/make_an_appointment.dart';
 import 'package:booker/views/service_form.dart';
@@ -8,9 +9,10 @@ import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/Strings.dart';
-import 'package:booker/views/profile.dart';
+import 'package:booker/views/profile_service_provider.dart';
 import 'package:booker/widgets/menu_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 
 class Home extends StatefulWidget {
   AppUser currentUser = AppUser();
@@ -24,20 +26,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<String> _menuItems = [];
+  //List<String> _menuItems = [];
   int _index = 0;
 
   List<BottomNavigationBarItem> _bottomNavBarItens = [];
 
   final StreamController<bool> _hasNewDrinksStreamController = StreamController<bool>.broadcast();
-
-  void getHasNewDrinks(){
-    print("getHasNewDrinks");
-    //bool hasNewDrinks = appGlobalKey.currentState?.hasNewDrinksMap.values.any((value) => value > 0) ?? false;
-    //_hasNewDrinksStreamController.add(hasNewDrinks);
-
-    return;
-  }
 
   BottomNavigationBarItem customBottomNavigationBarItem({
     required IconData icon,
@@ -93,12 +87,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
+  /*
   _selectMenuItem(String itemSelecionado) {
     if(itemSelecionado == AppLocalizations.of(context)!.menu_config){
-      Navigator.pushNamed(context, RouteGenerator.CONFIGURATIONS, arguments: widget.currentUser).then((value) => print("out CONFIGURATIONS => ${widget.currentUser}"));
+      Navigator.pushNamed(context, RouteGenerator.CONFIGURATIONS).then((value) => print("out CONFIGURATIONS => ${widget.currentUser}"));
     }
   }
+   */
 
+  /*
   Widget _setMenuItemsWidgets(String item) {
     if (item == AppLocalizations.of(context)!.menu_config) {
       return MenuItem(
@@ -109,14 +106,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     return Text(AppLocalizations.of(context)!.error);
   }
+   */
 
-  // melhorar implementação !!!!!!!!!!!!!
   Widget _setAppBarTitle(int index) {
-    TextStyle textStyle = const TextStyle(color: Colors.white);
+    TextStyle textStyle = const TextStyle(color: Colors.white, fontSize: fontSizeLarge);
 
     switch (index) {
       case 0:
-        return Text(Strings.BOOKER, style: textStyle);
+        return Container(color:Colors.blue, child: Text(Strings.BOOKER, style: textStyle));
       case 1:
         //return Text(widget.currentUser.userName, style: textStyle);
         return Text(AppLocalizations.of(context)!.my_drinks, style: textStyle);
@@ -156,10 +153,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
 
+    /*
     _menuItems = [
       //AppLocalizations.of(context)!.menu_my_events,
       AppLocalizations.of(context)!.menu_config,
     ];
+     */
+
     _bottomNavBarItens = [
       BottomNavigationBarItem(
         icon: const Icon(Icons.search),
@@ -185,10 +185,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      /*
       appBar: AppBar(
         //iconTheme: IconThemeData(color: standartTheme.primaryColor),
         //backgroundColor: Colors.white,
-        title: _setAppBarTitle(_tabController.index),
         elevation: 0,
         actions: <Widget>[
           PopupMenuButton<String>(
@@ -204,16 +204,31 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           )
         ],
       ),
-      body: TabBarView(
-        physics: const NeverScrollableScrollPhysics(),
-        controller: _tabController,
-        children: <Widget>[
-          //Profile(user: widget.currentUser), /*Chats(widget.currentUser)*/
-          //MakeAnAppointment(user: widget.currentUser)
-          //ChoiceOfService(user: widget.currentUser,)
-          //ServiceForm()
-          Explore()
-        ],
+      */
+      body: SliderDrawer(
+        appBar: SliderAppBar(
+          appBarColor: standartTheme.primaryColor,
+          appBarPadding: EdgeInsets.zero,
+          appBarHeight: kToolbarHeight,
+          drawerIconColor: Colors.white,
+          title: const Text(Strings.BOOKER, style: TextStyle(color: Colors.white, fontSize: fontSizeLarge))
+        ),
+        slideDirection: SlideDirection.RIGHT_TO_LEFT,
+        slider: Configurations(),
+        child: Container(
+          color: Colors.white,
+          child: TabBarView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _tabController,
+            children: <Widget>[
+              //Profile(user: widget.currentUser), /*Chats(widget.currentUser)*/
+              //MakeAnAppointment(user: widget.currentUser)
+              //ChoiceOfService(user: widget.currentUser,)
+              //ServiceForm()
+              Explore()
+            ],
+          ),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,

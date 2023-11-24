@@ -3,8 +3,8 @@ class Strings {
   static const List<String> WEEK_DAYS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
   static const String BOOKER = "Booker";
   static const String BOOKER_DOMAIN = "https://drinqr.app/";
-  static const String BOOKER_EMAIL = "contact.drinqr@gmail.com";
-  static const String BOOKER_INSTAGRAM_LINK = "https://instagram.com/drinqr";
+  static const String BOOKER_EMAIL = "contact.booker@gmail.com";
+  static const String BOOKER_INSTAGRAM_LINK = "https://instagram.com/app.booker";
 
   //Stripe
   static const String STRIPE_TEST_PUBLISHABLE_KEY = "pk_test_51N1eo7AP3Df2AKXCoAuo8wFeOZ7vHChGB1Q74v4bxyXsHhod4tEhIbnwsFtgO3bdqvmPAUjVY3mfoOfrPYTv9ilH00tDrRrMgN";
@@ -38,6 +38,7 @@ class Strings {
   static const String USER_URL_PROFILE_USER_IMAGE = "url_profile_user_image";
   static const String USER_URL_PROFILE_BG_IMAGE = "url_profile_bg_image";
   static const String USER_TOKENS = "tokens";
+  static const String USER_COLOR = "color";
 
   static const String USER_IS_SERVICE_PROVIDER = "is_service_provider";
   static const String USER_AVAILABILITY_MAP = "availability_map";
@@ -59,6 +60,10 @@ class Strings {
   static const String APPOINTMENT_USER_ID = "user_id";
   static const String APPOINTMENT_SERVICE_ID = "service_id";
   static const String APPOINTMENT_SERVICE_PROVIDER_USER_ID = "service_provider_user_id";
+  static const String APPOINTMENT_STATUS = "status";
+  static const String APPOINTMENT_STATUS_PENDING = "pending";
+  static const String APPOINTMENT_STATUS_CONFIRMED = "confirmed";
+  static const String APPOINTMENT_STATUS_CANCELED = "canceled";
   static const String APPOINTMENT_DAY = "day";
   static const String APPOINTMENT_FROM = "from";
   static const String APPOINTMENT_TO = "to";

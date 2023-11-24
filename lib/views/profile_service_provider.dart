@@ -1,5 +1,6 @@
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/service_provided.dart';
@@ -14,17 +15,15 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../widgets/clickable_item.dart';
 
-class Profile extends StatefulWidget {
+class ProfileServiceProvider extends StatefulWidget {
 
-  AppUser user;
-
-  Profile({Key? key, required this.user}) : super(key: key);
+  ProfileServiceProvider({Key? key,}) : super(key: key);
 
   @override
-  State<Profile> createState() => _ProfileState();
+  State<ProfileServiceProvider> createState() => _ProfileServiceProviderState();
 }
 
-class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
+class _ProfileServiceProviderState extends State<ProfileServiceProvider> with SingleTickerProviderStateMixin {
 
   late List<DayAvailability> _days;
   List<ServiceProvided> _servicesProvided = [];
@@ -33,7 +32,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   _getServicesProvided() async {
     _servicesProvided.clear();
-    _servicesProvided = await ServiceProvided.getServicesProvidedByUser(widget.user);
+    _servicesProvided = await ServiceProvided.getServicesProvidedByUser(currentAppUser!);
     setState(() {});
   }
 
@@ -47,6 +46,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         for (var day in  Strings.WEEK_DAYS)
           DayAvailability(
             dayName: day,
+            activeColor: appUserColor,
             onDayChanged: _updateAvailabilityMap,
             initialIsSelected: _appUser.availabilityMap[day]?["isSelected"] ?? false,
             initialIntervals: _appUser.availabilityMap[day]?['intervals'] ?? [],
@@ -69,16 +69,17 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     return;
   }
 
+  late Color appUserColor;
+
   @override
   void initState() {
-    _appUser = widget.user;
+    _appUser = currentAppUser!;
+    appUserColor = _appUser.getUserColorResolved();
     _tabController = TabController(length: 2, vsync: this);
     _getWeekDaysAvailability();
     _getServicesProvided();
     super.initState();
   }
-
-
 
   @override
   void dispose() {
@@ -88,10 +89,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.profile),
+        backgroundColor: appUserColor,
+        foregroundColor: Utils.getContrastingColor(appUserColor),
         elevation: 0,
       ),
       backgroundColor: Colors.white,
@@ -103,14 +105,34 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    ProfileHeader(appUser: widget.user, allowEdit: true,),
+                    ProfileHeader(
+                      appUser: _appUser,
+                      allowEdit: true,
+                      useHero: false,
+                      onReload: (){
+                        setState(() {
+                          appUserColor = _appUser.getUserColorResolved();
+                          _getWeekDaysAvailability();
+                        });
+                      },
+                    ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
+                      padding: const EdgeInsets.only(top: 8.0),
                       child: ListTile(
                         leading: Icon(Icons.calendar_month , color: Colors.black54,),
-                        title: Text("Meu calendário", style: textStyleSmallNormal,),
+                        title: Text("Calendário", style: textStyleSmallNormal,),
                         onTap: () {
                           Navigator.pushNamed(context, RouteGenerator.CALENDAR,);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: ListTile(
+                        leading: Icon(Icons.list , color: Colors.black54,),
+                        title: Text("Agendamentos", style: textStyleSmallNormal,),
+                        onTap: () {
+                          Navigator.pushNamed(context, RouteGenerator.MY_APPOINTMENTS,);
                         },
                       ),
                     ),
@@ -126,6 +148,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                 title: TabBar(
                   controller: _tabController,
                   labelColor: Colors.black,
+                  indicatorColor: _appUser.getUserColorResolved(),
                   tabs: [
                     Tab(text: AppLocalizations.of(context)!.profile_time_availability),
                     Tab(text: AppLocalizations.of(context)!.profile_services_provided),
@@ -155,6 +178,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
                       child: ButtonCustom(
+                        color: appUserColor,
                         text: AppLocalizations.of(context)!.profile_add_service,
                         onPressed: (){
                           Navigator.pushNamed(context, RouteGenerator.SERVICE_FORM,);

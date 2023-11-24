@@ -9,9 +9,8 @@ import 'package:booker/widgets/clickable_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Configurations extends StatefulWidget {
-  AppUser currentUser;
 
-  Configurations(this.currentUser);
+  Configurations();
 
   @override
   _ConfigurationsState createState() => _ConfigurationsState();
@@ -33,6 +32,7 @@ class _ConfigurationsState extends State<Configurations> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          elevation: 0,
           title: Text(AppLocalizations.of(context)!.configurations_appbar),
         ),
         body: Container(
@@ -50,9 +50,22 @@ class _ConfigurationsState extends State<Configurations> {
                 text: AppLocalizations.of(context)!.configurations_my_profile,
                 iconData: Icons.person,
                 onTap: () {
-                  Navigator.pushNamed(context, RouteGenerator.PROFILE, arguments: widget.currentUser);
+                  if(currentAppUser!.isServiceProvider){
+                    Navigator.pushNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDED);
+                  }
+                  else{
+                    Navigator.pushNamed(context, RouteGenerator.PROFILE_CUSTOMER);
+                  }
                 },
               ),
+              if(!currentAppUser!.isServiceProvider)
+                ClickableItem(
+                  text: AppLocalizations.of(context)!.configurations_my_appointments,
+                  iconData: Icons.calendar_month,
+                  onTap: () {
+                    Navigator.pushNamed(context, RouteGenerator.MY_APPOINTMENTS);
+                  },
+                ),
 /*
               ListTile(
                 leading: Icon(
@@ -75,13 +88,14 @@ class _ConfigurationsState extends State<Configurations> {
               ),
 
  */
-              ClickableItem(
-                text: AppLocalizations.of(context)!.configurations_payments,
-                iconData: Icons.payments_rounded,
-                onTap: () {
-                  Navigator.pushNamed(context, RouteGenerator.PAYMENT_CONFIGURATIONS, arguments: widget.currentUser);
-                },
-              ),
+              if(currentAppUser!.isServiceProvider)
+                ClickableItem(
+                  text: AppLocalizations.of(context)!.configurations_payments,
+                  iconData: Icons.payments_rounded,
+                  onTap: () {
+                    Navigator.pushNamed(context, RouteGenerator.PAYMENT_CONFIGURATIONS, arguments: currentAppUser!);
+                  },
+                ),
 
 
               // ClickableItem(
@@ -99,6 +113,7 @@ class _ConfigurationsState extends State<Configurations> {
               //   iconData: Icons.people,
               //   onTap: () {},
               // ),
+              /*
               ClickableItem(
                 text: AppLocalizations.of(context)!.configurations_language,
                 iconData: Icons.language,
@@ -106,6 +121,8 @@ class _ConfigurationsState extends State<Configurations> {
                   Navigator.pushNamed(context, RouteGenerator.LANGUAGE_CONFIGURATIONS, arguments: widget.currentUser);
                 },
               ),
+
+               */
               ClickableItem(
                 text: AppLocalizations.of(context)!.configurations_about,
                 iconData: Icons.info,
@@ -117,7 +134,7 @@ class _ConfigurationsState extends State<Configurations> {
                 text: AppLocalizations.of(context)!.configurations_help,
                 iconData: Icons.help,
                 onTap: () {
-                  Navigator.pushNamed(context, RouteGenerator.PRESENTATION, arguments: widget.currentUser);
+                  Navigator.pushNamed(context, RouteGenerator.PRESENTATION, arguments: currentAppUser!);
                 },
               ),
               Padding(

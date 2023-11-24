@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/user_firebase.dart';
+import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
+import 'package:booker/widgets/loading_data.dart';
 import 'package:booker/widgets/menu_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +28,8 @@ class _CalendarState extends State<Calendar> {
   CalendarController _controller = CalendarController();
   DateTime? _lastInitialDateTime;
   List<String> _menuItems = [];
+  StreamController<bool> loadingStreamController = StreamController.broadcast();
+
 
   void _changeCalendarView(CalendarView newView) {
     //print("newView = $newView");
@@ -58,9 +64,9 @@ class _CalendarState extends State<Calendar> {
 
   Future<void> _getAppointments(DateTime initialDateTime) async {
     print("_getAppointments >>>>>>");
+    loadingStreamController.add(true);
     //DateTime simplifiedDateTime = getDateTimeSimplified(dateTime);
     _lastInitialDateTime = initialDateTime;
-    AppUser appUser = await UserFirebase.getCurrentUserData();
     DateTime startDate = initialDateTime;
     DateTime endDate = getEndDate(startDate);
     //print("startDate = $startDate");
@@ -68,7 +74,7 @@ class _CalendarState extends State<Calendar> {
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS)
-        .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: appUser.id)
+        .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: currentAppUser!.id)
         .where(Strings.APPOINTMENT_DAY, isGreaterThanOrEqualTo: startDate)
         .where(Strings.APPOINTMENT_DAY, isLessThanOrEqualTo: endDate)
         .get();
@@ -77,6 +83,7 @@ class _CalendarState extends State<Calendar> {
     for (var doc in querySnapshot.docs) {
       AppointmentDetails appointmentDetails = AppointmentDetails.fromDocumentSnapshot(doc);
       if(mounted) await appointmentDetails.initServiceProvided(context);
+      if(appointmentDetails.status == Strings.APPOINTMENT_STATUS_CANCELED) appointmentDetails.serviceProvided.color = Colors.red.withOpacity(0.5);
       appointments.add(appointmentDetails);
     }
     //print("appointments = ${appointments.length}");
@@ -85,6 +92,7 @@ class _CalendarState extends State<Calendar> {
       _appointmentsList = appointments;
     });
 
+    loadingStreamController.add(false);
     return;
   }
 
@@ -151,14 +159,14 @@ class _CalendarState extends State<Calendar> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       DateTime? initialDate = _controller.displayDate;
       if(initialDate != null) {
         _getAppointments(initialDate);
       }
     });
+    super.initState();
+
   }
 
   @override
@@ -172,6 +180,8 @@ class _CalendarState extends State<Calendar> {
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.calendar),
           elevation: 0,
+          //backgroundColor: currentAppUser?.getUserColorResolved(),
+          //foregroundColor: Utils.getContrastingColor(currentAppUser!.getUserColorResolved()),
           actions: <Widget>[
             PopupMenuButton<String>(
               onSelected: _selectMenuItem,
@@ -233,36 +243,55 @@ class _CalendarState extends State<Calendar> {
             ),
           ),
           Expanded(
-            child: SfCalendar(
-              controller: _controller,
-              dataSource: AppointmentDetailsDataSource(_appointmentsList),
-              monthViewSettings: const MonthViewSettings(appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
-              onViewChanged: (ViewChangedDetails details){
-                //print("onViewChanged >>>>>>");
-                DateTime startDate = details.visibleDates.first;
-                if(startDate != _lastInitialDateTime) {
-                  _getAppointments(startDate);
-                }
-              },
-              onTap: (CalendarTapDetails details) {
-                if (details.targetElement == CalendarElement.appointment) {
-                  final AppointmentDetails appointmentDetails = details.appointments!.first;
-                  Navigator.pushNamed(context, RouteGenerator.APPOINTMENT_DETAILS_PAGE, arguments: appointmentDetails);
-                }
-              },
-              headerHeight: 30,
-              headerStyle: const CalendarHeaderStyle(
-                textAlign: TextAlign.center,
-                textStyle: TextStyle(
-                  fontSize: 20,
+            child: Stack(
+              children: [
+                SfCalendar(
+                  controller: _controller,
+                  dataSource: AppointmentDetailsDataSource(_appointmentsList),
+                  monthViewSettings: const MonthViewSettings(appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
+                  onViewChanged: (ViewChangedDetails details){
+                    //print("onViewChanged >>>>>>");
+                    DateTime startDate = details.visibleDates.first;
+                    if(startDate != _lastInitialDateTime) {
+                      _getAppointments(startDate);
+                    }
+                  },
+                  onTap: (CalendarTapDetails details) {
+                    if (details.targetElement == CalendarElement.appointment) {
+                      final AppointmentDetails appointmentDetails = details.appointments!.first;
+                      Navigator.pushNamed(context, RouteGenerator.APPOINTMENT_DETAILS_PAGE, arguments: appointmentDetails);
+                    }
+                  },
+                  headerHeight: 30,
+                  headerStyle: const CalendarHeaderStyle(
+                    textAlign: TextAlign.center,
+                    textStyle: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  selectionDecoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(color: standartTheme.primaryColor, width: 2),
+                    borderRadius: const BorderRadius.all(Radius.circular(4)),
+                    shape: BoxShape.rectangle,
+                  ),
                 ),
-              ),
-              selectionDecoration: BoxDecoration(
-                color: Colors.transparent,
-                border: Border.all(color: standartTheme.primaryColor, width: 2),
-                borderRadius: const BorderRadius.all(Radius.circular(4)),
-                shape: BoxShape.rectangle,
-              ),
+                StreamBuilder<bool>(
+                  stream: loadingStreamController.stream,
+                  builder: (context, snapshot) {
+                    if(snapshot.hasData) {
+                      bool isLoading = snapshot.data!;
+                      if(isLoading){
+                        return Container(
+                          color: Colors.white.withOpacity(0.5),
+                          child: LoadingData(),
+                        );
+                      }
+                    }
+                    return Container();
+                  }
+                )
+              ],
             ),
           ),
         ],

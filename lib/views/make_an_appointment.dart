@@ -1,4 +1,5 @@
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
@@ -14,12 +15,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MakeAnAppointment extends StatefulWidget {
 
-  AppUser user;
+  AppUser appUser;
   ServiceProvided serviceProvided;
 
   MakeAnAppointment({
     Key? key,
-    required this.user,
+    required this.appUser,
     required this.serviceProvided,
   }) : super(key: key);
 
@@ -60,7 +61,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS_PUBLIC)
-        .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: widget.user.id)
+        .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: widget.appUser.id)
         .where(Strings.APPOINTMENT_DAY, isEqualTo: simplifiedDateTime)
         .get();
 
@@ -109,7 +110,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     //print("weekDay = $weekDay");
 
     // Get intervals for the specific day
-    var dayIntervals = widget.user.availabilityMap[weekDay];
+    var dayIntervals = widget.appUser.availabilityMap[weekDay];
     List<TimeOfDay> availableTimes = [];
 
     List<AppointmentDetails> appointments = await _getAppointmentsMade(currentDateTime);
@@ -165,7 +166,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       AppointmentDetails appointmentDetails = AppointmentDetails();
       appointmentDetails.serviceId = widget.serviceProvided.id;
       appointmentDetails.serviceProviderUserId = widget.serviceProvided.userId;
-      appointmentDetails.name = "${widget.serviceProvided.name} - ${widget.user.name}";
+      appointmentDetails.name = "${widget.serviceProvided.name} - ${widget.appUser.name}";
       appointmentDetails.day = getDateTimeSimplified(selectedDateTime!);
       appointmentDetails.from = startingDateTime;
       appointmentDetails.to = startingDateTime.add(widget.serviceProvided.duration);
@@ -185,7 +186,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           content: Text("Agendamento marcado com sucesso!\nVocê receberá um email de confimação."),
           actions: <Widget>[
             TextButton(
-              child: Text(AppLocalizations.of(context)!.ok),
+              child: Text(AppLocalizations.of(context)!.ok, style: TextStyle(color: widget.appUser.getUserColorResolved())),
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
@@ -208,13 +209,13 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
             content: Text("Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
             actions: <Widget>[
               TextButton(
-                child: Text("Cancelar"),
+                child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: Text("Confirmar"),
+                child: Text("Confirmar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
                 onPressed: () {
                   _makeAppointment();
                   Navigator.of(context).pop();
@@ -236,7 +237,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
             content: Text("Você precisa selecionar um horário antes de marcar."),
             actions: <Widget>[
               TextButton(
-                child: Text("Ok"),
+                child: Text("Ok", style: TextStyle(color: widget.appUser.getUserColorResolved()),),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -262,13 +263,15 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       appBar: AppBar(
         title: Text("Marcar um horário"),
         elevation: 0,
+        backgroundColor: widget.appUser.getUserColorResolved(),
+        foregroundColor: Utils.getContrastingColor(widget.appUser.getUserColorResolved()),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ProfileHeader(appUser: widget.user,),
+            ProfileHeader(appUser: widget.appUser,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -319,7 +322,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
             if(isLoadingCurrentAvailableTimes)
               Padding(
                 padding: const EdgeInsets.all(64.0),
-                child: LoadingData(),
+                child: LoadingData(color: widget.appUser.getUserColorResolved(),),
               ),
             if(!isLoadingCurrentAvailableTimes)
               Padding(
@@ -366,9 +369,11 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                     ),
               ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 32, horizontal: 32),
+              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 32),
               child: ButtonCustom(
+                color: widget.appUser.getUserColorResolved(),
                 text: "Marcar horário",
+                textColor: Utils.getContrastingColor(widget.appUser.getUserColorResolved()),
                 onPressed: _showMakeAppointmentDialog,
               ),
             )

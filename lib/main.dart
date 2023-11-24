@@ -1,9 +1,10 @@
 import 'package:booker/helper/strings.dart';
+import 'package:booker/models/app_user.dart';
 import 'package:booker/splash_screen.dart';
 import 'package:booker/views/calendar.dart';
 import 'package:booker/views/choice_of_service.dart';
 import 'package:booker/views/make_an_appointment.dart';
-import 'package:booker/views/profile.dart';
+import 'package:booker/views/profile_service_provider.dart';
 import 'package:booker/views/service_form.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'helper/route_generator.dart';
 
 GlobalKey<AppState> appGlobalKey = GlobalKey();
+AppUser? currentAppUser;
 
 Future<void> main() async {
 

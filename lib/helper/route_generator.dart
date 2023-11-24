@@ -3,14 +3,19 @@ import 'package:booker/home.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
 import 'package:booker/models/service_provided.dart';
+import 'package:booker/views/about.dart';
 import 'package:booker/views/appointment_details_page.dart';
 import 'package:booker/views/calendar.dart';
 import 'package:booker/views/choice_of_service.dart';
 import 'package:booker/views/configurations.dart';
+import 'package:booker/views/edit_profile_service_provided.dart';
 import 'package:booker/views/login.dart';
 import 'package:booker/views/long_text.dart';
 import 'package:booker/views/make_an_appointment.dart';
-import 'package:booker/views/profile.dart';
+import 'package:booker/views/my_appointments.dart';
+import 'package:booker/views/presentation.dart';
+import 'package:booker/views/profile_service_provider.dart';
+import 'package:booker/views/profile_customer.dart';
 import 'package:booker/views/register.dart';
 import 'package:booker/views/reset_password.dart';
 import 'package:booker/views/service_form.dart';
@@ -27,7 +32,9 @@ class RouteGenerator {
   static const String PRESENTATION = "/presentation";
   static const String WAITING_EMAIL_VERIFICATION = "/waiting_email_verification";
   static const String CONFIGURATIONS = "/configurations";
-  static const String PROFILE = "/profile";
+  static const String PROFILE_CUSTOMER = "/profile_customer";
+  static const String PROFILE_SERVICE_PROVIDED = "/profile_service_provided";
+  static const String EDIT_PROFILE_SERVICE_PROVIDED = "/edit_profile_service_provided";
   static const String CALENDAR = "/calendar";
   static const String PROFILE_CONFIGURATIONS = "/profile_configurations";
   static const String LANGUAGE_CONFIGURATIONS = "/language_configurations";
@@ -43,6 +50,7 @@ class RouteGenerator {
   static const String MAKE_AN_APPOINTMENT = "/make_an_appointment";
   static const String SERVICE_FORM = "/service_form";
   static const String APPOINTMENT_DETAILS_PAGE = "/appointment_details_page";
+  static const String MY_APPOINTMENTS = "/my_appointments";
 
 
 
@@ -77,25 +85,31 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const Register());
       case RESET_PASSWORD:
         return MaterialPageRoute(builder: (_) => const ResetPassword());
-      //case PRESENTATION:
-      //  return MaterialPageRoute(builder: (_) => Presentation(args as AppUser));
+      case PRESENTATION:
+        return MaterialPageRoute(builder: (_) => Presentation());
       case WAITING_EMAIL_VERIFICATION:
         return MaterialPageRoute(builder: (_) => WaitingEmailVerification(args as AppUser));
       case CONFIGURATIONS:
-        return MaterialPageRoute(builder: (_) => Configurations(args as AppUser));
-      case PROFILE:
-        return MaterialPageRoute(builder: (_) => Profile(user: args as AppUser,));
+        return MaterialPageRoute(builder: (_) => Configurations());
+      case PROFILE_SERVICE_PROVIDED:
+        return MaterialPageRoute(builder: (_) => ProfileServiceProvider());
+      case PROFILE_CUSTOMER:
+        return MaterialPageRoute(builder: (_) => ProfileCustomer());
+      case EDIT_PROFILE_SERVICE_PROVIDED:
+        return MaterialPageRoute(builder: (_) => EditProfileServiceProvided());
       case CALENDAR:
         return MaterialPageRoute(builder: (_) => Calendar());
       case APPOINTMENT_DETAILS_PAGE:
         return MaterialPageRoute(builder: (_) => AppointmentDetailsPage(appointmentDetails: args as AppointmentDetails,));
+      case ABOUT:
+        return MaterialPageRoute(builder: (_) => const About());
+      case MY_APPOINTMENTS:
+        return MaterialPageRoute(builder: (_) => MyAppointments(showOnlyPastAppointments: (args ?? false) as bool,));
         /*
       case PROFILE_CONFIGURATIONS:
         return MaterialPageRoute(builder: (_) => ProfileConfigurations(args as AppUser));
       case LANGUAGE_CONFIGURATIONS:
         return MaterialPageRoute(builder: (_) => LanguageConfigurations(args as AppUser));
-      case ABOUT:
-        return MaterialPageRoute(builder: (_) => const About());
       case PAYMENT_CONFIGURATIONS:
         return MaterialPageRoute(builder: (_) => PaymentConfigurations(args as AppUser));
       case USER_PAYMENT_METHODS:
@@ -111,9 +125,9 @@ class RouteGenerator {
       case LONG_TEXT:
         return MaterialPageRoute(builder: (_) => LongText(appBarTitle: (args as Map)["appBarTitle"] as String, title: args["title"] as String, content: args["content"] as String,));
       case CHOICE_OF_SERVICE:
-        return MaterialPageRoute(builder: (_) => ChoiceOfService(user: args as AppUser,));
+        return MaterialPageRoute(builder: (_) => ChoiceOfService(appUser: args as AppUser,));
       case MAKE_AN_APPOINTMENT:
-        return MaterialPageRoute(builder: (_) => MakeAnAppointment(user: (args as Map)["user"] as AppUser, serviceProvided: args["serviceProvided"] as ServiceProvided,));
+        return MaterialPageRoute(builder: (_) => MakeAnAppointment(appUser: (args as Map)["user"] as AppUser, serviceProvided: args["serviceProvided"] as ServiceProvided,));
       case SERVICE_FORM:
         return MaterialPageRoute(builder: (_) => ServiceForm(serviceProvided: args as ServiceProvided?,));
       default:

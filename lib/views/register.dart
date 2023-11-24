@@ -21,7 +21,7 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   //TextEditingController _controllerName = TextEditingController(text: "User 1");
   final TextEditingController _controllerName = TextEditingController(text: "");
-  TextEditingController _controllerUserName = TextEditingController(text: "user_1");
+  //final TextEditingController _controllerUserName = TextEditingController(text: "user_1");
   //TextEditingController _controllerEmail = TextEditingController(text: "user1@gmail.com");
   final TextEditingController _controllerEmail = TextEditingController(text: "");
   //TextEditingController _controllerPassword = TextEditingController(text: "123456");
@@ -32,38 +32,19 @@ class _RegisterState extends State<Register> {
 
   bool _checked = false;
   bool _isLoading = false;
-  bool _userNameIsAvailable = false;
+  //bool _userNameIsAvailable = false;
 
   final AppUser _user = AppUser();
-
-  Future<bool>_checkIfUserNameIsAvailable(String userName) async {
-
-    bool userNameIsAvailable = false;
-
-    print("_checkIfUserNameIsAvailable");
-    print("userName = $userName");
-    QuerySnapshot querySnapshot =  await FirebaseFirestore.instance
-      .collection(Strings.COLLECTION_USERS)
-      ///change to COLLECTION_USERS_PUBLIC after setting cloud functions
-      //.collection(Strings.COLLECTION_USERS_PUBLIC)
-      .where(Strings.USER_USERNAME, isEqualTo: userName)
-      .get();
-
-    if(querySnapshot.docs.isEmpty) userNameIsAvailable = true;
-
-    return userNameIsAvailable;
-
-  }
 
   Future<void>_validateFields() async {
     setState(() {
       _isLoading = true;
     });
 
-    bool userNameIsAvailable = await _checkIfUserNameIsAvailable(_controllerUserName.text);
-    print("userNameIsAvailable = $userNameIsAvailable");
+    //bool userNameIsAvailable = await AppUser.checkIfUserNameIsAvailable(_controllerUserName.text);
+    //print("userNameIsAvailable = $userNameIsAvailable");
 
-    _userNameIsAvailable = userNameIsAvailable;
+    //_userNameIsAvailable = userNameIsAvailable;
 
     if (_formKey.currentState?.validate() ?? false) {
       if(_checked){
@@ -164,6 +145,7 @@ class _RegisterState extends State<Register> {
                                       },
                                     ),
                                   ),
+                                  /*
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 8),
                                     child: InputCustom(
@@ -185,6 +167,8 @@ class _RegisterState extends State<Register> {
                                       },
                                     ),
                                   ),
+
+                                   */
                                   Padding(
                                       padding: const EdgeInsets.only(bottom: 8),
                                       child: InputCustom(

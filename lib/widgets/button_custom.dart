@@ -5,8 +5,9 @@ class ButtonCustom extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final Color? color;
+  final Color? textColor;
 
-  const ButtonCustom({super.key, required this.text, this.onPressed, this.color});
+  const ButtonCustom({super.key, required this.text, this.onPressed, this.color, this.textColor,});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class ButtonCustom extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 2.0),
         child: Text(
           text,
-          style: const TextStyle(color: Colors.white, fontSize: fontSizeMedium,),
+          style: TextStyle(color: textColor ?? Colors.white, fontSize: fontSizeMedium,),
           textAlign: TextAlign.center,
         ),
       ),

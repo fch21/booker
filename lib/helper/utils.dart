@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'dart:html' as html;
 
+import 'package:url_launcher/url_launcher.dart';
+
 
 class Utils {
   static void showSnackBar(BuildContext context, String error) {
@@ -70,6 +72,28 @@ class Utils {
 
     input.click();
     return completer.future;
+  }
+
+  static Color? getContrastingColor(Color? color) {
+    if(color == null) return null;
+    // Calculating the luminance of the color
+    double luminance = (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255;
+    // If the color is very light, return black; otherwise, return white
+    // Increase the threshold for "very light" color
+    return luminance > 0.7 ? Colors.black : Colors.white; // Adjusted threshold to 0.7
+  }
+
+  static Future<void> sendEmailTo(BuildContext context, {required String email}) async {
+    final Uri emailLaunchUri = Uri(
+        scheme: 'mailto',
+        path: email,
+    );
+
+    if (await canLaunchUrl(emailLaunchUri)) {
+      await launchUrl(emailLaunchUri);
+    } else {
+      if(context.mounted) Utils.showSnackBar(context, 'Não foi possível abrir o e-mail');
+    }
   }
 
 }

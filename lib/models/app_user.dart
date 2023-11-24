@@ -1,5 +1,6 @@
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
+import 'package:booker/main.dart';
 import 'package:booker/models/time_interval.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +19,44 @@ class AppUser {
   String defaultPaymentMethodId = "";
   String urlProfileUserImage = "";
   String urlProfileBgImage = "";
+  Color color = Colors.white;
 
   bool isServiceProvider = false;
   Map<String, dynamic> availabilityMap = {};
 
   AppUser();
+
+  AppUser copy(){
+    AppUser copy = AppUser();
+    copy.id = id;
+    copy.name = name;
+    copy.userName = userName;
+    copy.description = description;
+    copy.email = email;
+    copy.password = password;
+    copy.tutorialDone = tutorialDone;
+    copy.wantNotifications = wantNotifications;
+    copy.language = language;
+    copy.defaultPaymentMethodId = defaultPaymentMethodId;
+    copy.urlProfileUserImage = urlProfileUserImage;
+    copy.urlProfileBgImage = urlProfileBgImage;
+    copy.color = color;
+
+    return copy;
+  }
+
+  Color getUserColorResolved(){
+    Color colorResolved;
+
+    if(color != Colors.white) {
+      colorResolved = color;
+    }
+    else {
+      colorResolved = standartTheme.primaryColor;
+    }
+
+    return colorResolved;
+  }
 
   Map<String, dynamic> convertAvailabilityMapToMap() {
     print("convertAvailabilityMapToMap >>>>>>>>");
@@ -54,6 +88,7 @@ class AppUser {
       Strings.USER_LANGUAGE: language,
       Strings.USER_URL_PROFILE_USER_IMAGE: urlProfileUserImage,
       Strings.USER_URL_PROFILE_BG_IMAGE: urlProfileBgImage,
+      Strings.USER_COLOR: color.value,
 
       Strings.USER_IS_SERVICE_PROVIDER: isServiceProvider,
       Strings.USER_AVAILABILITY_MAP: convertAvailabilityMapToMap(),
@@ -62,7 +97,6 @@ class AppUser {
     return map;
   }
 
-
   Map<String, dynamic> toMapPublic() {
     Map<String, dynamic> map = {
       Strings.USER_ID: id,
@@ -70,6 +104,7 @@ class AppUser {
       Strings.USER_USERNAME: userName,
       Strings.USER_URL_PROFILE_USER_IMAGE: urlProfileUserImage,
       Strings.USER_URL_PROFILE_BG_IMAGE: urlProfileBgImage,
+      Strings.USER_COLOR: color.value,
 
       Strings.USER_IS_SERVICE_PROVIDER: isServiceProvider,
       //Strings.USER_AVAILABILITY_MAP: availabilityMap,
@@ -94,7 +129,6 @@ class AppUser {
     });
   }
 
-
   AppUser.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
     if(documentSnapshot.data() != null){
       Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
@@ -107,6 +141,7 @@ class AppUser {
       language = data.containsKey(Strings.USER_LANGUAGE) ? documentSnapshot[Strings.USER_LANGUAGE] ?? "" :  "";
       urlProfileUserImage = data[Strings.USER_URL_PROFILE_USER_IMAGE] ?? "";
       urlProfileBgImage = data[Strings.USER_URL_PROFILE_BG_IMAGE] ?? "";
+      color = Color((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_COLOR] ?? Colors.white.value);
 
       isServiceProvider = data[Strings.USER_IS_SERVICE_PROVIDER] ?? false;
       //availabilityMap = (documentSnapshot.data() as Map<String, dynamic>)[Strings.USER_AVAILABILITY_MAP] ?? {};
@@ -124,6 +159,7 @@ class AppUser {
     userName = data.containsKey(Strings.USER_USERNAME) ? documentSnapshot[Strings.USER_USERNAME] ?? "" :  "";
     urlProfileUserImage = data[Strings.USER_URL_PROFILE_USER_IMAGE] ?? "";
     urlProfileBgImage = data[Strings.USER_URL_PROFILE_BG_IMAGE] ?? "";
+    color = Color((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_COLOR] ?? Colors.white.value);
 
     isServiceProvider = data[Strings.USER_IS_SERVICE_PROVIDER] ?? false;
     //availabilityMap = data[Strings.USER_AVAILABILITY_MAP] ?? {};
@@ -160,6 +196,25 @@ class AppUser {
     }
 
     return appUsersList;
+  }
+
+  static Future<bool> checkIfUserNameIsAvailable(String userName) async {
+
+    bool userNameIsAvailable = false;
+
+    print("checkIfUserNameIsAvailable");
+    print("userName = $userName");
+    QuerySnapshot querySnapshot =  await FirebaseFirestore.instance
+        .collection(Strings.COLLECTION_USERS)
+        ///change to COLLECTION_USERS_PUBLIC after setting cloud functions
+        //.collection(Strings.COLLECTION_USERS_PUBLIC)
+        .where(Strings.USER_USERNAME, isEqualTo: userName)
+        .get();
+
+    if(querySnapshot.docs.isEmpty) userNameIsAvailable = true;
+
+    return userNameIsAvailable;
+
   }
 
   @override

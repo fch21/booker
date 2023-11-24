@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
@@ -17,11 +18,15 @@ class ProfileHeader extends StatefulWidget {
 
   AppUser appUser;
   bool allowEdit;
+  bool useHero;
+  VoidCallback? onReload;
 
   ProfileHeader({
     Key? key,
     required this.appUser,
+    this.onReload,
     this.allowEdit = false,
+    this.useHero = true,
   }) : super(key: key);
 
   @override
@@ -31,6 +36,7 @@ class ProfileHeader extends StatefulWidget {
 class _ProfileHeaderState extends State<ProfileHeader> {
 
   late AppUser _appUser;
+  late Color appUserColor;
 
   static double bgImageHeight = 125.0;
   static double profileImageRadius = 60.0;
@@ -128,15 +134,18 @@ class _ProfileHeaderState extends State<ProfileHeader> {
 
   @override
   Widget build(BuildContext context) {
+
+    appUserColor = _appUser.getUserColorResolved();
+
     return Container(
       color: Colors.white,
-      height: bgImageHeight + (1 - profileImageOverlayProportion) * 2 * (profileImageRadius + profileImageBorder),
+      height: bgImageHeight + (1 - profileImageOverlayProportion) * 2 * (profileImageRadius + profileImageBorder) + (widget.allowEdit ? 36 : 0),
       child: Stack(
         children: [
           Column(
             children: [
               Hero(
-                tag: "${widget.appUser.id}${Strings.USER_URL_PROFILE_BG_IMAGE}",
+                tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_URL_PROFILE_BG_IMAGE}" : UniqueKey(),
                 child: Container(
                   width: double.infinity,
                   height: bgImageHeight,
@@ -189,13 +198,13 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                 padding: EdgeInsets.only(left: 2*profileImageRadius + 8),
                 child: ListTile(
                   title: Hero(
-                    tag: "${widget.appUser.id}${Strings.USER_NAME}",
+                    tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_NAME}" : UniqueKey(),
                     child: Material(color: Colors.white, child: Text(_appUser.name, style: textStyleMediumBold,))
                   ),
                   trailing: Column(
                     children: [
                       Hero(
-                        tag: "${widget.appUser.id}${Strings.USER_USERNAME}",
+                        tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_USERNAME}" : UniqueKey(),
                         child: Material(color: Colors.white, child: Text(_appUser.userName, style: textStyleSmallNormal,))
                       ),
                     ],
@@ -205,14 +214,28 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                     child: Row(
                       children: [
                         Hero(
-                          tag: "${widget.appUser.id}${Strings.USER_DESCRIPTION}",
+                          tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_DESCRIPTION}" : UniqueKey(),
                           child: Material(color: Colors.white, child: Text(_appUser.userName, style: textStyleSmallNormal,))
                         ),
                       ],
                     ),
                   ),
                 ),
-              )
+              ),
+              if(widget.allowEdit)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: TextButton(
+                      onPressed: () async {
+                        await Navigator.pushNamed(context, RouteGenerator.EDIT_PROFILE_SERVICE_PROVIDED, arguments: widget.appUser)
+                            .then((value){
+                              setState(() {});
+                              if(widget.onReload != null) widget.onReload!();
+                            });
+                      },
+                      child: Text("Editar", style: TextStyle(color: appUserColor),)
+                  ),
+                )
             ],
           ),
           Positioned(
@@ -222,7 +245,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
               alignment: Alignment.center,
               children: [
                 Hero(
-                  tag: "${widget.appUser.id}${Strings.USER_URL_PROFILE_USER_IMAGE}",
+                  tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_URL_PROFILE_USER_IMAGE}" : UniqueKey(),
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(

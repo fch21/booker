@@ -25,6 +25,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
       title: Text('Escolha uma cor'),
       content: SingleChildScrollView(
         child: ColorPicker(
+          enableAlpha: false,
           pickerColor: _currentColor,
           onColorChanged: (Color color) {
             setState(() {

@@ -1,4 +1,7 @@
 import 'package:booker/helper/text_input_formatters.dart';
+import 'package:booker/helper/utils.dart';
+import 'package:booker/main.dart';
+import 'package:booker/models/app_user.dart';
 import 'package:booker/models/service_provided.dart';
 import 'package:booker/widgets/input_custom.dart';
 import 'package:booker/widgets/button_custom.dart';
@@ -8,58 +11,78 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class ServiceForm extends StatefulWidget {
+class EditProfileServiceProvided extends StatefulWidget {
 
-  final ServiceProvided? serviceProvided;
-
-  ServiceForm({this.serviceProvided});
+  EditProfileServiceProvided();
 
   @override
-  _ServiceFormState createState() => _ServiceFormState();
+  _EditProfileServiceProvidedState createState() => _EditProfileServiceProvidedState();
 }
 
-class _ServiceFormState extends State<ServiceForm> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _durationController = TextEditingController();
+class _EditProfileServiceProvidedState extends State<EditProfileServiceProvided> {
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _userNameController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
   Color _selectedColor = Colors.blue;
 
-  ServiceProvided _serviceProvided = ServiceProvided();
+  bool _isLoading = false;
+  bool _userNameIsAvailable = false;
 
   final _formKey = GlobalKey<FormState>();
 
   final _decimalInputFormatter = DecimalTextInputFormatter();
   final _integerInputFormatter = IntegerTextInputFormatter();
 
-  _validateFields() {
+  _validateFields() async {
+    bool userNameChanged = _userNameController.text != currentAppUser!.userName;
+    if(userNameChanged){
+      setState(() {
+        _isLoading = true;
+      });
+      bool userNameIsAvailable = await AppUser.checkIfUserNameIsAvailable(_userNameController.text);
+      print("userNameIsAvailable = $userNameIsAvailable");
+
+      _userNameIsAvailable = userNameIsAvailable;
+
+    }
+    else{
+      _userNameIsAvailable = true;
+    }
+
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
 
-      _serviceProvided.updateServiceProvidedInFirestore(context);
-      Navigator.of(context).pop();
+      currentAppUser!.updateAppUserInFirestore(context);
+      if(mounted) Navigator.of(context).pop();
     }
+
+    if(userNameChanged){
+      if(mounted){
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+
   }
 
   @override
   void initState() {
     super.initState();
-
-    if (widget.serviceProvided != null) {
-      _serviceProvided = widget.serviceProvided!.copy();
-      _nameController.text = widget.serviceProvided!.name;
-      _descriptionController.text = widget.serviceProvided!.description;
-      _priceController.text = widget.serviceProvided!.price.toString();
-      _durationController.text = widget.serviceProvided!.duration.inMinutes.toString();
-      print("widget.serviceProvided!.color = ${widget.serviceProvided!.color}");
-      _selectedColor = widget.serviceProvided!.color;
-    }
+    _nameController.text = currentAppUser!.name;
+    _userNameController.text = currentAppUser!.userName;
+    _descriptionController.text = currentAppUser!.description;
+    _selectedColor = currentAppUser!.color;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.serviceProvided == null ? AppLocalizations.of(context)!.service_form_create_service : AppLocalizations.of(context)!.service_form_edit_service)),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.edit),
+        //backgroundColor: currentAppUser!.getUserColorResolved(),
+        //foregroundColor: Utils.getContrastingColor(currentAppUser!.getUserColorResolved()),
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Form(
@@ -68,16 +91,33 @@ class _ServiceFormState extends State<ServiceForm> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               InputCustom(
-                label: 'Nome do Serviço',
+                label: 'Nome',
                 controller: _nameController,
                 onSaved: (name){
-                  _serviceProvided.name = name ?? "";
+                  currentAppUser!.name = name ?? "";
                 },
                 validator: (value) {
                   if(value == "" || value == null ){
                     return AppLocalizations.of(context)!.required_field;
                   }
                   else{
+                    return null;
+                  }
+                },
+              ),
+              SizedBox(height: 12),
+              InputCustom(
+                label: 'Nome de usuário',
+                controller: _userNameController,
+                onSaved: (name){
+                  currentAppUser!.userName = name ?? "";
+                },
+                validator: (value) {
+                  if(value == "" || value == null ){
+                    return AppLocalizations.of(context)!.required_field;
+                  }
+                  else{
+                    if(!_userNameIsAvailable) return AppLocalizations.of(context)!.register_unavailable_user_name_message;
                     return null;
                   }
                 },
@@ -87,46 +127,10 @@ class _ServiceFormState extends State<ServiceForm> {
                 label: 'Descrição',
                 controller: _descriptionController,
                 onSaved: (description){
-                  _serviceProvided.description = description ?? "";
+                  currentAppUser!.description = description ?? "";
                 },
                 validator: (value) {
                   return null;
-                },
-              ),
-              SizedBox(height: 12),
-              InputCustom(
-                label: 'Preço em R\$',
-                controller: _priceController,
-                textInputType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [_decimalInputFormatter],
-                onSaved: (price){
-                  _serviceProvided.price = double.tryParse(price?.replaceAll(',','.') ?? "") ?? 0.0;
-                },
-                validator: (value) {
-                  if(value == "" || value == null ){
-                    return AppLocalizations.of(context)!.required_field;
-                  }
-                  else{
-                    return null;
-                  }
-                },
-              ),
-              SizedBox(height: 12),
-              InputCustom(
-                label: 'Duração (em minutos)',
-                controller: _durationController,
-                textInputType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [_integerInputFormatter],
-                onSaved: (durationInMinutes){
-                  _serviceProvided.duration = Duration(minutes: (int.tryParse(durationInMinutes ?? "0") ?? 0));
-                },
-                validator: (value) {
-                  if(value == "" || value == null ){
-                    return AppLocalizations.of(context)!.required_field;
-                  }
-                  else{
-                    return null;
-                  }
                 },
               ),
               SizedBox(height: 12),
@@ -142,7 +146,7 @@ class _ServiceFormState extends State<ServiceForm> {
                   if (color != null) {
                     setState(() {
                       _selectedColor = color;
-                      _serviceProvided.color = _selectedColor;
+                      currentAppUser!.color = _selectedColor;
                     });
                   }
                 },
@@ -181,8 +185,9 @@ class _ServiceFormState extends State<ServiceForm> {
               Padding(
                 padding: const EdgeInsets.only(top: 32.0),
                 child: ButtonCustom(
+                  //color: currentAppUser!.getUserColorResolved(),
                   onPressed: _validateFields,
-                  text: 'Salvar Serviço',
+                  text: 'Salvar',
                 ),
               )
             ],

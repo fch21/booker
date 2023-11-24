@@ -13,7 +13,7 @@ class ServiceProvided {
   String description = "";
   double price = 0.0;
   Duration duration = Duration.zero;
-  Color color = Colors.transparent;
+  Color color = Colors.white;
 
   ServiceProvided();
 
@@ -53,7 +53,7 @@ class ServiceProvided {
       description = (documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_DESCRIPTION] ?? "";
       price = ((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_PRICE] ?? 0.0) + .0;
       duration = Duration(minutes: (documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_DURATION] ?? 0);
-      color = Color((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_COLOR] ?? Colors.transparent.value);
+      color = Color((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_COLOR] ?? Colors.white.value);
     }
   }
 

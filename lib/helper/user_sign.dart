@@ -110,6 +110,7 @@ class UserSign {
       //if(firebaseUser.emailVerified || loggedWithFacebook){
       if(true){
         appGlobalKey.currentState?.updateAppForNewUser();
+        currentAppUser = user;
         if(isNewUser ?? false){
           if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PRESENTATION, arguments: user);
         }

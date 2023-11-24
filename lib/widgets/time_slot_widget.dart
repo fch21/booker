@@ -1,6 +1,8 @@
 import 'package:booker/models/time_interval.dart';
 import 'package:flutter/material.dart';
 
+import '../helper/utils.dart';
+
 
 
 
@@ -8,7 +10,9 @@ import 'package:flutter/material.dart';
 class TimeSlotWidget extends StatefulWidget {
   final Function onTimeChanged;
   TimeInterval? initialInterval;
-  TimeSlotWidget({required this.onTimeChanged, this.initialInterval,});
+  Color? color;
+  TimeSlotWidget({required this.onTimeChanged, this.initialInterval, this.color});
+
 
 
   @override
@@ -40,9 +44,11 @@ class _TimeSlotWidgetState extends State<TimeSlotWidget> {
   Widget build(BuildContext context) {
     print("build");
     return ElevatedButton(
+      style: ButtonStyle(backgroundColor: MaterialStateProperty.all(widget.color)),
       onPressed: _changeTimeInterval,
       child: Text(
-          "${interval?.startTime?.format(context) ?? "Início"} - ${interval?.endTime?.format(context) ?? "Término"}"
+        "${interval?.startTime?.format(context) ?? "Início"} - ${interval?.endTime?.format(context) ?? "Término"}",
+        style: TextStyle(color: Utils.getContrastingColor(widget.color)),
       ),
     );
   }

@@ -156,7 +156,6 @@ class _ExploreState extends State<Explore> {
 
     bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
 
-    print("build Explore");
     checkIfHasUserLinkAndLaunch();
 
     return Container(

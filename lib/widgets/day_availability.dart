@@ -1,3 +1,4 @@
+import 'package:booker/helper/utils.dart';
 import 'package:booker/models/time_interval.dart';
 import 'package:booker/widgets/time_slot_widget.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +8,14 @@ class DayAvailability extends StatefulWidget {
   Function(String, bool, List<TimeInterval?>) onDayChanged;
   bool initialIsSelected;
   List<TimeInterval> initialIntervals;
+  Color? activeColor;
 
   DayAvailability({
     required this.dayName,
     required this.onDayChanged,
     required this.initialIsSelected,
     required this.initialIntervals,
+    required this.activeColor,
   });
 
   @override
@@ -93,6 +96,8 @@ class _DayAvailabilityState extends State<DayAvailability> {
             title: Row(
               children: [
                 Checkbox(
+                  activeColor: widget.activeColor,
+                  checkColor: Utils.getContrastingColor(widget.activeColor),
                   value: isSelected,
                   onChanged: (value) {
                     setState(() {
@@ -126,7 +131,7 @@ class _DayAvailabilityState extends State<DayAvailability> {
                       onLongPress: (){
                         _removeTimeInterval(i);
                       },
-                      child: TimeSlotWidget(onTimeChanged: _updateDay, initialInterval: intervals[i],)
+                      child: TimeSlotWidget(onTimeChanged: _updateDay, initialInterval: intervals[i], color: widget.activeColor,)
                     ),
                   ),
               ],
@@ -137,8 +142,9 @@ class _DayAvailabilityState extends State<DayAvailability> {
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Center(
                 child: ElevatedButton(
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all(widget.activeColor)),
                   onPressed: _addTimeInterval,
-                  child: Text("Adicionar horário")
+                  child: Text("Adicionar horário", style: TextStyle(color: Utils.getContrastingColor(widget.activeColor)),)
                 )
               ),
             )

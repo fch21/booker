@@ -1,5 +1,6 @@
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/service_provided.dart';
@@ -12,11 +13,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChoiceOfService extends StatefulWidget {
 
-  AppUser user;
+  AppUser appUser;
 
   ChoiceOfService({
     Key? key,
-    required this.user
+    required this.appUser
   }) : super(key: key);
 
   @override
@@ -31,7 +32,7 @@ class _ChoiceOfServiceState extends State<ChoiceOfService> {
   bool servicesAreLoaded = false;
 
   _getServiceList() async {
-    services = await ServiceProvided.getServicesProvidedByUser(widget.user);
+    services = await ServiceProvided.getServicesProvidedByUser(widget.appUser);
     setState(() {
       servicesAreLoaded = true;
     });
@@ -45,17 +46,20 @@ class _ChoiceOfServiceState extends State<ChoiceOfService> {
 
   @override
   Widget build(BuildContext context) {
+    print("widget.appUser = ${widget.appUser.getUserColorResolved()}");
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text("Serviços disponíveis"),
         elevation: 0,
+        backgroundColor: widget.appUser.getUserColorResolved(),
+        foregroundColor: Utils.getContrastingColor(widget.appUser.getUserColorResolved()),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ProfileHeader(appUser: widget.user,),
+            ProfileHeader(appUser: widget.appUser,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8.0),
               child: Text(
@@ -94,7 +98,7 @@ class _ChoiceOfServiceState extends State<ChoiceOfService> {
                     return ServiceProvidedCard(
                       serviceProvided: serviceProvided,
                       onTap: (){
-                        Map args = {"user" : widget.user, "serviceProvided" : serviceProvided};
+                        Map args = {"user" : widget.appUser, "serviceProvided" : serviceProvided};
                         Navigator.pushNamed(context, RouteGenerator.MAKE_AN_APPOINTMENT, arguments: args);
                       },
                     );
