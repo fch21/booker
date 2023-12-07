@@ -2,9 +2,11 @@
 import 'package:booker/home.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
+import 'package:booker/models/available_schedule.dart';
 import 'package:booker/models/service_provided.dart';
 import 'package:booker/views/about.dart';
 import 'package:booker/views/appointment_details_page.dart';
+import 'package:booker/views/available_schedule_form.dart';
 import 'package:booker/views/calendar.dart';
 import 'package:booker/views/choice_of_service.dart';
 import 'package:booker/views/configurations.dart';
@@ -49,6 +51,7 @@ class RouteGenerator {
   static const String CHOICE_OF_SERVICE = "/choice_of_service";
   static const String MAKE_AN_APPOINTMENT = "/make_an_appointment";
   static const String SERVICE_FORM = "/service_form";
+  static const String AVAILABLE_SCHEDULE_FORM = "/available_schedule_form";
   static const String APPOINTMENT_DETAILS_PAGE = "/appointment_details_page";
   static const String MY_APPOINTMENTS = "/my_appointments";
 
@@ -130,6 +133,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => MakeAnAppointment(appUser: (args as Map)["user"] as AppUser, serviceProvided: args["serviceProvided"] as ServiceProvided,));
       case SERVICE_FORM:
         return MaterialPageRoute(builder: (_) => ServiceForm(serviceProvided: args as ServiceProvided?,));
+      case AVAILABLE_SCHEDULE_FORM:
+        return MaterialPageRoute(builder: (_) => AvailableScheduleForm(availableSchedule: (args as Map)["availableSchedule"] as AvailableSchedule?, onDelete: args["onDelete"] as VoidCallback,  onSave: args["onSave"] as VoidCallback));
       default:
         return _routeError();
     }

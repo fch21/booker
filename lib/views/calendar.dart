@@ -62,6 +62,10 @@ class _CalendarState extends State<Calendar> {
     return endDate;
   }
 
+  //List<AppointmentDetails> getAvailableSchedules(){
+    //currentAppUser!.availabilityMap;
+  //}
+
   Future<void> _getAppointments(DateTime initialDateTime) async {
     print("_getAppointments >>>>>>");
     loadingStreamController.add(true);

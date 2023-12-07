@@ -8,6 +8,7 @@ import 'package:booker/models/service_provided.dart';
 import 'package:booker/widgets/input_custom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -28,7 +29,8 @@ class AppointmentDetailsDataSource extends CalendarDataSource {
 
   @override
   String getSubject(int index) {
-    return (appointments![index] as AppointmentDetails).name;
+    AppointmentDetails appointmentDetails = appointments![index] as AppointmentDetails;
+    return "${appointmentDetails.serviceName} - ${appointmentDetails.userName}";
   }
 
   @override
@@ -44,8 +46,12 @@ class AppointmentDetailsDataSource extends CalendarDataSource {
 
 class AppointmentDetails {
 
+  static DateFormat dateFormat = DateFormat('dd/MM/yyyy HH:mm');
+
   String id = "";
-  String name = "";
+  String userName = "";
+  String serviceProviderName = "";
+  String serviceName = "";
   String userId = "";
   String serviceId = "";
   String serviceProviderUserId = "";
@@ -62,19 +68,22 @@ class AppointmentDetails {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       Strings.APPOINTMENT_ID: id,
-      Strings.APPOINTMENT_NAME: name,
+      Strings.APPOINTMENT_USER_NAME: userName,
+      Strings.APPOINTMENT_SERVICE_PROVIDER_NAME: serviceProviderName,
+      Strings.APPOINTMENT_SERVICE_NAME: serviceName,
       Strings.APPOINTMENT_USER_ID: userId,
       Strings.APPOINTMENT_SERVICE_ID: serviceId,
       Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID: serviceProviderUserId,
       Strings.APPOINTMENT_STATUS: status,
-      Strings.APPOINTMENT_DAY: day,
-      Strings.APPOINTMENT_FROM: from,
-      Strings.APPOINTMENT_TO: to,
+      Strings.APPOINTMENT_DAY: dateFormat.format(day),
+      Strings.APPOINTMENT_FROM: dateFormat.format(from),
+      Strings.APPOINTMENT_TO: dateFormat.format(to),
       Strings.APPOINTMENT_IS_ALL_DAY: isAllDay,
     };
 
     return map;
   }
+
 
   Map<String, dynamic> toMapPublic() {
     Map<String, dynamic> map = {
@@ -82,9 +91,9 @@ class AppointmentDetails {
       Strings.APPOINTMENT_SERVICE_ID: serviceId,
       Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID: serviceProviderUserId,
       Strings.APPOINTMENT_STATUS: status,
-      Strings.APPOINTMENT_DAY: day,
-      Strings.APPOINTMENT_FROM: from,
-      Strings.APPOINTMENT_TO: to,
+      Strings.APPOINTMENT_DAY: dateFormat.format(day),
+      Strings.APPOINTMENT_FROM: dateFormat.format(from),
+      Strings.APPOINTMENT_TO: dateFormat.format(to),
       Strings.APPOINTMENT_IS_ALL_DAY: isAllDay,
     };
 
@@ -94,14 +103,19 @@ class AppointmentDetails {
   AppointmentDetails.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
     if(documentSnapshot.data() != null){
       id = documentSnapshot.id;
-      name = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_NAME] ?? "";
+      userName = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_USER_NAME] ?? "";
+      serviceProviderName = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_PROVIDER_NAME] ?? "";
+      serviceName = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_NAME] ?? "";
       userId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_USER_ID] ?? "";
       serviceId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_ID] ?? "";
       serviceProviderUserId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID] ?? "";
       status = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_STATUS] ?? "";
-      day = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
-      from = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
-      to = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ??  Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
+      //day = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
+      //from = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
+      //to = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ??  Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
+      day = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? "");
+      from = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? "");
+      to = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ?? "");
       isAllDay = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_IS_ALL_DAY] ?? false;
     }
   }
@@ -112,9 +126,12 @@ class AppointmentDetails {
       serviceId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_ID] ?? "";
       serviceProviderUserId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID] ?? "";
       status = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_STATUS] ?? "";
-      day = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
-      from = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
-      to = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ??  Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
+      //day = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
+      //from = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
+      //to = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ??  Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
+      day = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? "");
+      from = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? "");
+      to = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ?? "");
       isAllDay = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_IS_ALL_DAY] ?? false;
     }
   }

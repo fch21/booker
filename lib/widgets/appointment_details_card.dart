@@ -23,7 +23,7 @@ class AppointmentDetailsCard extends StatelessWidget {
     return Card(
       elevation: 4,
       child: ListTile(
-        title: Text(isClient ? appointmentDetails.name.split("-").first : appointmentDetails.name, style: textStyleSmallNormal,),
+        title: Text("${appointmentDetails.serviceName} - ${isClient ? appointmentDetails.serviceProviderName : appointmentDetails.userName}", style: textStyleSmallNormal,),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: Column(

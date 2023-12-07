@@ -1,6 +1,6 @@
 class Strings {
 
-  static const List<String> WEEK_DAYS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+  static const List<String> WEEK_DAYS = ['Dom','Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb',];
   static const String BOOKER = "Booker";
   static const String BOOKER_DOMAIN = "https://drinqr.app/";
   static const String BOOKER_EMAIL = "contact.booker@gmail.com";
@@ -56,7 +56,9 @@ class Strings {
 
   //Drink Unit
   static const String APPOINTMENT_ID = "id";
-  static const String APPOINTMENT_NAME = "name";
+  static const String APPOINTMENT_USER_NAME = "user_name";
+  static const String APPOINTMENT_SERVICE_PROVIDER_NAME = "service_provider_name";
+  static const String APPOINTMENT_SERVICE_NAME = "service_name";
   static const String APPOINTMENT_USER_ID = "user_id";
   static const String APPOINTMENT_SERVICE_ID = "service_id";
   static const String APPOINTMENT_SERVICE_PROVIDER_USER_ID = "service_provider_user_id";

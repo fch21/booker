@@ -101,7 +101,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
                         //print("appointmentDetails.from.isBefore(currentDateTime) = ${appointmentDetails.from.isBefore(currentDateTime)}");
                         if(widget.showOnlyPastAppointments ? appointmentDetails.from.isBefore(currentDateTime) : appointmentDetails.from.isAfter(currentDateTime)) {
                           return Opacity(
-                            opacity: widget.showOnlyPastAppointments ? 0.6 : 1.0,
+                            opacity: widget.showOnlyPastAppointments ? 0.5 : 1.0,
                             child: AppointmentDetailsCard(
                               appointmentDetails: appointmentDetails,
                               isClient: !currentAppUser!.isServiceProvider,

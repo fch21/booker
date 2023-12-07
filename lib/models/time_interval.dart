@@ -5,6 +5,20 @@ class TimeInterval{
 
   TimeInterval({required this.startTime, required this.endTime});
 
+  TimeInterval copy(){
+    return TimeInterval(startTime: startTime, endTime: endTime);
+  }
+
+  bool isValid(){
+    int startMinutes = startTime.hour * 60 + startTime.minute;
+    int endMinutes = endTime.hour * 60 + endTime.minute;
+
+    if(endMinutes > startMinutes){
+      return true;
+    }
+    return false;
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'startTime': {'hour': startTime.hour, 'minute': startTime.minute},
@@ -73,7 +87,7 @@ class TimeInterval{
   @override
   String toString() {
     // TODO: implement toString
-    return "$startTime - $endTime";
+    return "${startTime.hour}:${startTime.minute < 10 ? "0" : ""}${startTime.minute} - ${endTime.hour}:${endTime.minute < 10 ? "0" : ""}${endTime.minute}";
   }
 
 }

@@ -199,13 +199,13 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                 child: ListTile(
                   title: Hero(
                     tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_NAME}" : UniqueKey(),
-                    child: Material(color: Colors.white, child: Text(_appUser.name, style: textStyleMediumBold,))
+                    child: Material(color: Colors.white, child: Text(_appUser.name, style: textStyleMediumBold, overflow: TextOverflow.ellipsis,))
                   ),
                   trailing: Column(
                     children: [
                       Hero(
                         tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_USERNAME}" : UniqueKey(),
-                        child: Material(color: Colors.white, child: Text(_appUser.userName, style: textStyleSmallNormal,))
+                        child: Material(color: Colors.white, child: Text(_appUser.userName, style: textStyleSmallNormal, overflow: TextOverflow.ellipsis,))
                       ),
                     ],
                   ),
@@ -213,9 +213,11 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Row(
                       children: [
-                        Hero(
-                          tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_DESCRIPTION}" : UniqueKey(),
-                          child: Material(color: Colors.white, child: Text(_appUser.userName, style: textStyleSmallNormal,))
+                        Expanded(
+                          child: Hero(
+                            tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_DESCRIPTION}" : UniqueKey(),
+                            child: Material(color: Colors.white, child: Text(_appUser.userName, style: textStyleSmallNormal, overflow: TextOverflow.ellipsis,))
+                          ),
                         ),
                       ],
                     ),

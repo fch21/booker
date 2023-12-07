@@ -3,8 +3,10 @@ import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
+import 'package:booker/models/available_schedule.dart';
 import 'package:booker/models/service_provided.dart';
 import 'package:booker/models/time_interval.dart';
+import 'package:booker/widgets/available_time_card.dart';
 import 'package:booker/widgets/button_custom.dart';
 import 'package:booker/widgets/day_availability.dart';
 import 'package:booker/widgets/profile_header.dart';
@@ -25,8 +27,9 @@ class ProfileServiceProvider extends StatefulWidget {
 
 class _ProfileServiceProviderState extends State<ProfileServiceProvider> with SingleTickerProviderStateMixin {
 
-  late List<DayAvailability> _days;
+  //late List<DayAvailability> _days;
   List<ServiceProvided> _servicesProvided = [];
+  List<AvailableSchedule> _availableSchedules = [];
   late AppUser _appUser;
   late TabController _tabController;
 
@@ -36,6 +39,39 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
     setState(() {});
   }
 
+  _getAvailableSchedules(){
+
+    /*
+    for(int i =0; i < 4; i++){
+      _availableSchedules.add(AvailableSchedule(
+          timeInterval: TimeInterval(
+            startTime: TimeOfDay.fromDateTime(DateTime.now()),
+            endTime: TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 1))),
+          ),
+          selectedDays: [true, false, false, true, true, false, false],
+          isSelected: true
+        )
+      );
+    }
+     */
+
+    List<AvailableSchedule> availableSchedulesList = AvailableSchedule.convertMapToSchedules(_appUser.availabilityMap);
+
+    setState(() {
+      _availableSchedules = availableSchedulesList;
+    });
+  }
+
+  _updateAvailabilityMap() async {
+    print(">>>>> _updateAvailabilityMap");
+    setState(() {
+      _appUser.availabilityMap = AvailableSchedule.convertSchedulesToMap(_availableSchedules);
+    });
+    await _appUser.updateAppUserInFirestore(context);
+    print("_appUser.availabilityMap) = ${_appUser.availabilityMap}");
+  }
+
+  /*
   _getWeekDaysAvailability(){
     print("getAllDayAvailability >>>>>>>");
     for (var day in Strings.WEEK_DAYS)
@@ -55,6 +91,9 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
     });
   }
 
+   */
+
+  /*
   Future <void> _updateAvailabilityMap(String dayName, bool isSelected, List<TimeInterval?> times) async {
     print("_updateAvailabilityMap >>>>>>>>>>>");
     print("times = $times");
@@ -68,6 +107,7 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
     print(_appUser.availabilityMap);
     return;
   }
+   */
 
   late Color appUserColor;
 
@@ -76,8 +116,9 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
     _appUser = currentAppUser!;
     appUserColor = _appUser.getUserColorResolved();
     _tabController = TabController(length: 2, vsync: this);
-    _getWeekDaysAvailability();
+    //_getWeekDaysAvailability();
     _getServicesProvided();
+    _getAvailableSchedules();
     super.initState();
   }
 
@@ -112,7 +153,7 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
                       onReload: (){
                         setState(() {
                           appUserColor = _appUser.getUserColorResolved();
-                          _getWeekDaysAvailability();
+                          //_getWeekDaysAvailability();
                         });
                       },
                     ),
@@ -163,11 +204,81 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
             children: <Widget>[
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: _days.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: _days[index],
-                ),
+                itemCount: _availableSchedules.length + 1,
+                itemBuilder: (context, index){
+
+                  if(index == _availableSchedules.length) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+                      child: ButtonCustom(
+                        color: appUserColor,
+                        text: AppLocalizations.of(context)!.profile_add_available_schedule,
+                        onPressed: (){
+
+                          AvailableSchedule availableSchedule = AvailableSchedule(
+                              timeInterval: TimeInterval(
+                                startTime: TimeOfDay.fromDateTime(DateTime.now()),
+                                endTime: TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 1))),
+                              ),
+                              selectedDays: [false, true, true, true, true, true, false],
+                              isSelected: true
+                          );
+
+                          _availableSchedules.add(availableSchedule);
+
+                          //we use the scheduleWasSaved to not add a new schedule if the user did not saved it after the creation
+                          bool scheduleWasSaved = false;
+
+                          Map args = {
+                            "availableSchedule" : availableSchedule,
+                            "onDelete" : (){
+                              _availableSchedules.remove(availableSchedule);
+                            },
+                            "onSave" : (){
+                              scheduleWasSaved = true;
+                            }
+                          };
+
+                          Navigator.pushNamed(context, RouteGenerator.AVAILABLE_SCHEDULE_FORM, arguments: args).then((value){
+                            if(scheduleWasSaved){
+                              _updateAvailabilityMap();
+                            }
+                            else{
+                              _availableSchedules.remove(availableSchedule);
+                            }
+                          });
+                        },
+                      ),
+                    );
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    //child: _days[index],
+                    child: GestureDetector(
+                      onTap: (){
+                        Map args = {
+                          "availableSchedule" : _availableSchedules[index],
+                          "onDelete" : (){
+                            _availableSchedules.remove(_availableSchedules[index]);
+                          },
+                          "onSave" : (){} //not necessary in this case because is the same reference
+                        };
+
+                        Navigator.pushNamed(context, RouteGenerator.AVAILABLE_SCHEDULE_FORM, arguments: args).then((value){
+                          _updateAvailabilityMap();
+                        });
+                      },
+                      child: AvailableScheduleCard(
+                        schedule: _availableSchedules[index],
+                        accentColor: appUserColor,
+                        onChanged: () {
+                          _updateAvailabilityMap();
+                        },
+                      ),
+                    )
+                  );
+                },
               ), // Primeira Tab: A lista existente
               ListView.builder(
                 shrinkWrap: true,

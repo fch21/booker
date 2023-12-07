@@ -50,27 +50,34 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
   }
 
   String _getWeekDay(DateTime date) {
-    // Dart 'weekday' dá 1 para Segunda-feira, 2 para Terça-feira e assim por diante
-    return  Strings.WEEK_DAYS[date.weekday - 1];
+    // Dart 'weekday' dá 1 para Segunda-feira, 2 para Terça-feira e assim por diante.
+    // Por isso vamos realizar o resto da divisao por 7 para fazer com que domingo (7) seja 0, segunda (1) seja 1...
+    return  Strings.WEEK_DAYS[(date.weekday) % 7];
   }
   
   // Function to get made appointments for a specific day
   Future<List<AppointmentDetails>> _getAppointmentsMade(DateTime dateTime) async {
     //print("_getAppointmentsMade >>>>>>");
     DateTime simplifiedDateTime = getDateTimeSimplified(dateTime);
+    String dayDateTimeString = AppointmentDetails.dateFormat.format(simplifiedDateTime);
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS_PUBLIC)
         .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: widget.appUser.id)
-        .where(Strings.APPOINTMENT_DAY, isEqualTo: simplifiedDateTime)
+        //.where(Strings.APPOINTMENT_DAY, isEqualTo: simplifiedDateTime)
+        .where(Strings.APPOINTMENT_DAY, isEqualTo: dayDateTimeString)
         .get();
 
     List<AppointmentDetails> appointments = [];
     for (var doc in querySnapshot.docs) {
       AppointmentDetails appointmentDetails = AppointmentDetails.fromDocumentSnapshotPublic(doc);
+      //print("appointmentDetails>>>>>>>");
+      //print("appointmentDetails.from = ${appointmentDetails.from}");
+      //print("appointmentDetails.to = ${appointmentDetails.to}");
       appointments.add(appointmentDetails);
     }
 
+    appointments.sort((a, b) => a.from.compareTo(b.from));
     return appointments;
   }
 
@@ -79,22 +86,28 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     DateTime endTime = startTime.add(Duration(minutes: serviceDurationInMinutes));
     //print("startTime = ${startTime}");
     //print("endTime = ${endTime}");
+    //print("appointments.length = ${appointments.length}");
 
     DateTime nextAvailable = startTime;
+    //for (var appointment in appointments)print("appointment: from = ${appointment.from}, to = ${appointment.to}");
 
     for (var appointment in appointments) {
       // Check for a conflict: the slot is unavailable if the start time is before the end of an existing appointment
       // or the end time is after the start of that appointment
       //print("appointment.from = ${appointment.from}");
       //print("appointment.to = ${appointment.to}");
-      if (startTime.isBefore(appointment.to) && endTime.isAfter(appointment.from)) {
+      //print("nextAvailable.isBefore(appointment.to) && endTime.isAfter(appointment.from) = ${nextAvailable.isBefore(appointment.to) && endTime.isAfter(appointment.from)}");
+      if (nextAvailable.isBefore(appointment.to) && endTime.isAfter(appointment.from)) {
         //return false; // There is a conflict
+        //print("appointment.to.isAfter(nextAvailable) = ${appointment.to.isAfter(nextAvailable)}");
         if (appointment.to.isAfter(nextAvailable)) {
           nextAvailable = appointment.to;
+          endTime = nextAvailable.add(Duration(minutes: serviceDurationInMinutes));
         }
       }
     }
     //return true; // No conflict, the slot is available
+    //print("getNextAvailableTime nextAvailable = ${nextAvailable}");
     return nextAvailable;
   }
 
@@ -111,12 +124,22 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
 
     // Get intervals for the specific day
     var dayIntervals = widget.appUser.availabilityMap[weekDay];
+    //print("dayIntervals = $dayIntervals");
     List<TimeOfDay> availableTimes = [];
 
     List<AppointmentDetails> appointments = await _getAppointmentsMade(currentDateTime);
 
     if (dayIntervals != null && dayIntervals['isSelected'] && dayIntervals['intervals'] is List) {
-      for (var interval in (dayIntervals['intervals'] as List<TimeInterval>)) {
+
+      List<TimeInterval> activeTimeIntervals = [];
+
+      for (var interval in (dayIntervals['intervals'] as List<Map<String, dynamic>>)){
+        if(interval['isSelected'] as bool){
+          activeTimeIntervals.add(interval['timeInterval'] as TimeInterval);
+        }
+      }
+
+      for (var interval in activeTimeIntervals) {
         TimeOfDay intervalStartTime = interval.startTime;
         TimeOfDay intervalEndTime = interval.endTime;
         DateTime intervalEndDateTime = dateTime.copyWith(hour: intervalEndTime.hour, minute: intervalEndTime.minute, second: 0, millisecond: 0, microsecond: 0);
@@ -125,22 +148,24 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
         DateTime appointmentEndDateTime = appointmentStartDateTime.add(Duration(minutes: serviceDurationInMinutes));
 
         while (!appointmentEndDateTime.isAfter(intervalEndDateTime)) {
-
+          //print("appointmentEndDateTime = ${appointmentEndDateTime}");
+          //print("!appointmentEndDateTime.isAfter(intervalEndDateTime) = ${!appointmentEndDateTime.isAfter(intervalEndDateTime)}");
           //await Future.delayed(Duration(milliseconds: 200));
           // Check if the current time slot is available. If not, adjust the start time
-
           DateTime nextAvailableTime = getNextAvailableTime(appointmentStartDateTime, appointments, serviceDurationInMinutes);
           //print("appointmentStartDateTime = ${appointmentStartDateTime}");
           //print("nextAvailableTime = ${nextAvailableTime}");
+          //print("nextAvailableTime.isAfter(appointmentStartDateTime) = ${nextAvailableTime.isAfter(appointmentStartDateTime)}");
           if (nextAvailableTime.isAfter(appointmentStartDateTime)) {
             appointmentStartDateTime = nextAvailableTime;
-            continue;
+            appointmentEndDateTime = appointmentStartDateTime.add(Duration(minutes: serviceDurationInMinutes));
+            continue;//restart the loop
           }
 
           if (appointmentStartDateTime.isAfter(DateTime.now())) {
             availableTimes.add(TimeOfDay(hour: appointmentStartDateTime.hour, minute: appointmentStartDateTime.minute));
           }
-
+          //print("loop availableTimes = $availableTimes");
           // Calculate the next possible start time
           appointmentStartDateTime = appointmentStartDateTime.add(Duration(minutes: serviceDurationInMinutes));
           appointmentEndDateTime = appointmentStartDateTime.add(Duration(minutes: serviceDurationInMinutes));
@@ -148,7 +173,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       }
     }
 
-    print("availableTimes = $availableTimes");
+    //print("availableTimes = $availableTimes");
 
     setState(() {
       currentAvailableTimes = availableTimes;
@@ -166,7 +191,9 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       AppointmentDetails appointmentDetails = AppointmentDetails();
       appointmentDetails.serviceId = widget.serviceProvided.id;
       appointmentDetails.serviceProviderUserId = widget.serviceProvided.userId;
-      appointmentDetails.name = "${widget.serviceProvided.name} - ${widget.appUser.name}";
+      appointmentDetails.userName = currentAppUser!.name;
+      appointmentDetails.serviceProviderName = widget.appUser.name;
+      appointmentDetails.serviceName = widget.serviceProvided.name;
       appointmentDetails.day = getDateTimeSimplified(selectedDateTime!);
       appointmentDetails.from = startingDateTime;
       appointmentDetails.to = startingDateTime.add(widget.serviceProvided.duration);

@@ -63,9 +63,15 @@ class AppUser {
     Map<String, dynamic> map = {};
     for (var entry in availabilityMap.entries) {
       List<Map<String, dynamic>> intervalsMap = [];
-      var intervals = entry.value['intervals'] as List<TimeInterval>;
-      for (var interval in intervals) {
-        intervalsMap.add(interval.toMap());
+      //var intervals = entry.value['intervals'] as List<TimeInterval>;
+      var schedules = entry.value['intervals'] as List;
+      //for (var interval in intervals) {
+      for (var schedule in schedules) {
+        //intervalsMap.add(interval.toMap());
+        intervalsMap.add({
+          'timeInterval': (schedule['timeInterval'] as TimeInterval).toMap(),
+          'isSelected': schedule['isSelected']
+        });
       }
       print("intervalsMap = $intervalsMap");
       map[entry.key] = {
@@ -119,8 +125,12 @@ class AppUser {
     availabilityMap.clear();
     map?.forEach((key, value) {
       var intervalsList = value['intervals'] as List;
-      List<TimeInterval> intervals = intervalsList.map((intervalMap) {
-        return TimeInterval.fromMap(intervalMap as Map<String, dynamic>);
+      List<Map<String, dynamic>> intervals = intervalsList.map((intervalMap) {
+        return {
+          'isSelected': intervalMap['isSelected'] as bool,
+          'timeInterval': TimeInterval.fromMap(intervalMap['timeInterval'] as Map<String, dynamic>),
+        };
+        //return TimeInterval.fromMap(intervalMap as Map<String, dynamic>);
       }).toList();
       availabilityMap[key] = {
         'isSelected': value['isSelected'],

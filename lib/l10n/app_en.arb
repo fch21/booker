@@ -481,6 +481,7 @@
     "profile_time_availability": "Availability",
     "profile_services_provided": "Services provided",
     "profile_add_service": "Add service",
+    "profile_add_available_schedule": "Add schedule",
 
 
     "service_form_create_service": "Create service",
