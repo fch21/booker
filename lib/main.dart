@@ -43,25 +43,29 @@ const fontSizeSmall = 16.0;
 const fontSizeVerySmall = 14.0;
 
 const textStyleLargeBold = TextStyle(
+  color: Colors.black87,
   fontSize: fontSizeLarge,
   fontWeight: FontWeight.bold,
 );
 
 const textStyleMediumBold = TextStyle(
+  color: Colors.black87,
   fontSize: fontSizeMedium,
   fontWeight: FontWeight.bold,
 );
 
 const textStyleMediumNormal = TextStyle(
+  color: Colors.black87,
   fontSize: fontSizeMedium,
 );
 
 const textStyleSmallNormal = TextStyle(
-
+  color: Colors.black87,
   fontSize: fontSizeSmall,
 );
 
 const textStyleVerySmallNormal = TextStyle(
+  color: Colors.black87,
   fontSize: fontSizeVerySmall,
 );
 

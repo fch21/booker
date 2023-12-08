@@ -123,7 +123,7 @@ class _CalendarState extends State<Calendar> {
   _selectMenuItem(String itemSelecionado) {
     if(itemSelecionado == AppLocalizations.of(context)!.menu_calendar_cancel_all){
       if(_appointmentsList.isNotEmpty){
-        AppointmentDetails.cancelAppointmentConfirmation(context, appointmentsList: _appointmentsList, useCancelAllMessage: true, extraTextForCancelAll: getTimePeriodString());
+        AppointmentDetails.cancelAppointmentConfirmation(context, appointmentsList: _appointmentsList, isServiceProvider: true, useCancelAllMessage: true, extraTextForCancelAll: getTimePeriodString());
       }
       else{
         showDialog(

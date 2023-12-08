@@ -46,9 +46,10 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalhes do Agendamento'),
+        title: const Text('Detalhes do Agendamento'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -58,10 +59,27 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(top: 16.0),
-                    child: Text(widget.appointmentDetails.serviceProvided.name, style: textStyleMediumBold,),
+                    child: Text(widget.appointmentDetails.serviceName, style: textStyleMediumBold,),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 16.0),
+                    child: RichText(
+                      text: TextSpan(
+                        // Default style for text
+                        style: textStyleSmallNormal,
+                        children: <TextSpan>[
+                          const TextSpan(text: 'Status: '),
+                          // Applying a different color to a part of the text
+                          TextSpan(
+                            text: widget.appointmentDetails.isCanceled ? 'Cancelado' : 'Confirmado',
+                            style: TextStyle(color: widget.appointmentDetails.isCanceled ? Colors.red : Colors.green),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
                     child: Text('Data: ${DateFormat('dd/MM/yyyy').format(widget.appointmentDetails.from)}', style: textStyleSmallNormal),
                   ),
                   Padding(
@@ -87,17 +105,19 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: SelectableText("email: ${_appUser!.email}", style: textStyleSmallNormal,),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 64.0),
-                    child: Center(
-                      child: TextButton(
-                        onPressed: (){
-                          AppointmentDetails.cancelAppointmentConfirmation(context, appointmentsList: [widget.appointmentDetails], addCancelMessage: isServiceProvider);
-                        },
-                        child: Text('Cancelar Agendamento', style: TextStyle(color: Colors.red, fontSize: fontSizeVerySmall),),
+                  if(!widget.appointmentDetails.isCanceled)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 64.0),
+                      child: Center(
+                        child: TextButton(
+                          onPressed: () async {
+                            bool confirmed = await AppointmentDetails.cancelAppointmentConfirmation(context, appointmentsList: [widget.appointmentDetails], isServiceProvider: isServiceProvider);
+                            if(mounted && confirmed) Navigator.of(context).pop();
+                          },
+                          child: const Text('Cancelar Agendamento', style: TextStyle(color: Colors.red, fontSize: fontSizeVerySmall),),
+                        ),
                       ),
                     ),
-                  ),
                 ],
               )
             : Center(

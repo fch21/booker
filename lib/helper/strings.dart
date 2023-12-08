@@ -63,9 +63,13 @@ class Strings {
   static const String APPOINTMENT_SERVICE_ID = "service_id";
   static const String APPOINTMENT_SERVICE_PROVIDER_USER_ID = "service_provider_user_id";
   static const String APPOINTMENT_STATUS = "status";
+  static const String APPOINTMENT_CANCELED_BY = "canceled_by";
+  static const String APPOINTMENT_CANCEL_MESSAGE = "cancel_message";
   static const String APPOINTMENT_STATUS_PENDING = "pending";
   static const String APPOINTMENT_STATUS_CONFIRMED = "confirmed";
   static const String APPOINTMENT_STATUS_CANCELED = "canceled";
+  static const String APPOINTMENT_CANCELED_BY_CLIENT = "client";
+  static const String APPOINTMENT_CANCELED_BY_SERVICE_PROVIDER = "service_provider";
   static const String APPOINTMENT_DAY = "day";
   static const String APPOINTMENT_FROM = "from";
   static const String APPOINTMENT_TO = "to";

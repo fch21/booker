@@ -207,7 +207,7 @@ class UserSign {
         padding: const EdgeInsets.symmetric(vertical: 4.0),
         child: Image.asset('assets/facebook_logo.png', height: 24.0,),
       ),
-      label: Text(AppLocalizations.of(context)!.facebook_sign_button_text, style: textStyleSmallNormal,),
+      label: Text(AppLocalizations.of(context)!.facebook_sign_button_text, style: const TextStyle(color: Colors.white, fontSize: fontSizeSmall ),),
       onPressed: () async {
         onStartProcessing();
         try {
@@ -225,8 +225,7 @@ class UserSign {
         onEndProcessing();
       },
       style: ElevatedButton.styleFrom(
-          primary: const Color(0xff1877f2),
-          onPrimary: Colors.white,
+          backgroundColor: const Color(0xff1877f2),
           elevation: 8.0,
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0))

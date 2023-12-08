@@ -56,6 +56,8 @@ class AppointmentDetails {
   String serviceId = "";
   String serviceProviderUserId = "";
   String status = Strings.APPOINTMENT_STATUS_CONFIRMED;
+  String canceledBy = "";
+  String cancelMessage = "";
   DateTime day =  DateTime.fromMillisecondsSinceEpoch(0);
   DateTime from =  DateTime.fromMillisecondsSinceEpoch(0);
   DateTime to =  DateTime.fromMillisecondsSinceEpoch(0);
@@ -64,6 +66,10 @@ class AppointmentDetails {
   ServiceProvided serviceProvided = ServiceProvided();
 
   AppointmentDetails();
+
+  bool get isCanceled {
+    return status == Strings.APPOINTMENT_STATUS_CANCELED;
+  }
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
@@ -75,6 +81,8 @@ class AppointmentDetails {
       Strings.APPOINTMENT_SERVICE_ID: serviceId,
       Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID: serviceProviderUserId,
       Strings.APPOINTMENT_STATUS: status,
+      Strings.APPOINTMENT_CANCELED_BY: canceledBy,
+      Strings.APPOINTMENT_CANCEL_MESSAGE: cancelMessage,
       Strings.APPOINTMENT_DAY: dateFormat.format(day),
       Strings.APPOINTMENT_FROM: dateFormat.format(from),
       Strings.APPOINTMENT_TO: dateFormat.format(to),
@@ -84,13 +92,14 @@ class AppointmentDetails {
     return map;
   }
 
-
   Map<String, dynamic> toMapPublic() {
     Map<String, dynamic> map = {
       Strings.APPOINTMENT_ID: id,
       Strings.APPOINTMENT_SERVICE_ID: serviceId,
       Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID: serviceProviderUserId,
       Strings.APPOINTMENT_STATUS: status,
+      Strings.APPOINTMENT_CANCELED_BY: canceledBy,
+      Strings.APPOINTMENT_CANCEL_MESSAGE: cancelMessage,
       Strings.APPOINTMENT_DAY: dateFormat.format(day),
       Strings.APPOINTMENT_FROM: dateFormat.format(from),
       Strings.APPOINTMENT_TO: dateFormat.format(to),
@@ -110,6 +119,8 @@ class AppointmentDetails {
       serviceId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_ID] ?? "";
       serviceProviderUserId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID] ?? "";
       status = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_STATUS] ?? "";
+      canceledBy = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_CANCELED_BY] ?? "";
+      cancelMessage = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_CANCEL_MESSAGE] ?? "";
       //day = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
       //from = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
       //to = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ??  Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
@@ -126,6 +137,8 @@ class AppointmentDetails {
       serviceId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_ID] ?? "";
       serviceProviderUserId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID] ?? "";
       status = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_STATUS] ?? "";
+      canceledBy = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_CANCELED_BY] ?? "";
+      cancelMessage = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_CANCEL_MESSAGE] ?? "";
       //day = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
       //from = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
       //to = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ??  Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
@@ -209,9 +222,11 @@ class AppointmentDetails {
     return appointmentDetailsList;
   }
 
-  static void cancelAppointmentConfirmation(BuildContext context, {required List<AppointmentDetails> appointmentsList, bool useCancelAllMessage = false, bool addCancelMessage = true, String extraTextForCancelAll = ""}) {
+  static Future<bool> cancelAppointmentConfirmation(BuildContext context, {required List<AppointmentDetails> appointmentsList, required bool isServiceProvider, bool useCancelAllMessage = false, String extraTextForCancelAll = ""}) async {
     print("appointmentsList.length = ${appointmentsList.length}");
-    showDialog(
+    bool confirmed = false;
+    bool showCancelAppointmentAddMessageDialog = false;
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -222,28 +237,44 @@ class AppointmentDetails {
             TextButton(
               child: Text('Voltar'),
               onPressed: () {
+                confirmed = false;
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text('Confirmar'),
-              onPressed: () {
-                for(var appointment in appointmentsList){
-                  appointment.status = Strings.APPOINTMENT_STATUS_CANCELED;
-                  appointment.updateAppointmentDetailsInFirestore(context);
-                }
+              onPressed: () async {
+                confirmed = true;
+                showCancelAppointmentAddMessageDialog = true;
                 Navigator.of(context).pop();
-                if(addCancelMessage) _cancelAppointmentAddMessage(context, useCancelAllMessage: useCancelAllMessage);
               },
             ),
           ],
         );
       },
     );
+
+    if(showCancelAppointmentAddMessageDialog && context.mounted){
+      String cancelMessage = "";
+      if(isServiceProvider) {
+        cancelMessage = await _cancelAppointmentAddMessage(context, useCancelAllMessage: useCancelAllMessage);
+      }
+      for(var appointment in appointmentsList){
+        appointment.status = Strings.APPOINTMENT_STATUS_CANCELED;
+        appointment.canceledBy = isServiceProvider ? Strings.APPOINTMENT_CANCELED_BY_SERVICE_PROVIDER : Strings.APPOINTMENT_CANCELED_BY_CLIENT;
+        appointment.cancelMessage = cancelMessage;
+        await appointment.updateAppointmentDetailsInFirestore(context);
+      }
+    }
+
+    return confirmed;
   }
 
-  static void _cancelAppointmentAddMessage(BuildContext context, {bool useCancelAllMessage = false}) {
-    showDialog(
+  static Future<String> _cancelAppointmentAddMessage(BuildContext context, {bool useCancelAllMessage = false}) async {
+
+    String cancelMessage = "";
+
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
 
@@ -269,7 +300,7 @@ class AppointmentDetails {
           actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: <Widget>[
             TextButton(
-              child: Text('Voltar'),
+              child: Text('Deixar em branco'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -279,6 +310,7 @@ class AppointmentDetails {
               onPressed: () {
                 // Adicione a lógica para cancelar o agendamento
                 print("message = ${textEditingController.text}");
+                cancelMessage = textEditingController.text;
                 Navigator.of(context).pop();
               },
             ),
@@ -286,5 +318,7 @@ class AppointmentDetails {
         );
       },
     );
+
+    return cancelMessage;
   }
 }

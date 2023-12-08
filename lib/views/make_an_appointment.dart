@@ -74,7 +74,9 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       //print("appointmentDetails>>>>>>>");
       //print("appointmentDetails.from = ${appointmentDetails.from}");
       //print("appointmentDetails.to = ${appointmentDetails.to}");
-      appointments.add(appointmentDetails);
+      if(!appointmentDetails.isCanceled){
+        appointments.add(appointmentDetails);
+      }
     }
 
     appointments.sort((a, b) => a.from.compareTo(b.from));

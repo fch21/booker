@@ -29,15 +29,26 @@ class MyAppointments extends StatefulWidget {
 
 class _MyAppointmentsState extends State<MyAppointments> {
 
-  List<AppointmentDetails> appointments = [];
+  List<AppointmentDetails> futureAppointments = [];
+  List<AppointmentDetails> pastAppointments = [];
   bool appointmentsAreLoaded = false;
   DateTime currentDateTime = DateTime.now();
 
 
   _getAppointmentsList() async {
-    appointments = await AppointmentDetails.getClientAppointmentDetails(appUser: currentAppUser!);
+    pastAppointments.clear();
+    futureAppointments.clear();
+    List<AppointmentDetails> appointments = await AppointmentDetails.getClientAppointmentDetails(appUser: currentAppUser!);
     appointments.sort((a, b) => a.from.compareTo(b.from));
 
+    for(var appointment in appointments){
+      if(appointment.from.isBefore(currentDateTime)){
+        pastAppointments.add(appointment);
+      }
+      else{
+        futureAppointments.add(appointment);
+      }
+    }
     setState(() {
       appointmentsAreLoaded = true;
     });
@@ -51,6 +62,9 @@ class _MyAppointmentsState extends State<MyAppointments> {
 
   @override
   Widget build(BuildContext context) {
+
+    List<AppointmentDetails> appointments = widget.showOnlyPastAppointments ? pastAppointments : futureAppointments;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -71,7 +85,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
                 ? Padding(
                     padding: const EdgeInsets.only(top: 32.0, bottom: 16),
                     child: Center(
-                        child: Text(AppLocalizations.of(context)!.no_services_provided_message, style: textStyleSmallNormal,)
+                        child: Text("Nenhum agendamento", style: textStyleSmallNormal,)
                     ),
                   )
                 : Padding(
@@ -98,22 +112,18 @@ class _MyAppointmentsState extends State<MyAppointments> {
                         AppointmentDetails appointmentDetails = appointments[index];
 
                         //print("appointmentDetails.from = ${appointmentDetails.from}");
-                        //print("appointmentDetails.from.isBefore(currentDateTime) = ${appointmentDetails.from.isBefore(currentDateTime)}");
-                        if(widget.showOnlyPastAppointments ? appointmentDetails.from.isBefore(currentDateTime) : appointmentDetails.from.isAfter(currentDateTime)) {
-                          return Opacity(
-                            opacity: widget.showOnlyPastAppointments ? 0.5 : 1.0,
-                            child: AppointmentDetailsCard(
-                              appointmentDetails: appointmentDetails,
-                              isClient: !currentAppUser!.isServiceProvider,
-                              onTap: (){
-                                Navigator.pushNamed(context, RouteGenerator.APPOINTMENT_DETAILS_PAGE, arguments: appointmentDetails);
-                              },
-                            ),
-                          );
-                        }
-                        else{
-                          return Container();
-                        }
+                        return Opacity(
+                          opacity: widget.showOnlyPastAppointments || appointmentDetails.isCanceled ? 0.5 : 1.0,
+                          child: AppointmentDetailsCard(
+                            appointmentDetails: appointmentDetails,
+                            isClient: !currentAppUser!.isServiceProvider,
+                            onTap: (){
+                              Navigator.pushNamed(context, RouteGenerator.APPOINTMENT_DETAILS_PAGE, arguments: appointmentDetails).then((value){
+                                _getAppointmentsList();
+                              });
+                            },
+                          ),
+                        );
                       },
                     ),
                 ),
