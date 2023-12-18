@@ -77,57 +77,27 @@ class _ExploreState extends State<Explore> {
     _listItemsDropCategories = FiltersConfig.getCategories();
   }
   */
+
   @override
   void initState() {
     super.initState();
     //_loadDropLists();
     //_addListenerEvents();
-  }
-
-  Future<AppUser?> getUserFromId(String userId) async {
-    //print("getUserFromId>>>>>>>>>");
-    //print("userId = ${userId}");
-    AppUser? user;
-    try{
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection(Strings.COLLECTION_USERS_PUBLIC)
-          .doc(userId)
-          .get();
-      if(userDoc.data()!= null) {
-        user = AppUser.fromDocumentSnapshotPublic(userDoc);
-      }
-    }
-    catch(e){
-      print(e);
-    }
-    return user;
-  }
-
-  Future<AppUser?> getUserFromUserName(String userName) async {
-    //print("getUserFromUserName>>>>>>>>>");
-    //print("userName = ${userName}");
-    AppUser? user;
-    try{
-      QuerySnapshot querySnapshot =  await FirebaseFirestore.instance
-          .collection(Strings.COLLECTION_USERS_PUBLIC)
-          .where(Strings.USER_USERNAME, isEqualTo: userName)
-          .get();
-
-      if(querySnapshot.docs.length == 1){
-        DocumentSnapshot userDoc = querySnapshot.docs.first;
-        if(userDoc.data()!= null) {
-          user = AppUser.fromDocumentSnapshotPublic(userDoc);
-        }
-      }
-    }
-    catch(e){
-      print(e);
-    }
-    return user;
+    checkIfHasUserLinkAndLaunch();
   }
 
   Future<bool> checkIfHasUserLinkAndLaunch() async {
     print("checkIfHasEventLinkAndLaunch");
+
+    if(initialServiceProviderId != null){
+      String id = initialServiceProviderId!;
+      initialServiceProviderId = null;
+      AppUser? user = await AppUser.getUserFromId(id);
+      if(user != null && context.mounted){
+        await Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: user);
+      }
+      initialServiceProviderId = null;
+    }
     //String? eventId = appGlobalKey.currentState?.linkEventId;
     /*
     String? eventId = appGlobalKey.currentState?.eventIdUrlParameter;
@@ -241,6 +211,7 @@ class _ExploreState extends State<Explore> {
             stream: FirebaseFirestore.instance
                 ///.collection(Strings.COLLECTION_USERS_PUBLIC)
                 .collection(Strings.COLLECTION_USERS)
+                .where(Strings.USER_IS_SERVICE_PROVIDER, isEqualTo: true)
                 .snapshots(),
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {

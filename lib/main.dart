@@ -18,6 +18,8 @@ import 'helper/route_generator.dart';
 
 GlobalKey<AppState> appGlobalKey = GlobalKey();
 AppUser? currentAppUser;
+//String? initialServiceProviderId = "IZDVVkzDFTZBjdOxRJOQbuaJHxP2";
+String? initialServiceProviderId;
 
 Future<void> main() async {
 
@@ -99,7 +101,7 @@ class AppState extends State<App> {
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: const [
-          Locale('en', 'US'), // Inglês
+          //Locale('en', 'US'), // Inglês
           Locale('pt', 'BR'), // Português Brasil
         ],
         title: Strings.BOOKER,

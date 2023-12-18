@@ -99,11 +99,10 @@ class _RegisterState extends State<Register> {
       body: Container(
         decoration: const BoxDecoration(color: Colors.white),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
               Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 64),
+                  padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 64),
                   child: Center(
                     child: SizedBox(
                         width: greaterWidthLayout ? MediaQuery.of(context).size.width * 0.4 : null,
@@ -113,70 +112,28 @@ class _RegisterState extends State<Register> {
               ),
               Stack(
                 children: [
-                  Container(
-                    decoration: const BoxDecoration(color: Colors.white),
-                    child: Center(
-                      child: SizedBox(
-                        width: greaterWidthLayout ? MediaQuery.of(context).size.width * 0.5 : null,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Form(
-                              key: _formKey,
-                              child: Column(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8.0),
-                                    child: InputCustom(
-                                      controller: _controllerName,
-                                      label: AppLocalizations.of(context)!.register_name,
-                                      textInputType: TextInputType.text,
-                                      onSaved: (name) {
-                                        _user.name = name!;
-                                        return null;
-                                      },
-                                      validator: (value) {
-                                        if(value == "" || value == null ){
-                                          return AppLocalizations.of(context)!.required_field;
-                                        }
-                                        else{
-                                          return null;
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                  /*
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8),
-                                    child: InputCustom(
-                                      controller: _controllerUserName,
-                                      label: AppLocalizations.of(context)!.register_user_name,
-                                      textInputType: TextInputType.text,
-                                      onSaved: (userName) {
-                                        _user.userName = userName!;
-                                        return null;
-                                      },
-                                      validator: (value) {
-                                        if(value == "" || value == null ){
-                                          return AppLocalizations.of(context)!.required_field;
-                                        }
-                                        else{
-                                          if(!_userNameIsAvailable) return AppLocalizations.of(context)!.register_unavailable_user_name_message;
-                                          return null;
-                                        }
-                                      },
-                                    ),
-                                  ),
-
-                                   */
-                                  Padding(
-                                      padding: const EdgeInsets.only(bottom: 8),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: Container(
+                      decoration: const BoxDecoration(color: Colors.white),
+                      child: Center(
+                        child: SizedBox(
+                          width: greaterWidthLayout ? MediaQuery.of(context).size.width * 0.5 : null,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 8.0),
                                       child: InputCustom(
-                                        controller: _controllerEmail,
-                                        label: AppLocalizations.of(context)!.register_email,
-                                        textInputType: TextInputType.emailAddress,
-                                        onSaved: (email) {
-                                          _user.email = email!;
+                                        controller: _controllerName,
+                                        label: AppLocalizations.of(context)!.register_name,
+                                        textInputType: TextInputType.text,
+                                        onSaved: (name) {
+                                          _user.name = name!;
                                           return null;
                                         },
                                         validator: (value) {
@@ -187,157 +144,202 @@ class _RegisterState extends State<Register> {
                                             return null;
                                           }
                                         },
-                                      )),
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8),
-                                    child: InputCustom(
-                                      controller: _controllerPassword,
-                                      label: AppLocalizations.of(context)!.register_password,
-                                      password: true,
-                                      textInputType: TextInputType.text,
-                                      onSaved: (password) {
-                                        _user.password = password!;
-                                        return null;
-                                      },
-                                      validator: (value) {
-                                        if(value == "" || value == null ){
-                                          return AppLocalizations.of(context)!.required_field;
-                                        }
-                                        else{
-                                          return null;
-                                        }
-                                      },
+                                      ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 12),
-                                    child: InputCustom(
-                                      controller: _controllerConfirmPassword,
-                                      label: AppLocalizations.of(context)!.register_confirm_password,
-                                      password: true,
-                                      textInputType: TextInputType.text,
-                                      validator: (value) {
-                                        if (_controllerPassword.text != _controllerConfirmPassword.text) {
-                                          return AppLocalizations.of(context)!.register_different_passwords;
-                                        }
-
-                                        if(value == "" || value == null ){
-                                          return AppLocalizations.of(context)!.required_field;
-                                        }
-                                        else{
+                                    /*
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: InputCustom(
+                                        controller: _controllerUserName,
+                                        label: AppLocalizations.of(context)!.register_user_name,
+                                        textInputType: TextInputType.text,
+                                        onSaved: (userName) {
+                                          _user.userName = userName!;
                                           return null;
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Checkbox(
-                                        value: _checked,
-                                        onChanged: (value) {
-                                          if(value != null){
-                                            setState(() {
-                                              _checked = value;
-                                            });
+                                        },
+                                        validator: (value) {
+                                          if(value == "" || value == null ){
+                                            return AppLocalizations.of(context)!.required_field;
+                                          }
+                                          else{
+                                            if(!_userNameIsAvailable) return AppLocalizations.of(context)!.register_unavailable_user_name_message;
+                                            return null;
                                           }
                                         },
                                       ),
-                                      Expanded(
-                                        child: Material(
-                                          color: Colors.transparent,
-                                          child: RichText(
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  style: const TextStyle(color: Colors.black),
-                                                  text: AppLocalizations.of(context)!.register_terms_part_1,
-                                                ),
-                                                TextSpan(
-                                                  text: AppLocalizations.of(context)!.register_terms_of_use,
-                                                  style: const TextStyle(color: Colors.blue),
-                                                  recognizer: TapGestureRecognizer()
-                                                    ..onTap = () {
-                                                      String title = AppLocalizations.of(context)!.register_terms_of_use;
-                                                      Map args = {"appBarTitle" : "", "title" : title, "content" : Strings.TERMS_OF_USE};
-                                                      Navigator.pushNamed(context, RouteGenerator.LONG_TEXT, arguments: args);
-                                                    },
-                                                ),
-                                                TextSpan(
-                                                  style: const TextStyle(color: Colors.black),
-                                                  text: AppLocalizations.of(context)!.register_terms_part_2,
-                                                ),
-                                                TextSpan(
-                                                  text: AppLocalizations.of(context)!.register_privacy_policy,
-                                                  style: const TextStyle(color: Colors.blue),
-                                                  recognizer: TapGestureRecognizer()
-                                                    ..onTap = () {
-                                                      String title = AppLocalizations.of(context)!.register_privacy_policy;
-                                                      Map args = {"appBarTitle" : "", "title" : title, "content" : Strings.PRIVACY_POLICY};
-                                                      Navigator.pushNamed(context, RouteGenerator.LONG_TEXT, arguments: args);
-                                                    },
-                                                ),
-                                              ],
+                                    ),
+
+                                     */
+                                    Padding(
+                                        padding: const EdgeInsets.only(bottom: 8),
+                                        child: InputCustom(
+                                          controller: _controllerEmail,
+                                          label: AppLocalizations.of(context)!.register_email,
+                                          textInputType: TextInputType.emailAddress,
+                                          onSaved: (email) {
+                                            _user.email = email!;
+                                            return null;
+                                          },
+                                          validator: (value) {
+                                            if(value == "" || value == null ){
+                                              return AppLocalizations.of(context)!.required_field;
+                                            }
+                                            else{
+                                              return null;
+                                            }
+                                          },
+                                        )),
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: InputCustom(
+                                        controller: _controllerPassword,
+                                        label: AppLocalizations.of(context)!.register_password,
+                                        password: true,
+                                        textInputType: TextInputType.text,
+                                        onSaved: (password) {
+                                          _user.password = password!;
+                                          return null;
+                                        },
+                                        validator: (value) {
+                                          if(value == "" || value == null ){
+                                            return AppLocalizations.of(context)!.required_field;
+                                          }
+                                          else{
+                                            return null;
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 12),
+                                      child: InputCustom(
+                                        controller: _controllerConfirmPassword,
+                                        label: AppLocalizations.of(context)!.register_confirm_password,
+                                        password: true,
+                                        textInputType: TextInputType.text,
+                                        validator: (value) {
+                                          if (_controllerPassword.text != _controllerConfirmPassword.text) {
+                                            return AppLocalizations.of(context)!.register_different_passwords;
+                                          }
+
+                                          if(value == "" || value == null ){
+                                            return AppLocalizations.of(context)!.required_field;
+                                          }
+                                          else{
+                                            return null;
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Checkbox(
+                                          value: _checked,
+                                          onChanged: (value) {
+                                            if(value != null){
+                                              setState(() {
+                                                _checked = value;
+                                              });
+                                            }
+                                          },
+                                        ),
+                                        Expanded(
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            child: RichText(
+                                              text: TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    style: const TextStyle(color: Colors.black),
+                                                    text: AppLocalizations.of(context)!.register_terms_part_1,
+                                                  ),
+                                                  TextSpan(
+                                                    text: AppLocalizations.of(context)!.register_terms_of_use,
+                                                    style: const TextStyle(color: Colors.blue),
+                                                    recognizer: TapGestureRecognizer()
+                                                      ..onTap = () {
+                                                        String title = AppLocalizations.of(context)!.register_terms_of_use;
+                                                        Map args = {"appBarTitle" : "", "title" : title, "content" : Strings.TERMS_OF_USE};
+                                                        Navigator.pushNamed(context, RouteGenerator.LONG_TEXT, arguments: args);
+                                                      },
+                                                  ),
+                                                  TextSpan(
+                                                    style: const TextStyle(color: Colors.black),
+                                                    text: AppLocalizations.of(context)!.register_terms_part_2,
+                                                  ),
+                                                  TextSpan(
+                                                    text: AppLocalizations.of(context)!.register_privacy_policy,
+                                                    style: const TextStyle(color: Colors.blue),
+                                                    recognizer: TapGestureRecognizer()
+                                                      ..onTap = () {
+                                                        String title = AppLocalizations.of(context)!.register_privacy_policy;
+                                                        Map args = {"appBarTitle" : "", "title" : title, "content" : Strings.PRIVACY_POLICY};
+                                                        Navigator.pushNamed(context, RouteGenerator.LONG_TEXT, arguments: args);
+                                                      },
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                            Padding(
-                                padding: const EdgeInsets.only(top: 16),
-                                child: ButtonCustom(
-                                  text: AppLocalizations.of(context)!.register_button_text,
-                                  onPressed: _validateFields,
-                                )
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 32),
-                              child: UserSign.googleSignInButton(
-                                  context,
-                                  onStartProcessing: (){
-                                    setState(() {
-                                      _isLoading = true;
-                                    });
-                                  },
-                                  onEndProcessing: (){
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                  }),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 16, bottom: 64),
-                              child: UserSign.facebookSignInButton(
-                                  context,
-                                  onStartProcessing: (){
-                                    setState(() {
-                                      _isLoading = true;
-                                    });
-                                  },
-                                  onEndProcessing: (){
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                  }),
-                            ),
-
-                            /*
-                              Padding(
-                                padding: EdgeInsets.only(top: 16),
-                                child: Text(
-                                  _errorMessage,
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 16,
-                                  ),
+                                      ],
+                                    )
+                                  ],
                                 ),
-                              )
+                              ),
+                              Padding(
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: ButtonCustom(
+                                    text: AppLocalizations.of(context)!.register_button_text,
+                                    onPressed: _validateFields,
+                                  )
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 32),
+                                child: UserSign.googleSignInButton(
+                                    context,
+                                    onStartProcessing: (){
+                                      setState(() {
+                                        _isLoading = true;
+                                      });
+                                    },
+                                    onEndProcessing: (){
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 16, bottom: 64),
+                                child: UserSign.facebookSignInButton(
+                                    context,
+                                    onStartProcessing: (){
+                                      setState(() {
+                                        _isLoading = true;
+                                      });
+                                    },
+                                    onEndProcessing: (){
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }),
+                              ),
 
-                               */
-                          ],
+                              /*
+                                Padding(
+                                  padding: EdgeInsets.only(top: 16),
+                                  child: Text(
+                                    _errorMessage,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                )
+
+                                 */
+                            ],
+                          ),
                         ),
                       ),
                     ),

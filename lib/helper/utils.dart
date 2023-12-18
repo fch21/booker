@@ -74,6 +74,34 @@ class Utils {
     return completer.future;
   }
 
+  static Color darkenColor(Color color, double threshold) {
+    // Convert the color to HSL
+    HSLColor hsl = HSLColor.fromColor(color);
+    // Calculate the lightness based on the threshold
+    double lightness = hsl.lightness - (hsl.lightness - threshold).clamp(0.0, 1.0) * 0.2;
+
+    // Ensure the new lightness does not exceed the threshold
+    lightness = lightness < threshold ? lightness : threshold;
+
+    // Return the color with adjusted lightness
+    return hsl.withLightness(lightness).toColor();
+  }
+
+  static Color getNotTooLightColor(Color color) {
+    double threshold = 0.8;
+
+    // Compute the luminance of the input color.
+    double luminance = color.computeLuminance();
+
+    // If the color's luminance is greater than the threshold, darken it.
+    if (luminance > threshold) {
+      return darkenColor(color, threshold);
+    }
+
+    // If the color's luminance is lower than the threshold, return it as is.
+    return color;
+  }
+
   static Color? getContrastingColor(Color? color) {
     if(color == null) return null;
     // Calculating the luminance of the color

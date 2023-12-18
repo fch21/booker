@@ -37,7 +37,15 @@ class _ServiceFormState extends State<ServiceForm> {
       _formKey.currentState?.save();
 
       _serviceProvided.updateServiceProvidedInFirestore(context);
-      Navigator.of(context).pop();
+      if(widget.serviceProvided != null){
+        //to update instantly in the previous page
+        widget.serviceProvided!.name = _serviceProvided.name;
+        widget.serviceProvided!.description = _serviceProvided.description;
+        widget.serviceProvided!.price = _serviceProvided.price;
+        widget.serviceProvided!.duration = _serviceProvided.duration;
+        widget.serviceProvided!.color = _serviceProvided.color;
+      }
+      if(mounted) Navigator.of(context).pop();
     }
   }
 

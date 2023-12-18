@@ -50,7 +50,7 @@ class _ChoiceOfServiceState extends State<ChoiceOfService> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Serviços disponíveis"),
+        title: const Text("Serviços disponíveis"),
         elevation: 0,
         backgroundColor: widget.appUser.getUserColorResolved(),
         foregroundColor: Utils.getContrastingColor(widget.appUser.getUserColorResolved()),
@@ -60,8 +60,8 @@ class _ChoiceOfServiceState extends State<ChoiceOfService> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ProfileHeader(appUser: widget.appUser,),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8.0),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 18.0, vertical: 8.0),
               child: Text(
                 'Escolha seu serviço',
                 style: TextStyle(
@@ -78,7 +78,7 @@ class _ChoiceOfServiceState extends State<ChoiceOfService> {
             if(!servicesAreLoaded)
               Padding(
                 padding: const EdgeInsets.only(top: 64.0),
-                child: LoadingData(),
+                child: LoadingData(color: widget.appUser.color,),
               ),
             if(servicesAreLoaded)
               services.isEmpty

@@ -155,7 +155,7 @@ class _AppUserItemState extends State<AppUserItem> {
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Hero(
                             tag: "${widget.appUser.id}${Strings.USER_DESCRIPTION}",
-                            child: Material(color: Colors.white, child: Text(widget.appUser.userName, style: textStyleSmallNormal,))
+                            child: Material(color: Colors.white, child: Text(widget.appUser.description, style: textStyleSmallNormal, maxLines: 2, overflow: TextOverflow.ellipsis,))
                         ),
                       ),
                     ),

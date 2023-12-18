@@ -145,6 +145,7 @@ class AppUser {
       id = documentSnapshot.id;
       name = data.containsKey(Strings.USER_NAME) ? documentSnapshot[Strings.USER_NAME] ?? "" :  "";
       userName = data.containsKey(Strings.USER_USERNAME) ? documentSnapshot[Strings.USER_USERNAME] ?? "" :  "";
+      description = data.containsKey(Strings.USER_DESCRIPTION) ? documentSnapshot[Strings.USER_DESCRIPTION] ?? "" :  "";
       email = data.containsKey(Strings.USER_EMAIL) ? documentSnapshot[Strings.USER_EMAIL] ?? "" :  "";
       tutorialDone = data.containsKey(Strings.USER_TUTORIAL_DONE) ? documentSnapshot[Strings.USER_TUTORIAL_DONE] ?? false : false;
       wantNotifications = data.containsKey(Strings.USER_WANT_NOTIFICATIONS) ? documentSnapshot[Strings.USER_WANT_NOTIFICATIONS] ?? true : true;
@@ -167,6 +168,7 @@ class AppUser {
     id = documentSnapshot.id;
     name = data[Strings.USER_NAME] ?? "";
     userName = data.containsKey(Strings.USER_USERNAME) ? documentSnapshot[Strings.USER_USERNAME] ?? "" :  "";
+    description = data.containsKey(Strings.USER_DESCRIPTION) ? documentSnapshot[Strings.USER_DESCRIPTION] ?? "" :  "";
     urlProfileUserImage = data[Strings.USER_URL_PROFILE_USER_IMAGE] ?? "";
     urlProfileBgImage = data[Strings.USER_URL_PROFILE_BG_IMAGE] ?? "";
     color = Color((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_COLOR] ?? Colors.white.value);
@@ -195,6 +197,50 @@ class AppUser {
     }
 
     return result;
+  }
+
+
+  static Future<AppUser?> getUserFromId(String userId) async {
+    //print("getUserFromId>>>>>>>>>");
+    //print("userId = ${userId}");
+    AppUser? user;
+    try{
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection(Strings.COLLECTION_USERS)
+          //.collection(Strings.COLLECTION_USERS_PUBLIC)
+          .doc(userId)
+          .get();
+      if(userDoc.data() != null) {
+        user = AppUser.fromDocumentSnapshotPublic(userDoc);
+      }
+    }
+    catch(e){
+      print(e);
+    }
+    return user;
+  }
+
+  static Future<AppUser?> getUserFromUserName(String userName) async {
+    //print("getUserFromUserName>>>>>>>>>");
+    //print("userName = ${userName}");
+    AppUser? user;
+    try{
+      QuerySnapshot querySnapshot =  await FirebaseFirestore.instance
+          .collection(Strings.COLLECTION_USERS_PUBLIC)
+          .where(Strings.USER_USERNAME, isEqualTo: userName)
+          .get();
+
+      if(querySnapshot.docs.length == 1){
+        DocumentSnapshot userDoc = querySnapshot.docs.first;
+        if(userDoc.data()!= null) {
+          user = AppUser.fromDocumentSnapshotPublic(userDoc);
+        }
+      }
+    }
+    catch(e){
+      print(e);
+    }
+    return user;
   }
 
   static List<AppUser> getAppUsersFromDocumentSnapshots(List<DocumentSnapshot> documentSnapshots){

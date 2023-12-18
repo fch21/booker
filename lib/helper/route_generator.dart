@@ -9,7 +9,7 @@ import 'package:booker/views/appointment_details_page.dart';
 import 'package:booker/views/available_schedule_form.dart';
 import 'package:booker/views/calendar.dart';
 import 'package:booker/views/choice_of_service.dart';
-import 'package:booker/views/configurations.dart';
+import 'package:booker/views/configurations_home.dart';
 import 'package:booker/views/edit_profile_service_provided.dart';
 import 'package:booker/views/login.dart';
 import 'package:booker/views/long_text.dart';
@@ -33,7 +33,7 @@ class RouteGenerator {
   static const String RESET_PASSWORD = "/reset_password";
   static const String PRESENTATION = "/presentation";
   static const String WAITING_EMAIL_VERIFICATION = "/waiting_email_verification";
-  static const String CONFIGURATIONS = "/configurations";
+  static const String CONFIGURATIONS_HOME = "/configurations";
   static const String PROFILE_CUSTOMER = "/profile_customer";
   static const String PROFILE_SERVICE_PROVIDED = "/profile_service_provided";
   static const String EDIT_PROFILE_SERVICE_PROVIDED = "/edit_profile_service_provided";
@@ -92,14 +92,14 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Presentation());
       case WAITING_EMAIL_VERIFICATION:
         return MaterialPageRoute(builder: (_) => WaitingEmailVerification(args as AppUser));
-      case CONFIGURATIONS:
-        return MaterialPageRoute(builder: (_) => Configurations());
+      case CONFIGURATIONS_HOME:
+        return MaterialPageRoute(builder: (_) => ConfigurationsHome());
       case PROFILE_SERVICE_PROVIDED:
         return MaterialPageRoute(builder: (_) => ProfileServiceProvider());
       case PROFILE_CUSTOMER:
         return MaterialPageRoute(builder: (_) => ProfileCustomer());
       case EDIT_PROFILE_SERVICE_PROVIDED:
-        return MaterialPageRoute(builder: (_) => EditProfileServiceProvided());
+        return MaterialPageRoute(builder: (_) => EditProfileServiceProvider());
       case CALENDAR:
         return MaterialPageRoute(builder: (_) => Calendar());
       case APPOINTMENT_DETAILS_PAGE:

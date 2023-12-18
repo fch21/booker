@@ -7,6 +7,7 @@ import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
+import 'package:booker/models/available_schedule.dart';
 import 'package:booker/widgets/loading_data.dart';
 import 'package:booker/widgets/menu_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -73,14 +74,17 @@ class _CalendarState extends State<Calendar> {
     _lastInitialDateTime = initialDateTime;
     DateTime startDate = initialDateTime;
     DateTime endDate = getEndDate(startDate);
-    //print("startDate = $startDate");
-    //print("endDate = $endDate");
+    print("startDate = $startDate");
+    print("endDate = $endDate");
+
+    String formattedStartDate = AppointmentDetails.formatDateTime(startDate);
+    String formattedEndDate = AppointmentDetails.formatDateTime(endDate);
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS)
         .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: currentAppUser!.id)
-        .where(Strings.APPOINTMENT_DAY, isGreaterThanOrEqualTo: startDate)
-        .where(Strings.APPOINTMENT_DAY, isLessThanOrEqualTo: endDate)
+        .where(Strings.APPOINTMENT_DAY, isGreaterThanOrEqualTo: formattedStartDate)
+        .where(Strings.APPOINTMENT_DAY, isLessThanOrEqualTo: formattedEndDate)
         .get();
 
     List<AppointmentDetails> appointments = [];
@@ -90,7 +94,7 @@ class _CalendarState extends State<Calendar> {
       if(appointmentDetails.status == Strings.APPOINTMENT_STATUS_CANCELED) appointmentDetails.serviceProvided.color = Colors.red.withOpacity(0.5);
       appointments.add(appointmentDetails);
     }
-    //print("appointments = ${appointments.length}");
+    print("appointments = ${appointments.length}");
 
     setState(() {
       _appointmentsList = appointments;
@@ -98,6 +102,24 @@ class _CalendarState extends State<Calendar> {
 
     loadingStreamController.add(false);
     return;
+  }
+
+  List<TimeRegion> _getAvailableSchedulesSpecialRegions(){
+    List<AvailableSchedule> availableSchedulesList = AvailableSchedule.convertMapToSchedules(currentAppUser!.availabilityMap);
+
+    List<TimeRegion> availableSchedulesConverted = [];
+
+    if(_lastInitialDateTime != null){
+      for(var availableSchedule in availableSchedulesList){
+        if(availableSchedule.isSelected){
+          List<TimeRegion> timeRegionsList = availableSchedule.convertIntoTimeRegionsList(_lastInitialDateTime!, getEndDate(_lastInitialDateTime!));
+          availableSchedulesConverted.addAll(timeRegionsList);
+        }
+      }
+    }
+
+    print("availableSchedulesConverted = ${availableSchedulesConverted.length}");
+    return availableSchedulesConverted;
   }
 
   String getTimePeriodString(){
@@ -252,6 +274,7 @@ class _CalendarState extends State<Calendar> {
                 SfCalendar(
                   controller: _controller,
                   dataSource: AppointmentDetailsDataSource(_appointmentsList),
+                  specialRegions: _getAvailableSchedulesSpecialRegions(),
                   monthViewSettings: const MonthViewSettings(appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
                   onViewChanged: (ViewChangedDetails details){
                     //print("onViewChanged >>>>>>");

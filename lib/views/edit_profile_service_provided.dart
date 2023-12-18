@@ -11,15 +11,15 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class EditProfileServiceProvided extends StatefulWidget {
+class EditProfileServiceProvider extends StatefulWidget {
 
-  EditProfileServiceProvided();
+  EditProfileServiceProvider();
 
   @override
-  _EditProfileServiceProvidedState createState() => _EditProfileServiceProvidedState();
+  _EditProfileServiceProviderState createState() => _EditProfileServiceProviderState();
 }
 
-class _EditProfileServiceProvidedState extends State<EditProfileServiceProvided> {
+class _EditProfileServiceProviderState extends State<EditProfileServiceProvider> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _userNameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
@@ -29,9 +29,6 @@ class _EditProfileServiceProvidedState extends State<EditProfileServiceProvided>
   bool _userNameIsAvailable = false;
 
   final _formKey = GlobalKey<FormState>();
-
-  final _decimalInputFormatter = DecimalTextInputFormatter();
-  final _integerInputFormatter = IntegerTextInputFormatter();
 
   _validateFields() async {
     bool userNameChanged = _userNameController.text != currentAppUser!.userName;
@@ -126,6 +123,8 @@ class _EditProfileServiceProvidedState extends State<EditProfileServiceProvided>
               InputCustom(
                 label: 'Descrição',
                 controller: _descriptionController,
+                maxLength: 120,
+                maxLines: 2,
                 onSaved: (description){
                   currentAppUser!.description = description ?? "";
                 },
@@ -144,8 +143,11 @@ class _EditProfileServiceProvidedState extends State<EditProfileServiceProvided>
                   );
                   print("cor = $color");
                   if (color != null) {
+                    Color resolvedColor = Utils.getNotTooLightColor(color);
+                    if(resolvedColor != color && mounted) Utils.showSnackBar(context, "A cor escolhida era muito clara. Ela foi ajustada para uma melhor visualização.");
+                    print("cor = $color");
                     setState(() {
-                      _selectedColor = color;
+                      _selectedColor = resolvedColor;
                       currentAppUser!.color = _selectedColor;
                     });
                   }

@@ -1,5 +1,9 @@
 import 'package:booker/helper/strings.dart';
 import 'package:booker/models/time_interval.dart';
+import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+import 'appointment_details.dart';
 
 class AvailableSchedule {
   TimeInterval timeInterval;
@@ -14,6 +18,25 @@ class AvailableSchedule {
 
   AvailableSchedule copy(){
     return AvailableSchedule(timeInterval: timeInterval.copy(), selectedDays: List.from(selectedDays), isSelected: isSelected);
+  }
+
+  List<TimeRegion> convertIntoTimeRegionsList(DateTime start, DateTime end){
+    List<TimeRegion> timeRegions = [];
+
+    for(DateTime dateTime = start; !dateTime.isAfter(end); dateTime = dateTime.add(const Duration(days: 1))){
+      if(selectedDays[(dateTime.weekday) % 7]){
+        TimeRegion timeRegion = TimeRegion(
+          startTime: dateTime.copyWith(hour: timeInterval.startTime.hour, minute: timeInterval.startTime.minute),
+          endTime: dateTime.copyWith(hour: timeInterval.endTime.hour, minute: timeInterval.endTime.minute),
+          color: Colors.green.withOpacity(0.4),
+          enablePointerInteraction: false, // Deactivate interaction with region
+        );
+
+        timeRegions.add(timeRegion);
+      }
+    }
+
+    return timeRegions;
   }
 
   static List<bool> getWeekDaysBoolList(){

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:booker/helper/user_firebase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:booker/helper/route_generator.dart';
@@ -59,7 +60,10 @@ class _WaitingEmailVerificationState extends State<WaitingEmailVerification> {
         _timerSendEmailAgain.cancel();
 
         appGlobalKey.currentState?.updateAppForNewUser();
-        if(mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PRESENTATION, arguments: widget.currentUser);
+        AppUser user = await UserFirebase.getCurrentUserData();
+        currentAppUser = user;
+        //if(mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PRESENTATION, arguments: widget.currentUser);
+        if (mounted) Navigator.of(context).pushNamedAndRemoveUntil(RouteGenerator.HOME, (Route<dynamic> route) => false, arguments: widget.currentUser,);
       }
     });
   }

@@ -301,6 +301,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ProfileHeader(appUser: widget.appUser,),
+            const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -321,6 +322,22 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                       initialDate: DateTime.now(),
                       firstDate: DateTime.now(),
                       lastDate: DateTime.now().add(const Duration(days: 365)),
+                      builder: (BuildContext context, Widget? child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.light(
+                              primary: widget.appUser.color, // header background color
+                              onPrimary: Utils.getContrastingColor(widget.appUser.color) ?? Colors.black, // header text color
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.black87, // button text color
+                              ),
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
                     );
 
                     if (pickedDate != null) {
@@ -348,6 +365,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                 ),
               ],
             ),
+            const Divider(),
             if(isLoadingCurrentAvailableTimes)
               Padding(
                 padding: const EdgeInsets.all(64.0),
@@ -363,39 +381,41 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                       child: Text(AppLocalizations.of(context)!.no_available_times_message, style: textStyleSmallNormal,)
                     ),
                   )
-                  : Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: currentAvailableTimes.map((timeOfDay) {
-                        //int index = currentAvailableTimes.indexOf(timeOfDay);
-                        bool isSelected = selectedDateTime == currentDateTime && selectedTimeOfDay == timeOfDay;
-                        return ChoiceChip(
-                          key: UniqueKey(),
-                          disabledColor: Colors.black26,
-                          selectedColor: Colors.white,
-                          labelStyle: const TextStyle(color: Colors.black, fontSize: 16,),
-                          label: Text(timeOfDay.format(context)),
-                          //elevation: isSelected ? 3 : 1,
-                          side: isSelected ? const BorderSide(width: 0, color: Colors.green) : null,
-                          //selectedShadowColor: Colors.green,
-                          selected: isSelected,
-                          onSelected: (value){
-                            if(!value){
-                              setState(() {
-                                selectedDateTime = null;
-                                selectedTimeOfDay = null;
-                              });
-                            }
-                            else{
-                              setState(() {
-                                selectedDateTime = currentDateTime;
-                                selectedTimeOfDay = timeOfDay;
-                              });
-                            }
-                          },
-                        );
-                      }).toList(),
-                    ),
+                  : Center(
+                    child: Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: currentAvailableTimes.map((timeOfDay) {
+                          //int index = currentAvailableTimes.indexOf(timeOfDay);
+                          bool isSelected = selectedDateTime == currentDateTime && selectedTimeOfDay == timeOfDay;
+                          return ChoiceChip(
+                            key: UniqueKey(),
+                            disabledColor: Colors.black26,
+                            selectedColor: Colors.white,
+                            labelStyle: const TextStyle(color: Colors.black, fontSize: 16,),
+                            label: SizedBox(width: 50, child: Center(child: Text(timeOfDay.format(context)))),
+                            //elevation: isSelected ? 3 : 1,
+                            side: isSelected ? const BorderSide(width: 0, color: Colors.green) : null,
+                            //selectedShadowColor: Colors.green,
+                            selected: isSelected,
+                            onSelected: (value){
+                              if(!value){
+                                setState(() {
+                                  selectedDateTime = null;
+                                  selectedTimeOfDay = null;
+                                });
+                              }
+                              else{
+                                setState(() {
+                                  selectedDateTime = currentDateTime;
+                                  selectedTimeOfDay = timeOfDay;
+                                });
+                              }
+                            },
+                          );
+                        }).toList(),
+                      ),
+                  ),
               ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 32),

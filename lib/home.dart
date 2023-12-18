@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:booker/views/choice_of_service.dart';
-import 'package:booker/views/configurations.dart';
+import 'package:booker/views/configurations_home.dart';
 import 'package:booker/views/explore.dart';
 import 'package:booker/views/make_an_appointment.dart';
 import 'package:booker/views/service_form.dart';
@@ -25,14 +25,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  //late TabController _tabController;
   //List<String> _menuItems = [];
-  int _index = 0;
+  //int _index = 0;
 
-  List<BottomNavigationBarItem> _bottomNavBarItens = [];
+  //List<BottomNavigationBarItem> _bottomNavBarItens = [];
 
   final StreamController<bool> _hasNewDrinksStreamController = StreamController<bool>.broadcast();
 
+  /*
   BottomNavigationBarItem customBottomNavigationBarItem({
     required IconData icon,
     required String label,
@@ -87,6 +88,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
+   */
+
   /*
   _selectMenuItem(String itemSelecionado) {
     if(itemSelecionado == AppLocalizations.of(context)!.menu_config){
@@ -108,6 +111,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
    */
 
+  /*
   Widget _setAppBarTitle(int index) {
     TextStyle textStyle = const TextStyle(color: Colors.white, fontSize: fontSizeLarge);
 
@@ -125,6 +129,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
   }
 
+   */
+
+  /*
   _onItemTapped(int index) {
     _tabController.animateTo(index);
     setState(() {
@@ -132,21 +139,26 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
   }
 
+   */
+
   @override
   void initState() {
     super.initState();
+    /*
     _tabController = TabController(
       initialIndex: _index,
       length: 1,
       vsync: this,
     );
+
+     */
     print(widget.currentUser);
     //_tabController.addListener(() {setState(() {});    });
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    //_tabController.dispose();
     super.dispose();
   }
 
@@ -159,7 +171,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       AppLocalizations.of(context)!.menu_config,
     ];
      */
-
+    /*
     _bottomNavBarItens = [
       BottomNavigationBarItem(
         icon: const Icon(Icons.search),
@@ -183,40 +195,32 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       // ),
     ];
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      /*
-      appBar: AppBar(
-        //iconTheme: IconThemeData(color: standartTheme.primaryColor),
-        //backgroundColor: Colors.white,
-        elevation: 0,
-        actions: <Widget>[
-          PopupMenuButton<String>(
-            onSelected: _selectMenuItem,
-            itemBuilder: (context) {
-              return _menuItems.map((String item) {
-                return PopupMenuItem<String>(
-                  value: item,
-                  child: _setMenuItemsWidgets(item),
-                );
-              }).toList();
-            },
-          )
-        ],
-      ),
-      */
-      body: SliderDrawer(
+     */
+
+    Widget body = Explore();
+    PreferredSizeWidget? appBar = AppBar(
+      //iconTheme: IconThemeData(color: standartTheme.primaryColor),
+      //backgroundColor: Colors.white,
+      title: const Text(Strings.BOOKER, style: TextStyle(color: Colors.white, fontSize: fontSizeLarge)),
+      elevation: 0,
+    );
+
+    if(!currentAppUser!.isServiceProvider){
+      appBar = null;
+      body = SliderDrawer(
         appBar: SliderAppBar(
-          appBarColor: standartTheme.primaryColor,
-          appBarPadding: EdgeInsets.zero,
-          appBarHeight: kToolbarHeight,
-          drawerIconColor: Colors.white,
-          title: const Text(Strings.BOOKER, style: TextStyle(color: Colors.white, fontSize: fontSizeLarge))
+            appBarColor: standartTheme.primaryColor,
+            appBarPadding: EdgeInsets.zero,
+            appBarHeight: kToolbarHeight,
+            drawerIconColor: Colors.white,
+            title: const Text(Strings.BOOKER, style: TextStyle(color: Colors.white, fontSize: fontSizeLarge))
         ),
         slideDirection: SlideDirection.RIGHT_TO_LEFT,
-        slider: Configurations(),
+        slider: ConfigurationsHome(),
         child: Container(
           color: Colors.white,
+          child: body,
+          /*
           child: TabBarView(
             physics: const NeverScrollableScrollPhysics(),
             controller: _tabController,
@@ -228,8 +232,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               Explore()
             ],
           ),
+
+           */
         ),
-      ),
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: appBar,
+      body: body
+      /*
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,
         showUnselectedLabels: false,
@@ -241,6 +254,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),
+
+       */
     );
   }
 }

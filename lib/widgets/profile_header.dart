@@ -41,7 +41,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
   static double bgImageHeight = 125.0;
   static double profileImageRadius = 60.0;
   static double profileImageBorder = 6.0;
-  static double profileImageOverlayProportion = 0.5;
+  static double profileImageOverlayProportion = 0.35;
 
   html.File? _profileImage;
   html.File? _bgImage;
@@ -139,58 +139,60 @@ class _ProfileHeaderState extends State<ProfileHeader> {
 
     return Container(
       color: Colors.white,
-      height: bgImageHeight + (1 - profileImageOverlayProportion) * 2 * (profileImageRadius + profileImageBorder) + (widget.allowEdit ? 36 : 0),
+      //height: bgImageHeight + (1 - profileImageOverlayProportion) * 2 * (profileImageRadius + profileImageBorder) + (widget.allowEdit ? 36 : 0),
       child: Stack(
         children: [
           Column(
             children: [
-              Hero(
-                tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_URL_PROFILE_BG_IMAGE}" : UniqueKey(),
-                child: Container(
-                  width: double.infinity,
-                  height: bgImageHeight,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: _appUser.urlProfileBgImage != ""
-                          ? NetworkImage(_appUser.urlProfileBgImage)
-                          : const AssetImage("assets/no_image.jpeg") as ImageProvider,
-                    )
-                  ),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      if(_updatingBgImage)
-                        Container(
-                          color: Colors.white,
-                          child: LoadingData(),
-                        ),
-                      if(widget.allowEdit)
-                        const DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [
-                                Colors.black45,
-                                Colors.transparent,
-                              ],
+              SizedBox(
+                child: Hero(
+                  tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_URL_PROFILE_BG_IMAGE}" : UniqueKey(),
+                  child: Container(
+                    width: double.infinity,
+                    height: bgImageHeight,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: _appUser.urlProfileBgImage != ""
+                            ? NetworkImage(_appUser.urlProfileBgImage)
+                            : const AssetImage("assets/no_image.jpeg") as ImageProvider,
+                      )
+                    ),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        if(_updatingBgImage)
+                          Container(
+                            color: Colors.white,
+                            child: LoadingData(),
+                          ),
+                        if(widget.allowEdit)
+                          const DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [
+                                  Colors.black45,
+                                  Colors.transparent,
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      if(widget.allowEdit)
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          left: 0,
-                          child: TextButton(
-                            onPressed: (){
-                              _getImage(Strings.GALLERY, isProfileImage: false);
-                            },
-                            child: Text(AppLocalizations.of(context)!.profile_config_change_picture, style: TextStyle(color: Colors.white),),
+                        if(widget.allowEdit)
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            left: 0,
+                            child: TextButton(
+                              onPressed: (){
+                                _getImage(Strings.GALLERY, isProfileImage: false);
+                              },
+                              child: Text(AppLocalizations.of(context)!.profile_config_change_picture, style: TextStyle(color: Colors.white),),
+                            ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -201,26 +203,24 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                     tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_NAME}" : UniqueKey(),
                     child: Material(color: Colors.white, child: Text(_appUser.name, style: textStyleMediumBold, overflow: TextOverflow.ellipsis,))
                   ),
-                  trailing: Column(
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Hero(
-                        tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_USERNAME}" : UniqueKey(),
-                        child: Material(color: Colors.white, child: Text(_appUser.userName, style: textStyleSmallNormal, overflow: TextOverflow.ellipsis,))
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Hero(
+                            tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_USERNAME}" : UniqueKey(),
+                            child: Material(color: Colors.white, child: Text(_appUser.userName, style: textStyleSmallNormal, overflow: TextOverflow.ellipsis,))
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12.0),
+                        child: Hero(
+                            tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_DESCRIPTION}" : UniqueKey(),
+                            child: Material(color: Colors.white, child: Text(_appUser.description, style: textStyleSmallNormal, overflow: TextOverflow.ellipsis, maxLines: 5,))
+                        ),
                       ),
                     ],
-                  ),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Hero(
-                            tag: widget.useHero ? "${widget.appUser.id}${Strings.USER_DESCRIPTION}" : UniqueKey(),
-                            child: Material(color: Colors.white, child: Text(_appUser.userName, style: textStyleSmallNormal, overflow: TextOverflow.ellipsis,))
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),

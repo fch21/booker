@@ -8,15 +8,15 @@ import 'package:booker/widgets/clickable_item.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class Configurations extends StatefulWidget {
+class ConfigurationsHome extends StatefulWidget {
 
-  Configurations();
+  ConfigurationsHome();
 
   @override
-  _ConfigurationsState createState() => _ConfigurationsState();
+  _ConfigurationsHomeState createState() => _ConfigurationsHomeState();
 }
 
-class _ConfigurationsState extends State<Configurations> {
+class _ConfigurationsHomeState extends State<ConfigurationsHome> {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore db = FirebaseFirestore.instance;
   //String _errorMessage = "";
@@ -58,14 +58,14 @@ class _ConfigurationsState extends State<Configurations> {
                   }
                 },
               ),
-              if(!currentAppUser!.isServiceProvider)
-                ClickableItem(
-                  text: AppLocalizations.of(context)!.configurations_my_appointments,
-                  iconData: Icons.calendar_month,
-                  onTap: () {
-                    Navigator.pushNamed(context, RouteGenerator.MY_APPOINTMENTS);
-                  },
-                ),
+              ClickableItem(
+                text: AppLocalizations.of(context)!.configurations_my_appointments,
+                iconData: Icons.calendar_month,
+                onTap: () {
+                  Navigator.pushNamed(context, RouteGenerator.MY_APPOINTMENTS);
+                },
+              ),
+
 /*
               ListTile(
                 leading: Icon(
@@ -88,16 +88,6 @@ class _ConfigurationsState extends State<Configurations> {
               ),
 
  */
-              if(currentAppUser!.isServiceProvider)
-                ClickableItem(
-                  text: AppLocalizations.of(context)!.configurations_payments,
-                  iconData: Icons.payments_rounded,
-                  onTap: () {
-                    Navigator.pushNamed(context, RouteGenerator.PAYMENT_CONFIGURATIONS, arguments: currentAppUser!);
-                  },
-                ),
-
-
               // ClickableItem(
               //   text: AppLocalizations.of(context)!.configurations_privacy,
               //   iconData: Icons.lock,
@@ -130,6 +120,7 @@ class _ConfigurationsState extends State<Configurations> {
                   Navigator.pushNamed(context, RouteGenerator.ABOUT);
                 },
               ),
+              /*
               ClickableItem(
                 text: AppLocalizations.of(context)!.configurations_help,
                 iconData: Icons.help,
@@ -137,6 +128,8 @@ class _ConfigurationsState extends State<Configurations> {
                   Navigator.pushNamed(context, RouteGenerator.PRESENTATION, arguments: currentAppUser!);
                 },
               ),
+
+               */
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: TextButton(

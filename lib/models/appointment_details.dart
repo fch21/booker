@@ -30,6 +30,9 @@ class AppointmentDetailsDataSource extends CalendarDataSource {
   @override
   String getSubject(int index) {
     AppointmentDetails appointmentDetails = appointments![index] as AppointmentDetails;
+
+    if(appointmentDetails.serviceName.isEmpty && appointmentDetails.userName.isEmpty) return "";
+
     return "${appointmentDetails.serviceName} - ${appointmentDetails.userName}";
   }
 
@@ -46,7 +49,7 @@ class AppointmentDetailsDataSource extends CalendarDataSource {
 
 class AppointmentDetails {
 
-  static DateFormat dateFormat = DateFormat('dd/MM/yyyy HH:mm');
+  static DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
 
   String id = "";
   String userName = "";
@@ -195,6 +198,11 @@ class AppointmentDetails {
     }
 
     return result;
+  }
+
+  static String formatDateTime(DateTime dateTime) {
+    final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
+    return formatter.format(dateTime);
   }
 
   static Future<List<AppointmentDetails>> getClientAppointmentDetails({required AppUser appUser}) async {

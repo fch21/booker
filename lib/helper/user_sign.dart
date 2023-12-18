@@ -107,15 +107,21 @@ class UserSign {
 
       print("loggedWithFacebook = $loggedWithFacebook");
 
-      //if(firebaseUser.emailVerified || loggedWithFacebook){
-      if(true){
+      if(firebaseUser.emailVerified || loggedWithFacebook){
+      //if(true){
         appGlobalKey.currentState?.updateAppForNewUser();
         currentAppUser = user;
-        if(isNewUser ?? false){
+        //if(isNewUser ?? false){
+        if(false){
           if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PRESENTATION, arguments: user);
         }
         else{
-          if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.HOME, arguments: user);
+          if(user.isServiceProvider){
+            if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDED);
+          }
+          else{
+            if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.HOME, arguments: user);
+          }
         }
       }
       else{

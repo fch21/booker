@@ -85,7 +85,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
                 ? Padding(
                     padding: const EdgeInsets.only(top: 32.0, bottom: 16),
                     child: Center(
-                        child: Text("Nenhum agendamento", style: textStyleSmallNormal,)
+                        child: Text(widget.showOnlyPastAppointments ? "Nenhum agendamento no histórico" : "Nenhum agendamento futuro", style: textStyleSmallNormal,)
                     ),
                   )
                 : Padding(
