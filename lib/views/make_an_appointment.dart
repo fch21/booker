@@ -1,3 +1,4 @@
+import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
@@ -229,30 +230,55 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
 
   _showMakeAppointmentDialog(){
     if(selectedTimeOfDay != null && selectedDateTime != null){
+
+      Widget unLoggedUserDialog = AlertDialog(
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        title: Text("Faça o login"),
+        content: Text("Para marcar um horário você precisa fazer o login"),
+        actions: <Widget>[
+          TextButton(
+            child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text("Login", style: TextStyle(color: widget.appUser.getUserColorResolved())),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.pushNamed(context, RouteGenerator.LOGIN);
+            },
+          ),
+        ],
+      );
+      Widget loggedUserDialog = AlertDialog(
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        title: Text("Marcar Horário"),
+        content: Text("Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
+        actions: <Widget>[
+          TextButton(
+            child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text("Confirmar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
+            onPressed: () {
+              _makeAppointment();
+              Navigator.of(context).pop();
+              _showAppointmentMadeDialog();
+            },
+          ),
+        ],
+      );
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            actionsAlignment: MainAxisAlignment.spaceBetween,
-            title: Text("Marcar Horário"),
-            content: Text("Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
-            actions: <Widget>[
-              TextButton(
-                child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: Text("Confirmar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
-                onPressed: () {
-                  _makeAppointment();
-                  Navigator.of(context).pop();
-                  _showAppointmentMadeDialog();
-                },
-              ),
-            ],
-          );
+          return currentAppUser == null
+              ? unLoggedUserDialog
+              : loggedUserDialog;
         },
       );
     }

@@ -1,5 +1,7 @@
 
 import 'package:booker/helper/route_generator.dart';
+import 'package:booker/helper/user_sign.dart';
+import 'package:booker/main.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -30,9 +32,14 @@ class _SplashScreenState extends State<SplashScreen> {
           );
         },
         pageBuilder: (context, animation, secondaryAnimation) {
-          Future.delayed(splashAnimationDuration + splashDuration, (){
-            print("LOGIN");
-            Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
+          Future.delayed(splashAnimationDuration + splashDuration, () async {
+            await UserSign.getCurrentAppUser();
+            if(currentAppUser?.isServiceProvider ?? false){
+              if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDED);
+            }
+            else{
+              Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
+            }
           });
 
           bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;

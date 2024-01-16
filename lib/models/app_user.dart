@@ -6,12 +6,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'appointment_details.dart';
+
 class AppUser {
   String id = "";
   String name = "";
   String userName = "";
   String description = "";
   String email = "";
+  String phone = "";
   String password = "";
   bool tutorialDone = false;
   bool wantNotifications = true;
@@ -20,9 +23,11 @@ class AppUser {
   String urlProfileUserImage = "";
   String urlProfileBgImage = "";
   Color color = Colors.white;
+  int subscriptionLevel = 0;
 
   bool isServiceProvider = false;
   Map<String, dynamic> availabilityMap = {};
+  List blockedClientsIds = [];
 
   AppUser();
 
@@ -33,6 +38,7 @@ class AppUser {
     copy.userName = userName;
     copy.description = description;
     copy.email = email;
+    copy.phone = phone;
     copy.password = password;
     copy.tutorialDone = tutorialDone;
     copy.wantNotifications = wantNotifications;
@@ -41,6 +47,7 @@ class AppUser {
     copy.urlProfileUserImage = urlProfileUserImage;
     copy.urlProfileBgImage = urlProfileBgImage;
     copy.color = color;
+    copy.subscriptionLevel = subscriptionLevel;
 
     return copy;
   }
@@ -89,14 +96,17 @@ class AppUser {
       Strings.USER_USERNAME: userName,
       Strings.USER_DESCRIPTION: description,
       Strings.USER_EMAIL: email,
+      Strings.USER_PHONE: phone,
       Strings.USER_TUTORIAL_DONE: tutorialDone,
       Strings.USER_WANT_NOTIFICATIONS: wantNotifications,
       Strings.USER_LANGUAGE: language,
       Strings.USER_URL_PROFILE_USER_IMAGE: urlProfileUserImage,
       Strings.USER_URL_PROFILE_BG_IMAGE: urlProfileBgImage,
       Strings.USER_COLOR: color.value,
+      Strings.USER_SUBSCRIPTION_LEVEL: subscriptionLevel,
 
       Strings.USER_IS_SERVICE_PROVIDER: isServiceProvider,
+      Strings.USER_BLOCKED_CLIENTS_IDS: blockedClientsIds,
       Strings.USER_AVAILABILITY_MAP: convertAvailabilityMapToMap(),
     };
 
@@ -113,6 +123,7 @@ class AppUser {
       Strings.USER_COLOR: color.value,
 
       Strings.USER_IS_SERVICE_PROVIDER: isServiceProvider,
+      Strings.USER_BLOCKED_CLIENTS_IDS: blockedClientsIds,
       //Strings.USER_AVAILABILITY_MAP: availabilityMap,
       Strings.USER_AVAILABILITY_MAP: convertAvailabilityMapToMap(),
     };
@@ -147,14 +158,17 @@ class AppUser {
       userName = data.containsKey(Strings.USER_USERNAME) ? documentSnapshot[Strings.USER_USERNAME] ?? "" :  "";
       description = data.containsKey(Strings.USER_DESCRIPTION) ? documentSnapshot[Strings.USER_DESCRIPTION] ?? "" :  "";
       email = data.containsKey(Strings.USER_EMAIL) ? documentSnapshot[Strings.USER_EMAIL] ?? "" :  "";
+      phone = data.containsKey(Strings.USER_PHONE) ? documentSnapshot[Strings.USER_PHONE] ?? "" :  "";
       tutorialDone = data.containsKey(Strings.USER_TUTORIAL_DONE) ? documentSnapshot[Strings.USER_TUTORIAL_DONE] ?? false : false;
       wantNotifications = data.containsKey(Strings.USER_WANT_NOTIFICATIONS) ? documentSnapshot[Strings.USER_WANT_NOTIFICATIONS] ?? true : true;
       language = data.containsKey(Strings.USER_LANGUAGE) ? documentSnapshot[Strings.USER_LANGUAGE] ?? "" :  "";
       urlProfileUserImage = data[Strings.USER_URL_PROFILE_USER_IMAGE] ?? "";
       urlProfileBgImage = data[Strings.USER_URL_PROFILE_BG_IMAGE] ?? "";
       color = Color((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_COLOR] ?? Colors.white.value);
+      subscriptionLevel = data[Strings.USER_SUBSCRIPTION_LEVEL] ?? 0;
 
       isServiceProvider = data[Strings.USER_IS_SERVICE_PROVIDER] ?? false;
+      blockedClientsIds = data[Strings.USER_BLOCKED_CLIENTS_IDS] ?? [];
       //availabilityMap = (documentSnapshot.data() as Map<String, dynamic>)[Strings.USER_AVAILABILITY_MAP] ?? {};
       convertMapToAvailabilityMap(data[Strings.USER_AVAILABILITY_MAP] as Map<String, dynamic>?);
 
@@ -199,6 +213,41 @@ class AppUser {
     return result;
   }
 
+  String getLinkToTheUserProfile(){
+    return "${Strings.BOOKER_DOMAIN}?id=$id";
+  }
+
+  Future<List<AppUser>> getClients() async {
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Strings.COLLECTION_USERS)
+        .doc(id)
+        .collection(Strings.COLLECTION_CLIENTS)
+        .get();
+
+    List<AppUser> clients = AppUser.getAppUsersFromDocumentSnapshots(querySnapshot.docs);
+
+    return clients;
+  }
+
+  //only works if the user is a service provider
+  Future<List<AppointmentDetails>> getAppointmentDetailsOfClient({required AppUser client}) async {
+    List<AppointmentDetails> appointmentDetailsOfClientList = [];
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS)
+        .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: id)
+        .where(Strings.APPOINTMENT_USER_ID, isEqualTo: client.id)
+        .get().catchError((error) {
+      print("Error getting services provided by user: $error");
+    });
+
+    for(var doc in querySnapshot.docs){
+      appointmentDetailsOfClientList.add(AppointmentDetails.fromDocumentSnapshot(doc));
+    }
+
+    return appointmentDetailsOfClientList;
+  }
 
   static Future<AppUser?> getUserFromId(String userId) async {
     //print("getUserFromId>>>>>>>>>");

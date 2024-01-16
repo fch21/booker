@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/user_firebase.dart';
 import 'package:booker/helper/utils.dart';
+import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/service_provided.dart';
 import 'package:booker/widgets/input_custom.dart';
@@ -50,6 +51,7 @@ class AppointmentDetailsDataSource extends CalendarDataSource {
 class AppointmentDetails {
 
   static DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
+  static DateFormat dateFormatVisualize = DateFormat('dd/MM/yyyy HH:mm');
 
   String id = "";
   String userName = "";
@@ -64,6 +66,7 @@ class AppointmentDetails {
   DateTime day =  DateTime.fromMillisecondsSinceEpoch(0);
   DateTime from =  DateTime.fromMillisecondsSinceEpoch(0);
   DateTime to =  DateTime.fromMillisecondsSinceEpoch(0);
+  bool reminderSent = false;
   bool isAllDay = false;
 
   ServiceProvided serviceProvided = ServiceProvided();
@@ -89,6 +92,7 @@ class AppointmentDetails {
       Strings.APPOINTMENT_DAY: dateFormat.format(day),
       Strings.APPOINTMENT_FROM: dateFormat.format(from),
       Strings.APPOINTMENT_TO: dateFormat.format(to),
+      Strings.APPOINTMENT_REMINDER_SENT: reminderSent,
       Strings.APPOINTMENT_IS_ALL_DAY: isAllDay,
     };
 
@@ -130,6 +134,7 @@ class AppointmentDetails {
       day = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? "");
       from = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? "");
       to = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ?? "");
+      reminderSent = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_REMINDER_SENT] ?? false;
       isAllDay = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_IS_ALL_DAY] ?? false;
     }
   }
@@ -201,8 +206,13 @@ class AppointmentDetails {
   }
 
   static String formatDateTime(DateTime dateTime) {
-    final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
+    final DateFormat formatter = dateFormat;
     return formatter.format(dateTime);
+  }
+
+  static String formatDateTimeToVisualize(DateTime dateTime) {
+    final DateFormat formatter = dateFormatVisualize;
+    return formatter.format(dateTime).replaceAll(" ", " às ");
   }
 
   static Future<List<AppointmentDetails>> getClientAppointmentDetails({required AppUser appUser}) async {
@@ -230,6 +240,20 @@ class AppointmentDetails {
     return appointmentDetailsList;
   }
 
+  static Future<AppointmentDetails> getClientLastAppointmentDetailsWithCurrentServiceProvider({required AppUser appUser}) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS)
+        .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: currentAppUser!.id)
+        .where(Strings.APPOINTMENT_USER_ID, isEqualTo: appUser.id)
+        .orderBy(Strings.APPOINTMENT_FROM, descending: true)
+        .limit(1)
+        .get().catchError((error) {
+      print("Error getting services provided by user: $error");
+    });
+
+   return AppointmentDetails.fromDocumentSnapshot(querySnapshot.docs.first);
+  }
+  
   static Future<bool> cancelAppointmentConfirmation(BuildContext context, {required List<AppointmentDetails> appointmentsList, required bool isServiceProvider, bool useCancelAllMessage = false, String extraTextForCancelAll = ""}) async {
     print("appointmentsList.length = ${appointmentsList.length}");
     bool confirmed = false;

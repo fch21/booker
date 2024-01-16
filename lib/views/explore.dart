@@ -91,12 +91,11 @@ class _ExploreState extends State<Explore> {
 
     if(initialServiceProviderId != null){
       String id = initialServiceProviderId!;
-      initialServiceProviderId = null;
+      resetInitialServiceProviderId();
       AppUser? user = await AppUser.getUserFromId(id);
       if(user != null && context.mounted){
         await Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: user);
       }
-      initialServiceProviderId = null;
     }
     //String? eventId = appGlobalKey.currentState?.linkEventId;
     /*

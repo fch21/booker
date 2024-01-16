@@ -177,12 +177,22 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
+                            padding: const EdgeInsets.only(bottom: 0.0),
                             child: ListTile(
                               leading: Icon(Icons.list , color: Colors.black54,),
                               title: Text("Agendamentos", style: textStyleSmallNormal,),
                               onTap: () {
                                 Navigator.pushNamed(context, RouteGenerator.MY_APPOINTMENTS,);
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: ListTile(
+                              leading: Icon(Icons.group , color: Colors.black54,),
+                              title: Text("Clientes", style: textStyleSmallNormal,),
+                              onTap: () {
+                                Navigator.pushNamed(context, RouteGenerator.MY_CLIENTS,);
                               },
                             ),
                           ),

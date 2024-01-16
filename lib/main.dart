@@ -13,19 +13,65 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import 'dart:html' as html;
 import 'helper/route_generator.dart';
 
 GlobalKey<AppState> appGlobalKey = GlobalKey();
 AppUser? currentAppUser;
 //String? initialServiceProviderId = "IZDVVkzDFTZBjdOxRJOQbuaJHxP2";
-String? initialServiceProviderId;
+
+Map<String, String> initialUrlParameters = {};
+
+String? get initialServiceProviderId {
+  return initialUrlParameters["id"];
+}
+
+void resetInitialServiceProviderId(){
+  initialUrlParameters.remove("id");
+}
+
+void getUrlParameters() {
+  final search = html.window.location.search;
+  print("html.window.location.search = ${html.window.location.search}");
+  if (search?.isEmpty ?? true) return;
+
+  final searchParameters = search!.substring(1).split('&');
+  final parameterMap = <String, String>{};
+
+  for (final parameter in searchParameters) {
+    final keyValue = parameter.split('=');
+    if (keyValue.length != 2) continue;
+    final key = Uri.decodeComponent(keyValue[0]);
+    final value = Uri.decodeComponent(keyValue[1]);
+    parameterMap[key] = value;
+  }
+
+  initialUrlParameters = parameterMap;
+  print("initialUrlParameters = $initialUrlParameters");
+  return;
+}
+
+void removeUrlParameters() {
+  Uri? uri = Uri.tryParse(html.window.location.href);
+  print("uri.origin = ${uri?.origin}");
+  print("uri.path = ${uri?.path}");
+  if(uri != null){
+    Uri? newUri = Uri.tryParse(uri.origin);
+
+    // Atualize a URL sem parâmetros e sem adicionar uma entrada no histórico do navegador
+    if(newUri != null) html.window.history.replaceState(null, '', newUri.toString());
+  }
+}
 
 Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
 
-  runApp(const App());
+  getUrlParameters();
+
+  removeUrlParameters();
+
+  runApp(App(key: appGlobalKey,));
 }
 
 final ThemeData standartTheme = ThemeData(
@@ -80,15 +126,8 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
 
-  bool userLogged = false;
-  User? currentUser = FirebaseAuth.instance.currentUser;
-
-  updateAppForNewUser(){
-    print("updateAppForNewUser");
-    print("userLogged = $userLogged");
-    if(!userLogged){
-      setState(() {});
-    }
+  redrawApp(){
+    setState(() {});
   }
 
   @override

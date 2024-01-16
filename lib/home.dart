@@ -15,10 +15,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 
 class Home extends StatefulWidget {
-  AppUser currentUser = AppUser();
   int? index;
 
-  Home({super.key, required this.currentUser, this.index});
+  Home({super.key, this.index});
 
   @override
   _HomeState createState() => _HomeState();
@@ -30,8 +29,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   //int _index = 0;
 
   //List<BottomNavigationBarItem> _bottomNavBarItens = [];
-
-  final StreamController<bool> _hasNewDrinksStreamController = StreamController<bool>.broadcast();
 
   /*
   BottomNavigationBarItem customBottomNavigationBarItem({
@@ -152,7 +149,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
 
      */
-    print(widget.currentUser);
+    //print("currentAppUser = $currentAppUser");
     //_tabController.addListener(() {setState(() {});    });
   }
 
@@ -205,7 +202,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       elevation: 0,
     );
 
-    if(!currentAppUser!.isServiceProvider){
+
+    if(!(currentAppUser?.isServiceProvider ?? false)){
       appBar = null;
       body = SliderDrawer(
         appBar: SliderAppBar(

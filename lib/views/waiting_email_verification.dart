@@ -59,7 +59,7 @@ class _WaitingEmailVerificationState extends State<WaitingEmailVerification> {
         _timerCheck.cancel();
         _timerSendEmailAgain.cancel();
 
-        appGlobalKey.currentState?.updateAppForNewUser();
+        appGlobalKey.currentState?.redrawApp();
         AppUser user = await UserFirebase.getCurrentUserData();
         currentAppUser = user;
         //if(mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PRESENTATION, arguments: widget.currentUser);

@@ -7,9 +7,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class Utils {
-  static void showSnackBar(BuildContext context, String error) {
-    print("showSnackBar = $error");
-    if(context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error),));
+  static void showSnackBar(BuildContext context, String message) {
+    print("showSnackBar = $message");
+    if(context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message),));
   }
 
   static DateTime? getDateTimeFromFormattedStrings(String date, String time) {
@@ -121,6 +121,24 @@ class Utils {
       await launchUrl(emailLaunchUri);
     } else {
       if(context.mounted) Utils.showSnackBar(context, 'Não foi possível abrir o e-mail');
+    }
+  }
+
+  static Future<void> sendMessageToWhatsApp(BuildContext context, {required String phoneNumber}) async {
+    // Formata o número de telefone para o formato internacional (exemplo: '+5511999999999')
+    final Uri whatsappUri = Uri(
+      scheme: 'https',
+      host: 'api.whatsapp.com',
+      path: '/send',
+      queryParameters: {
+        'phone': phoneNumber, // Inclua o código do país no número de telefone
+      },
+    );
+
+    if (await canLaunchUrl(whatsappUri)) {
+      await launchUrl(whatsappUri);
+    } else {
+      if (context.mounted) Utils.showSnackBar(context, 'Não foi possível abrir o WhatsApp');
     }
   }
 

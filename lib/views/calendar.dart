@@ -91,8 +91,12 @@ class _CalendarState extends State<Calendar> {
     for (var doc in querySnapshot.docs) {
       AppointmentDetails appointmentDetails = AppointmentDetails.fromDocumentSnapshot(doc);
       if(mounted) await appointmentDetails.initServiceProvided(context);
-      if(appointmentDetails.status == Strings.APPOINTMENT_STATUS_CANCELED) appointmentDetails.serviceProvided.color = Colors.red.withOpacity(0.5);
-      appointments.add(appointmentDetails);
+      //if(appointmentDetails.status == Strings.APPOINTMENT_STATUS_CANCELED) appointmentDetails.serviceProvided.color = Colors.red.withOpacity(0.5);
+      //appointments.add(appointmentDetails);
+      if(appointmentDetails.to.isBefore(DateTime.now())) appointmentDetails.serviceProvided.color = appointmentDetails.serviceProvided.color.withOpacity(0.5);
+      if(appointmentDetails.status != Strings.APPOINTMENT_STATUS_CANCELED){
+        appointments.add(appointmentDetails);
+      }
     }
     print("appointments = ${appointments.length}");
 

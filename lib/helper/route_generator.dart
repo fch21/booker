@@ -4,29 +4,35 @@ import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
 import 'package:booker/models/available_schedule.dart';
 import 'package:booker/models/service_provided.dart';
+import 'package:booker/splash_screen.dart';
 import 'package:booker/views/about.dart';
+import 'package:booker/views/add_payment_method_with_stripe_elements.dart';
 import 'package:booker/views/appointment_details_page.dart';
 import 'package:booker/views/available_schedule_form.dart';
 import 'package:booker/views/calendar.dart';
 import 'package:booker/views/choice_of_service.dart';
+import 'package:booker/views/client_page.dart';
 import 'package:booker/views/configurations_home.dart';
 import 'package:booker/views/edit_profile_service_provided.dart';
 import 'package:booker/views/login.dart';
 import 'package:booker/views/long_text.dart';
 import 'package:booker/views/make_an_appointment.dart';
 import 'package:booker/views/my_appointments.dart';
+import 'package:booker/views/my_clients.dart';
 import 'package:booker/views/presentation.dart';
 import 'package:booker/views/profile_service_provider.dart';
 import 'package:booker/views/profile_customer.dart';
 import 'package:booker/views/register.dart';
 import 'package:booker/views/reset_password.dart';
 import 'package:booker/views/service_form.dart';
+import 'package:booker/views/subscriptions_management.dart';
 import 'package:booker/views/waiting_email_verification.dart';
 import 'package:flutter/material.dart';
 
 class RouteGenerator {
   static const String MAIN = "/";
   static const String HOME = "/home";
+  static const String SPLASH_SCREEN = "/splash";
   static const String HOME_WITH_INDEX = "/home_with_index";
   static const String LOGIN = "/login";
   static const String REGISTER = "/register";
@@ -40,7 +46,8 @@ class RouteGenerator {
   static const String CALENDAR = "/calendar";
   static const String PROFILE_CONFIGURATIONS = "/profile_configurations";
   static const String LANGUAGE_CONFIGURATIONS = "/language_configurations";
-  static const String PAYMENT_CONFIGURATIONS = "/payment_configurations";
+  //static const String PAYMENT_CONFIGURATIONS = "/payment_configurations";
+  static const String SUBSCRIPTIONS_MANAGEMENT = "/subscriptions_management";
   static const String USER_PAYMENT_METHODS = "/user_payment_methods";
   static const String PAYMENT_SCREEN = "/payment_screen";
   static const String CREDIT_CARDS = "/credit_cards";
@@ -53,7 +60,9 @@ class RouteGenerator {
   static const String SERVICE_FORM = "/service_form";
   static const String AVAILABLE_SCHEDULE_FORM = "/available_schedule_form";
   static const String APPOINTMENT_DETAILS_PAGE = "/appointment_details_page";
+  static const String CLIENT_PAGE = "/client_page";
   static const String MY_APPOINTMENTS = "/my_appointments";
+  static const String MY_CLIENTS = "/my_clients";
 
 
 
@@ -65,10 +74,12 @@ class RouteGenerator {
       //case MAIN:
        // return MaterialPageRoute(builder: (_) => App());
       case HOME:
-        return MaterialPageRoute(builder: (_) => Home(currentUser: args as AppUser));
+        return MaterialPageRoute(builder: (_) => Home());
+      case SPLASH_SCREEN:
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
       case HOME_WITH_INDEX:
         return PageRouteBuilder(
-          pageBuilder: (_, __, ___) => Home(currentUser: (args as Map)["currentUser"] as AppUser, index: args["index"] as int,),
+          pageBuilder: (_, __, ___) => Home(index: args as int),
           transitionDuration: const Duration(seconds: 0),
         );
       case LOGIN:
@@ -94,6 +105,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => WaitingEmailVerification(args as AppUser));
       case CONFIGURATIONS_HOME:
         return MaterialPageRoute(builder: (_) => ConfigurationsHome());
+      case SUBSCRIPTIONS_MANAGEMENT:
+        return MaterialPageRoute(builder: (_) => SubscriptionManagementPage());
       case PROFILE_SERVICE_PROVIDED:
         return MaterialPageRoute(builder: (_) => ProfileServiceProvider());
       case PROFILE_CUSTOMER:
@@ -104,10 +117,16 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Calendar());
       case APPOINTMENT_DETAILS_PAGE:
         return MaterialPageRoute(builder: (_) => AppointmentDetailsPage(appointmentDetails: args as AppointmentDetails,));
+      case CLIENT_PAGE:
+        return MaterialPageRoute(builder: (_) => ClientPage(client: args as AppUser,));
       case ABOUT:
         return MaterialPageRoute(builder: (_) => const About());
       case MY_APPOINTMENTS:
         return MaterialPageRoute(builder: (_) => MyAppointments(showOnlyPastAppointments: (args ?? false) as bool,));
+      case MY_CLIENTS:
+        return MaterialPageRoute(builder: (_) => MyClients());
+      case ADD_PAYMENT_METHOD_WITH_STRIPE_ELEMENTS:
+        return MaterialPageRoute(builder: (_) => const AddPaymentMethodWithStripeElements());
         /*
       case PROFILE_CONFIGURATIONS:
         return MaterialPageRoute(builder: (_) => ProfileConfigurations(args as AppUser));

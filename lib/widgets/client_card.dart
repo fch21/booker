@@ -1,0 +1,86 @@
+import 'package:booker/helper/route_generator.dart';
+import 'package:booker/helper/strings.dart';
+import 'package:booker/main.dart';
+import 'package:booker/models/app_user.dart';
+import 'package:booker/models/appointment_details.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+class ClientCard extends StatefulWidget {
+
+  AppUser client;
+  VoidCallback onTap;
+
+  ClientCard({
+    Key? key,
+    required this.client,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  State<ClientCard> createState() => _ClientCardState();
+}
+
+class _ClientCardState extends State<ClientCard> {
+
+  AppointmentDetails? lastAppointmentDetails;
+
+  _getLastAppointmentDetails() async {
+    AppointmentDetails appointmentDetails = await AppointmentDetails.getClientLastAppointmentDetailsWithCurrentServiceProvider(appUser: widget.client);
+    setState(() {
+      lastAppointmentDetails = appointmentDetails;
+    });
+  }
+
+  @override
+  void initState() {
+    _getLastAppointmentDetails();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    bool clientIsBlocked = currentAppUser!.blockedClientsIds.contains(widget.client.id);
+
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Card(
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8,8,8,8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Nome: ${widget.client.name}",
+                        style: textStyleSmallNormal,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if(clientIsBlocked) const Padding(
+                      padding: EdgeInsets.only( left: 8.0),
+                      child: Text('Bloqueado', style: TextStyle(color: Colors.red, fontSize: fontSizeSmall),),
+                    ),
+                  ],
+                ),
+              ),
+              Text('Email: ${widget.client.email}', style: const TextStyle(fontSize: fontSizeSmall),),
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text('Último agendamento: ${lastAppointmentDetails == null
+                    ? "Carregando..."
+                    : AppointmentDetails.formatDateTimeToVisualize(lastAppointmentDetails!.from)}',
+                  style: const TextStyle(fontSize: fontSizeSmall),),
+              ),
+            ],
+          ),
+        )
+      ),
+    );
+  }
+}

@@ -28,7 +28,7 @@ class AvailableSchedule {
         TimeRegion timeRegion = TimeRegion(
           startTime: dateTime.copyWith(hour: timeInterval.startTime.hour, minute: timeInterval.startTime.minute),
           endTime: dateTime.copyWith(hour: timeInterval.endTime.hour, minute: timeInterval.endTime.minute),
-          color: Colors.green.withOpacity(0.4),
+          color: Colors.green.withOpacity(0.2),
           enablePointerInteraction: false, // Deactivate interaction with region
         );
 

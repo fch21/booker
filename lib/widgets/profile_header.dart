@@ -41,7 +41,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
   static double bgImageHeight = 125.0;
   static double profileImageRadius = 60.0;
   static double profileImageBorder = 6.0;
-  static double profileImageOverlayProportion = 0.35;
+  static double profileImageOverlayProportion = 0.5;
 
   html.File? _profileImage;
   html.File? _bgImage;

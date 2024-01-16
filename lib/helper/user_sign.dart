@@ -93,6 +93,24 @@ class UserSign {
     return;
   }
 
+  static Future<void> getCurrentAppUser() async {
+    User? firebaseUser = UserFirebase.getCurrentUser();
+    if (firebaseUser != null){
+      AppUser user = await UserFirebase.getCurrentUserData();
+      currentAppUser = user;
+    }
+    else{
+      currentAppUser = null;
+    }
+    appGlobalKey.currentState?.redrawApp();
+  }
+
+  static Future<void> logoutUser(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.SPLASH_SCREEN, (_) => false);
+    return;
+  }
+
   static Future<void> checkCurrentUser(BuildContext context, {bool? isNewUser}) async {
     print("_checkCurrentUser");
 
@@ -109,8 +127,8 @@ class UserSign {
 
       if(firebaseUser.emailVerified || loggedWithFacebook){
       //if(true){
-        appGlobalKey.currentState?.updateAppForNewUser();
         currentAppUser = user;
+        appGlobalKey.currentState?.redrawApp();
         //if(isNewUser ?? false){
         if(false){
           if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PRESENTATION, arguments: user);
@@ -120,7 +138,8 @@ class UserSign {
             if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDED);
           }
           else{
-            if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.HOME, arguments: user);
+            //if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.HOME, arguments: user);
+            if(context.mounted) Navigator.pop(context);
           }
         }
       }
@@ -133,7 +152,9 @@ class UserSign {
 
   static Future<UserCredential> signInWithGoogle() async {
 
-    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      clientId: "1060470892593-46d486l7p1knpkeglnu2ccqqvl9igjbi.apps.googleusercontent.com"
+    );
 
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
@@ -164,7 +185,10 @@ class UserSign {
     // Inicie o fluxo de login do Facebook
     // Verifique se o SDK do Facebook está pronto
 
+    print("signInWithFacebook");
     final LoginResult result = await FacebookAuth.instance.login();
+    print("result = $result");
+    print("result.accessToken?.token = ${result.accessToken?.token}");
 
     if(result.accessToken?.token != null){
       // Crie uma credencial para passar para o FirebaseAuth

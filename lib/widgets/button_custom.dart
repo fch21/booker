@@ -22,7 +22,7 @@ class ButtonCustom extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 2.0),
         child: Text(
           text,
-          style: TextStyle(color: textColor ?? Colors.white, fontSize: fontSizeMedium,),
+          style: TextStyle(color: textColor ?? Colors.white, fontSize: fontSizeSmall,),
           textAlign: TextAlign.center,
         ),
       ),

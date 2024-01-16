@@ -20,12 +20,15 @@ class Login extends StatefulWidget {
 
 class LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _controllerEmail = TextEditingController(text: "fccmansur@gmail.com");
+  //TextEditingController _controllerEmail = TextEditingController(text: "fccmansur@gmail.com");
+  TextEditingController _controllerEmail = TextEditingController(text: "contact.context.development@gmail.com");
   //final TextEditingController _controllerEmail = TextEditingController(text: "");
-  TextEditingController _controllerPassword = TextEditingController(text: "Ff123456");
+  TextEditingController _controllerPassword = TextEditingController(text: "123456");
+  //TextEditingController _controllerPassword = TextEditingController(text: "Ff123456");
   //final TextEditingController _controllerPassword = TextEditingController(text: "");
   //String _errorMessage = "";
-  bool _isLoading = true;
+  //bool _isLoading = true;
+  bool _isLoading = false;
 
   Future<void> _validateFields() async {
     setState(() {
@@ -107,6 +110,7 @@ class LoginState extends State<Login> {
   @override
   void initState() {
     _checkIfIsInstagramBrowser();
+    /*
     UserSign.checkCurrentUser(context).then((value){
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         setState(() {
@@ -114,6 +118,8 @@ class LoginState extends State<Login> {
         });
       });
     });
+
+     */
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       precacheImage(const AssetImage("assets/booker_logo.png"), context).then((_){
@@ -132,6 +138,7 @@ class LoginState extends State<Login> {
     if(!_imageLoaded) return LoadingData();
 
     return Scaffold(
+      appBar: Navigator.canPop(context) ? AppBar(title: const Text("Login"),) : null,
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -167,9 +174,7 @@ class LoginState extends State<Login> {
                                         controller: _controllerEmail,
                                         label: AppLocalizations.of(context)!.login_email,
                                         textInputType: TextInputType.emailAddress,
-                                        onSaved: (email) {
-                                          //_anuncio.titulo = titulo;
-                                        },
+                                        onSaved: (email) {},
                                         validator: (value) {
                                           if(value == "" || value == null ){
                                             return AppLocalizations.of(context)!.required_field;
@@ -184,9 +189,7 @@ class LoginState extends State<Login> {
                                     label: AppLocalizations.of(context)!.login_password,
                                     password: true,
                                     textInputType: TextInputType.text,
-                                    onSaved: (password) {
-                                      //_anuncio.titulo = titulo;
-                                    },
+                                    onSaved: (password) {},
                                     validator: (value) {
                                       if(value == "" || value == null ){
                                         return AppLocalizations.of(context)!.required_field;

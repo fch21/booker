@@ -38,7 +38,13 @@ class _MyAppointmentsState extends State<MyAppointments> {
   _getAppointmentsList() async {
     pastAppointments.clear();
     futureAppointments.clear();
-    List<AppointmentDetails> appointments = await AppointmentDetails.getClientAppointmentDetails(appUser: currentAppUser!);
+    List<AppointmentDetails> appointments = [];
+    if(currentAppUser!.isServiceProvider){
+      appointments = await AppointmentDetails.getServiceProviderAppointmentDetails(appUser: currentAppUser!);
+    }
+    else{
+      appointments = await AppointmentDetails.getClientAppointmentDetails(appUser: currentAppUser!);
+    }
     appointments.sort((a, b) => a.from.compareTo(b.from));
 
     for(var appointment in appointments){

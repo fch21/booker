@@ -2,8 +2,8 @@ class Strings {
 
   static const List<String> WEEK_DAYS = ['Dom','Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb',];
   static const String BOOKER = "Booker";
-  static const String BOOKER_DOMAIN = "https://drinqr.app/";
-  static const String BOOKER_EMAIL = "contact.booker@gmail.com";
+  static const String BOOKER_DOMAIN = "https://bookerweb.com/";
+  static const String BOOKER_EMAIL = "central.booker@gmail.com";
   static const String BOOKER_INSTAGRAM_LINK = "https://instagram.com/app.booker";
 
   //Stripe
@@ -31,6 +31,7 @@ class Strings {
   static const String USER_USERNAME = "user_name";
   static const String USER_DESCRIPTION = "description";
   static const String USER_EMAIL = "email";
+  static const String USER_PHONE = "phone";
   static const String USER_TUTORIAL_DONE = "tutorial_done";
   static const String USER_WANT_NOTIFICATIONS = "want_notifications";
   static const String USER_LANGUAGE = "language";
@@ -39,8 +40,10 @@ class Strings {
   static const String USER_URL_PROFILE_BG_IMAGE = "url_profile_bg_image";
   static const String USER_TOKENS = "tokens";
   static const String USER_COLOR = "color";
+  static const String USER_SUBSCRIPTION_LEVEL = "subscription_level";
 
   static const String USER_IS_SERVICE_PROVIDER = "is_service_provider";
+  static const String USER_BLOCKED_CLIENTS_IDS = "blocked_clients_ids";
   static const String USER_AVAILABILITY_MAP = "availability_map";
 
   //strings Service Category
@@ -74,6 +77,7 @@ class Strings {
   static const String APPOINTMENT_FROM = "from";
   static const String APPOINTMENT_TO = "to";
   static const String APPOINTMENT_IS_ALL_DAY = "is_all_day";
+  static const String APPOINTMENT_REMINDER_SENT = "reminder_sent";
 
 
   static const String STRIPE_MAP_AMOUNT = "amount";
@@ -112,6 +116,7 @@ class Strings {
 
   //Firestore
   static const String COLLECTION_USERS = "users";
+  static const String COLLECTION_CLIENTS = "clients";
   static const String COLLECTION_USERS_PUBLIC = "users_public";
   static const String COLLECTION_SERVICES_PROVIDED = "services_provided";
   static const String COLLECTION_APPOINTMENTS_DETAILS = "appointments_details";

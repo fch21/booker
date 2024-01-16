@@ -1,10 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:booker/helper/user_sign.dart';
+import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/widgets/clickable_item.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -17,13 +18,6 @@ class ConfigurationsProfileServiceProvider extends StatefulWidget {
 }
 
 class _ConfigurationsProfileServiceProviderState extends State<ConfigurationsProfileServiceProvider> {
-  FirebaseAuth auth = FirebaseAuth.instance;
-  FirebaseFirestore db = FirebaseFirestore.instance;
-
-  _logoutUser() async {
-    await auth.signOut();
-    Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.LOGIN, (_) => false);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +26,7 @@ class _ConfigurationsProfileServiceProviderState extends State<ConfigurationsPro
         backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 0,
+          backgroundColor: currentAppUser!.color,
           title: Text(AppLocalizations.of(context)!.configurations_appbar),
         ),
         body: Container(
@@ -47,10 +42,21 @@ class _ConfigurationsProfileServiceProviderState extends State<ConfigurationsPro
                 },
               ),
               ClickableItem(
-                text: AppLocalizations.of(context)!.configurations_payments,
-                iconData: Icons.payments_rounded,
+                //text: AppLocalizations.of(context)!.configurations_payments,
+                text: "Assinaturas",
+                //iconData: Icons.payments_rounded,
+                iconData: Icons.diamond_outlined,
                 onTap: () {
-                  Navigator.pushNamed(context, RouteGenerator.PAYMENT_CONFIGURATIONS, arguments: currentAppUser!);
+                  Navigator.pushNamed(context, RouteGenerator.SUBSCRIPTIONS_MANAGEMENT, arguments: currentAppUser!);
+                },
+              ),
+              ClickableItem(
+                text: "Copiar link do perfil",
+                iconData: Icons.link,
+                onTap: () {
+                  String linkToTheUserProfile = currentAppUser!.getLinkToTheUserProfile();
+                  Clipboard.setData(ClipboardData(text: linkToTheUserProfile));
+                  Utils.showSnackBar(context, 'Texto copiado para a área de transferência!');
                 },
               ),
               ClickableItem(
@@ -69,7 +75,7 @@ class _ConfigurationsProfileServiceProviderState extends State<ConfigurationsPro
                       padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(vertical: 16)),
                     ),
                     onPressed: () {
-                      _logoutUser();
+                      UserSign.logoutUser(context);
                     },
                     child: Text(AppLocalizations.of(context)!.logout, style: TextStyle(color: Colors.red[600], fontSize: fontSizeVerySmall),)),
               )
