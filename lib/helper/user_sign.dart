@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 //import 'dart:js' as js;
 
 class UserSign {
@@ -76,6 +77,117 @@ class UserSign {
     return result;
   }
 
+  static void verifyPhoneNumber({required BuildContext context, required String phoneNumber, VoidCallback? onConfirmed}) async {
+
+    String? phoneNumberVerificationId;
+
+    FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        // Este callback é opcional em seu caso
+        // Aqui, em vez de fazer login, você associa o número ao usuário existente
+        try {
+          await FirebaseAuth.instance.currentUser!.updatePhoneNumber(credential);
+          // Número de telefone adicionado com sucesso ao usuário
+        } catch (e) {
+          print("ERROR in updatePhoneNumber");
+        }
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        print("verificationFailed >>>> $e");
+        // Trate os erros de verificação aqui
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        // Salve o verificationId para uso posterior
+        print("codeSent >>>> $verificationId");
+        phoneNumberVerificationId = verificationId;
+        // Atualize a interface do usuário para permitir que o usuário insira o código de SMS
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        // Este callback é opcional em seu caso
+      },
+    );
+
+    TextEditingController pinCodeController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          title: const Text("Código de verificação"),
+          content: PinCodeTextField(
+            appContext: context,
+            length: 6, // o número de caracteres do código
+            controller: pinCodeController,
+            keyboardType: TextInputType.number,
+            pinTheme: PinTheme(
+              shape: PinCodeFieldShape.box,
+              borderRadius: BorderRadius.circular(5),
+              fieldHeight: 50,
+              fieldWidth: 35,
+              activeColor: standartTheme.primaryColor,
+              selectedColor: Colors.grey,
+              inactiveColor: Colors.grey,
+              activeFillColor: Colors.white,
+              inactiveFillColor: Colors.white,
+              //selectedFillColor: Colors.lightGreen[50],
+            ),
+            onCompleted: (String value) {
+              // Você pode optar por confirmar o código automaticamente após o preenchimento
+            },
+          ),
+
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("Confirmar"),
+              onPressed: () async {
+                String smsCode = pinCodeController.text;
+                print("phoneNumberVerificationId = $phoneNumberVerificationId");
+                print("smsCode = $smsCode");
+                if(phoneNumberVerificationId != null && smsCode.isNotEmpty) {
+                  bool confirmed = await _confirmVerificationCode(smsCode: smsCode, verificationId: phoneNumberVerificationId!);
+                  if(confirmed && onConfirmed != null) onConfirmed();
+                }
+                else{
+                  print("ERROR phoneNumberVerificationId == null or SMS code is empty");
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static Future<bool> _confirmVerificationCode({required String smsCode, required String verificationId}) async {
+
+    bool codeConfirmed;
+
+    try {
+      final PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode,);
+      // Aqui, você poderia autenticar o usuário, mas como você só quer verificar o número,
+      // você pode simplesmente verificar se o código é correto sem fazer login
+      //await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance.currentUser!.updatePhoneNumber(credential);
+      // Se a linha acima não lançar um erro, o código é válido
+      codeConfirmed = true;
+      // Salve o número de telefone verificado no banco de dados ou preferência do usuário
+    } catch (e) {
+    // Trate os erros aqui (por exemplo, código inválido)
+      codeConfirmed = false;
+      print("error = $e");
+    }
+
+    return codeConfirmed;
+  }
+
   static bool? checkIfIsNewUser(UserCredential userCredential){
     return userCredential.additionalUserInfo?.isNewUser;
   }
@@ -106,8 +218,32 @@ class UserSign {
   }
 
   static Future<void> logoutUser(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.SPLASH_SCREEN, (_) => false);
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          title: const Text("Logout"),
+          content: const Text("Tem certeza que você quer sair da sua conta?"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Confirmar"),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.of(context).pop();
+                Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.SPLASH_SCREEN, (_) => false);
+              },
+            ),
+          ],
+        );
+      },
+    );
     return;
   }
 

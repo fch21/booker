@@ -1,10 +1,12 @@
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/user_sign.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/time_interval.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 import 'appointment_details.dart';
 
@@ -211,6 +213,67 @@ class AppUser {
     }
 
     return result;
+  }
+
+  Future<void> addPhoneNumberToUser(BuildContext buildContext) async {
+    await showDialog(
+      context: buildContext,
+      builder: (BuildContext context) {
+
+        String? phoneNumber;
+
+        return AlertDialog(
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          title: const Text("Adicionar número de telefone"),
+          content:IntlPhoneField(
+            decoration: const InputDecoration(
+              labelText: 'Número com DDD',
+              border: OutlineInputBorder(
+                borderSide: BorderSide(),
+              ),
+            ),
+            initialCountryCode: 'BR',
+            onChanged: (phone) {
+              print(phone.completeNumber);
+              bool isValidNumber = false;
+              try{
+                isValidNumber = phone.isValidNumber();
+              }
+              catch(e){print(e);}
+              print(isValidNumber);
+              if(isValidNumber){
+                phoneNumber = phone.completeNumber;
+              }
+              else{
+                phoneNumber = null;
+              }
+            },
+            initialValue: "",
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("Confirmar"),
+              onPressed: () async {
+                if(phoneNumber != null){
+                  Navigator.of(context).pop();
+                  UserSign.verifyPhoneNumber(context: buildContext, phoneNumber: phoneNumber!, onConfirmed: (){
+                    phone = phoneNumber!;
+                    updateAppUserInFirestore(context);
+                  });
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return;
   }
 
   String getLinkToTheUserProfile(){

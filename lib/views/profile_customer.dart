@@ -142,9 +142,23 @@ class _ProfileCustomerState extends State<ProfileCustomer> {
                   text: 'Salvar mudanças',
                 ),
               ),
-              CustomDivider(),
+              const CustomDivider(),
+              const Padding(
+                  padding: EdgeInsets.only(top: 32.0),
+                  child: Center(child: Text("Quer receber notificações por Whatsapp?", style: textStyleMediumNormal,))
+              ),
               Padding(
                 padding: const EdgeInsets.only(top: 32.0),
+                child: ButtonCustom(
+                  onPressed: (){
+                    currentAppUser!.addPhoneNumberToUser(context);
+                  },
+                  text: 'Adicionar número de telefone',
+                ),
+              ),
+              const CustomDivider(),
+              const Padding(
+                padding: EdgeInsets.only(top: 32.0),
                 child: Center(child: Text("Quer se tornar um prestador de serviço?", style: textStyleMediumNormal,))
               ),
               Padding(
