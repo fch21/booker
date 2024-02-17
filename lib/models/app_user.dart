@@ -1,4 +1,5 @@
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/text_input_formatters.dart';
 import 'package:booker/helper/user_sign.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
@@ -25,7 +26,7 @@ class AppUser {
   String urlProfileUserImage = "";
   String urlProfileBgImage = "";
   Color color = Colors.white;
-  int subscriptionLevel = 0;
+  String subscriptionId = "";
 
   bool isServiceProvider = false;
   Map<String, dynamic> availabilityMap = {};
@@ -49,7 +50,7 @@ class AppUser {
     copy.urlProfileUserImage = urlProfileUserImage;
     copy.urlProfileBgImage = urlProfileBgImage;
     copy.color = color;
-    copy.subscriptionLevel = subscriptionLevel;
+    copy.subscriptionId = subscriptionId;
 
     return copy;
   }
@@ -105,7 +106,7 @@ class AppUser {
       Strings.USER_URL_PROFILE_USER_IMAGE: urlProfileUserImage,
       Strings.USER_URL_PROFILE_BG_IMAGE: urlProfileBgImage,
       Strings.USER_COLOR: color.value,
-      Strings.USER_SUBSCRIPTION_LEVEL: subscriptionLevel,
+      Strings.USER_SUBSCRIPTION_ID: subscriptionId,
 
       Strings.USER_IS_SERVICE_PROVIDER: isServiceProvider,
       Strings.USER_BLOCKED_CLIENTS_IDS: blockedClientsIds,
@@ -167,7 +168,7 @@ class AppUser {
       urlProfileUserImage = data[Strings.USER_URL_PROFILE_USER_IMAGE] ?? "";
       urlProfileBgImage = data[Strings.USER_URL_PROFILE_BG_IMAGE] ?? "";
       color = Color((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_COLOR] ?? Colors.white.value);
-      subscriptionLevel = data[Strings.USER_SUBSCRIPTION_LEVEL] ?? 0;
+      subscriptionId = data[Strings.USER_SUBSCRIPTION_ID] ?? "";
 
       isServiceProvider = data[Strings.USER_IS_SERVICE_PROVIDER] ?? false;
       blockedClientsIds = data[Strings.USER_BLOCKED_CLIENTS_IDS] ?? [];
@@ -216,16 +217,18 @@ class AppUser {
   }
 
   Future<void> addPhoneNumberToUser(BuildContext buildContext) async {
+
+    String? phoneNumber;
+    bool shouldVerifyPhone = false;
+
     await showDialog(
       context: buildContext,
       builder: (BuildContext context) {
-
-        String? phoneNumber;
-
         return AlertDialog(
           actionsAlignment: MainAxisAlignment.spaceBetween,
           title: const Text("Adicionar número de telefone"),
           content:IntlPhoneField(
+            inputFormatters: [IntegerTextInputFormatter()],
             decoration: const InputDecoration(
               labelText: 'Número com DDD',
               border: OutlineInputBorder(
@@ -261,11 +264,11 @@ class AppUser {
               child: const Text("Confirmar"),
               onPressed: () async {
                 if(phoneNumber != null){
+                  shouldVerifyPhone = true;
                   Navigator.of(context).pop();
-                  UserSign.verifyPhoneNumber(context: buildContext, phoneNumber: phoneNumber!, onConfirmed: (){
-                    phone = phoneNumber!;
-                    updateAppUserInFirestore(context);
-                  });
+                }
+                else{
+                  Utils.showSnackBar(context, "Adicione um número válido");
                 }
               },
             ),
@@ -273,6 +276,12 @@ class AppUser {
         );
       },
     );
+    if(shouldVerifyPhone && buildContext.mounted){
+      await UserSign.verifyPhoneNumber(buildContext: buildContext, phoneNumber: phoneNumber!, onConfirmed: (){
+        phone = phoneNumber!;
+        updateAppUserInFirestore(buildContext);
+      });
+    }
     return;
   }
 
@@ -310,6 +319,14 @@ class AppUser {
     }
 
     return appointmentDetailsOfClientList;
+  }
+
+  Future<List<AppointmentDetails>> getOrderedAppointmentDetailsOfClient({required AppUser client}) async {
+    List<AppointmentDetails> orderedAppointmentDetailsOfClientList = await getAppointmentDetailsOfClient(client: client);
+
+    orderedAppointmentDetailsOfClientList.sort((a, b) => b.from.compareTo(a.from));
+
+    return orderedAppointmentDetailsOfClientList;
   }
 
   static Future<AppUser?> getUserFromId(String userId) async {

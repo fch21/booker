@@ -1,4 +1,5 @@
 import 'package:booker/helper/text_input_formatters.dart';
+import 'package:booker/main.dart';
 import 'package:booker/models/service_provided.dart';
 import 'package:booker/widgets/input_custom.dart';
 import 'package:booker/widgets/button_custom.dart';
@@ -29,14 +30,11 @@ class _ServiceFormState extends State<ServiceForm> {
 
   final _formKey = GlobalKey<FormState>();
 
-  final _decimalInputFormatter = DecimalTextInputFormatter();
-  final _integerInputFormatter = IntegerTextInputFormatter();
-
-  _validateFields() {
+  Future<void> _validateFields() async {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
 
-      _serviceProvided.updateServiceProvidedInFirestore(context);
+      await _serviceProvided.updateServiceProvidedInFirestore(context);
       if(widget.serviceProvided != null){
         //to update instantly in the previous page
         widget.serviceProvided!.name = _serviceProvided.name;
@@ -47,6 +45,35 @@ class _ServiceFormState extends State<ServiceForm> {
       }
       if(mounted) Navigator.of(context).pop();
     }
+  }
+
+  Future<void> _deleteConfirmationDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmar exclusão'),
+          content: Text('Tem certeza que deseja excluir esse serviço? Os agendamentos já realizados não serão cancelados, mas os clientes não poderão mais selecionar esse serviço.'),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: <Widget>[
+            TextButton(
+              child: Text('Voltar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Excluir'),
+              onPressed: () async {
+                await _serviceProvided.deleteServiceProvidedInFirestore(context);
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -106,7 +133,7 @@ class _ServiceFormState extends State<ServiceForm> {
                 label: 'Preço em R\$',
                 controller: _priceController,
                 textInputType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [_decimalInputFormatter],
+                inputFormatters: [DecimalTextInputFormatter()],
                 onSaved: (price){
                   _serviceProvided.price = double.tryParse(price?.replaceAll(',','.') ?? "") ?? 0.0;
                 },
@@ -124,7 +151,7 @@ class _ServiceFormState extends State<ServiceForm> {
                 label: 'Duração (em minutos)',
                 controller: _durationController,
                 textInputType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [_integerInputFormatter],
+                inputFormatters: [IntegerTextInputFormatter()],
                 onSaved: (durationInMinutes){
                   _serviceProvided.duration = Duration(minutes: (int.tryParse(durationInMinutes ?? "0") ?? 0));
                 },
@@ -192,7 +219,17 @@ class _ServiceFormState extends State<ServiceForm> {
                   onPressed: _validateFields,
                   text: 'Salvar Serviço',
                 ),
-              )
+              ),
+              if(widget.serviceProvided != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 48.0),
+                  child: Center(
+                    child: TextButton(
+                      onPressed: _deleteConfirmationDialog,
+                      child: const Text('Excluir serviço', style: TextStyle(color: Colors.red, fontSize: fontSizeVerySmall),),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

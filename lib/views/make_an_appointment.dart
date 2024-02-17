@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
@@ -6,7 +8,10 @@ import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
 import 'package:booker/models/service_provided.dart';
 import 'package:booker/models/time_interval.dart';
+import 'package:booker/views/my_clients.dart';
 import 'package:booker/widgets/button_custom.dart';
+import 'package:booker/widgets/client_card.dart';
+import 'package:booker/widgets/input_custom.dart';
 import 'package:booker/widgets/loading_data.dart';
 import 'package:booker/widgets/profile_header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,11 +23,13 @@ class MakeAnAppointment extends StatefulWidget {
 
   AppUser appUser;
   ServiceProvided serviceProvided;
+  bool manuallyAddAppointment;
 
   MakeAnAppointment({
     Key? key,
     required this.appUser,
     required this.serviceProvided,
+    this.manuallyAddAppointment = false,
   }) : super(key: key);
 
   @override
@@ -160,6 +167,9 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           //print("nextAvailableTime = ${nextAvailableTime}");
           //print("nextAvailableTime.isAfter(appointmentStartDateTime) = ${nextAvailableTime.isAfter(appointmentStartDateTime)}");
           if (nextAvailableTime.isAfter(appointmentStartDateTime)) {
+            //to show start options only in the times that have a minute ending in 10
+            int extraMinutesToRound = (10 - nextAvailableTime.minute % 10) % 10;
+            if(extraMinutesToRound != 0) nextAvailableTime = nextAvailableTime.copyWith(minute: nextAvailableTime.minute + extraMinutesToRound);
             appointmentStartDateTime = nextAvailableTime;
             appointmentEndDateTime = appointmentStartDateTime.add(Duration(minutes: serviceDurationInMinutes));
             continue;//restart the loop
@@ -168,9 +178,10 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           if (appointmentStartDateTime.isAfter(DateTime.now())) {
             availableTimes.add(TimeOfDay(hour: appointmentStartDateTime.hour, minute: appointmentStartDateTime.minute));
           }
-          //print("loop availableTimes = $availableTimes");
+          print("loop availableTimes = $availableTimes");
           // Calculate the next possible start time
-          appointmentStartDateTime = appointmentStartDateTime.add(Duration(minutes: serviceDurationInMinutes));
+          //appointmentStartDateTime = appointmentStartDateTime.add(Duration(minutes: serviceDurationInMinutes)); //to show start options each serviceDurationInMinutes minutes
+          appointmentStartDateTime = appointmentStartDateTime.add(Duration(minutes: 10));//to show start options each 10 minutes
           appointmentEndDateTime = appointmentStartDateTime.add(Duration(minutes: serviceDurationInMinutes));
         }
       }
@@ -186,7 +197,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     return;
   }
 
-  Future<bool> _makeAppointment() async {
+  Future<bool> _makeAppointment(AppUser client) async {
     if(selectedTimeOfDay != null && selectedDateTime != null){
 
       DateTime startingDateTime = selectedDateTime!.copyWith(hour: selectedTimeOfDay!.hour, minute: selectedTimeOfDay!.minute, second: 0, millisecond: 0, microsecond: 0);
@@ -194,14 +205,14 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       AppointmentDetails appointmentDetails = AppointmentDetails();
       appointmentDetails.serviceId = widget.serviceProvided.id;
       appointmentDetails.serviceProviderUserId = widget.serviceProvided.userId;
-      appointmentDetails.userName = currentAppUser!.name;
+      appointmentDetails.userName = client.name;
       appointmentDetails.serviceProviderName = widget.appUser.name;
       appointmentDetails.serviceName = widget.serviceProvided.name;
       appointmentDetails.day = getDateTimeSimplified(selectedDateTime!);
       appointmentDetails.from = startingDateTime;
       appointmentDetails.to = startingDateTime.add(widget.serviceProvided.duration);
 
-      return await appointmentDetails.updateAppointmentDetailsInFirestore(context);
+      return await appointmentDetails.updateAppointmentDetailsInFirestore(context, client: client);
     }
     return false;
   }
@@ -213,10 +224,10 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
         return AlertDialog(
           actionsAlignment: MainAxisAlignment.end,
           title: Text("Confirmado"),
-          content: Text("Agendamento marcado com sucesso!\nVocê receberá um email de confimação."),
+          content: Text(widget.manuallyAddAppointment ? "Agendamento manualmente marcado com sucesso!" : "Agendamento marcado com sucesso!"),
           actions: <Widget>[
             TextButton(
-              child: Text(AppLocalizations.of(context)!.ok, style: TextStyle(color: widget.appUser.getUserColorResolved())),
+              child: Text("Continuar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
@@ -230,6 +241,10 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
 
   _showMakeAppointmentDialog(){
     if(selectedTimeOfDay != null && selectedDateTime != null){
+
+      StreamController<bool> updateDialogStreamController = StreamController.broadcast();
+      TextEditingController controllerClientName = TextEditingController(text: "");
+      AppUser? selectedClient;
 
       Widget unLoggedUserDialog = AlertDialog(
         actionsAlignment: MainAxisAlignment.spaceBetween,
@@ -254,7 +269,65 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       Widget loggedUserDialog = AlertDialog(
         actionsAlignment: MainAxisAlignment.spaceBetween,
         title: Text("Marcar Horário"),
-        content: Text("Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
+        content: widget.manuallyAddAppointment
+          ? StreamBuilder<bool>(
+            stream: updateDialogStreamController.stream,
+            builder: (context, snapshot) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
+                  Padding(
+                    padding: EdgeInsets.only(top: 24.0, bottom: 16.0),
+                    child: Text(
+                        selectedClient != null
+                        ? "Cliente selecionado:"
+                        : "Adicione o nome do cliente ou escolha um cliente já existente:"
+                    ),
+                  ),
+                  if(selectedClient == null)
+                    InputCustom(
+                      controller: controllerClientName,
+                      label: "Nome do cliente"
+                    ),
+
+                  if(selectedClient == null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Center(
+                        child: GestureDetector(
+                          child: const Text(
+                            "Escolher um cliente existente",
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (_) => MyClients(
+                                  onTapUser: (client){
+                                    selectedClient = client;
+                                    updateDialogStreamController.add(true);
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              )
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
+                  if(selectedClient != null)
+                    ClientCard(
+                      client: selectedClient!,
+                      onTap: (){},
+                    ),
+                ],
+              );
+            }
+          )
+         : Text("Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
+
         actions: <Widget>[
           TextButton(
             child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
@@ -265,9 +338,32 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           TextButton(
             child: Text("Confirmar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
             onPressed: () {
-              _makeAppointment();
-              Navigator.of(context).pop();
-              _showAppointmentMadeDialog();
+
+              if(widget.manuallyAddAppointment){
+                if(controllerClientName.text != "" || selectedClient != null){
+
+                  AppUser? client = selectedClient;
+                  if(client == null){
+                    client = AppUser();
+                    client.name = controllerClientName.text;
+                  }
+                  print("client.id = ${client.id}");
+                  print("client.name = ${client.name}");
+                  print("currentAppUser!.id = ${currentAppUser!.id}");
+                  print("currentAppUser!.name = ${currentAppUser!.name}");
+                  _makeAppointment(client);
+                  Navigator.of(context).pop();
+                  _showAppointmentMadeDialog();
+                }
+                else{
+                  Utils.showSnackBar(context, "Você precisa adicionar o nome do cliente ou escolher um cliente existente");
+                }
+              }
+              else{
+                _makeAppointment(currentAppUser!);
+                Navigator.of(context).pop();
+                _showAppointmentMadeDialog();
+              }
             },
           ),
         ],

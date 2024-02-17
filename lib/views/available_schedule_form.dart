@@ -48,7 +48,7 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
     );
   }
 
-  Future<void> deleteConfirmation() async {
+  Future<void> _deleteConfirmationDialog() async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -68,6 +68,26 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
               onPressed: () {
                 widget.onDelete();
                 Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _savedConfirmationDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: const Text('Horário salvo com sucesso!'),
+          actionsAlignment: MainAxisAlignment.end,
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
@@ -118,6 +138,7 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
                           time: _availableSchedule.timeInterval.startTime,
                           fontSize: fontSizeLarge,
                           onTimeChanged: (timeOfDay){
+                            print("onTimeChanged = $timeOfDay");
                             _availableSchedule.timeInterval.startTime = timeOfDay;
                           }
                         ),
@@ -179,7 +200,7 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
             Padding(
               padding: const EdgeInsets.only(top: 32.0),
               child: ButtonCustom(
-                onPressed: (){
+                onPressed: () async {
                   if(_availableSchedule.timeInterval.isValid()){
 
                     widget.availableSchedule?.timeInterval.startTime = _availableSchedule.timeInterval.startTime;
@@ -188,6 +209,7 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
                     widget.availableSchedule?.isSelected = _availableSchedule.isSelected;
 
                     widget.onSave();
+                    await _savedConfirmationDialog();
                     Navigator.of(context).pop();
                   }
                   else{
@@ -201,7 +223,7 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
               padding: const EdgeInsets.only(top: 48.0),
               child: Center(
                 child: TextButton(
-                  onPressed: deleteConfirmation,
+                  onPressed: _deleteConfirmationDialog,
                   child: const Text('Excluir horário', style: TextStyle(color: Colors.red, fontSize: fontSizeVerySmall),),
                 ),
               ),

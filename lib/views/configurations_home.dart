@@ -55,7 +55,7 @@ class _ConfigurationsHomeState extends State<ConfigurationsHome> {
                           Navigator.pushNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDED);
                         }
                         else{
-                          Navigator.pushNamed(context, RouteGenerator.PROFILE_CUSTOMER);
+                          Navigator.pushNamed(context, RouteGenerator.EDIT_PROFILE_CLIENT);
                         }
                       },
                     ),

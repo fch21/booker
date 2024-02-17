@@ -107,6 +107,12 @@ const textStyleMediumNormal = TextStyle(
   fontSize: fontSizeMedium,
 );
 
+const textStyleSmallBold = TextStyle(
+  color: Colors.black87,
+  fontSize: fontSizeSmall,
+  fontWeight: FontWeight.bold,
+);
+
 const textStyleSmallNormal = TextStyle(
   color: Colors.black87,
   fontSize: fontSizeSmall,

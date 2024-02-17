@@ -36,7 +36,8 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
   late AppUser _appUser;
   late TabController _tabController;
 
-  _getServicesProvided() async {
+  Future<void> _getServicesProvided() async {
+    //print(">>>>> _getServicesProvided");
     _servicesProvided.clear();
     _servicesProvided = await ServiceProvided.getServicesProvidedByUser(currentAppUser!);
     setState(() {});
@@ -66,12 +67,12 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
   }
 
   _updateAvailabilityMap() async {
-    print(">>>>> _updateAvailabilityMap");
+    //print(">>>>> _updateAvailabilityMap");
     setState(() {
       _appUser.availabilityMap = AvailableSchedule.convertSchedulesToMap(_availableSchedules);
     });
     await _appUser.updateAppUserInFirestore(context);
-    print("_appUser.availabilityMap) = ${_appUser.availabilityMap}");
+    //print("_appUser.availabilityMap) = ${_appUser.availabilityMap}");
   }
 
   /*
@@ -169,9 +170,9 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: ListTile(
-                              leading: Icon(Icons.calendar_month , color: Colors.black54,),
-                              title: Text("Calendário", style: textStyleSmallNormal,),
-                              onTap: () {
+                              leading: const Icon(Icons.calendar_month , color: Colors.black54,),
+                              title: const Text("Calendário", style: textStyleSmallNormal,),
+                              onTap: () async {
                                 Navigator.pushNamed(context, RouteGenerator.CALENDAR,);
                               },
                             ),
@@ -179,20 +180,31 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
                           Padding(
                             padding: const EdgeInsets.only(bottom: 0.0),
                             child: ListTile(
-                              leading: Icon(Icons.list , color: Colors.black54,),
-                              title: Text("Agendamentos", style: textStyleSmallNormal,),
+                              leading: const Icon(Icons.list , color: Colors.black54,),
+                              title: const Text("Agendamentos", style: textStyleSmallNormal,),
                               onTap: () {
                                 Navigator.pushNamed(context, RouteGenerator.MY_APPOINTMENTS,);
                               },
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
+                            padding: const EdgeInsets.only(bottom: 0.0),
                             child: ListTile(
-                              leading: Icon(Icons.group , color: Colors.black54,),
-                              title: Text("Clientes", style: textStyleSmallNormal,),
+                              leading: const Icon(Icons.group , color: Colors.black54,),
+                              title: const Text("Clientes", style: textStyleSmallNormal,),
                               onTap: () {
                                 Navigator.pushNamed(context, RouteGenerator.MY_CLIENTS,);
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: ListTile(
+                              leading: const Icon(Icons.add , color: Colors.black54,),
+                              title: const Text("Adicionar agendamento manualmente", style: textStyleSmallNormal,),
+                              onTap: () {
+                                Map args = {"user" : currentAppUser!, "manually_add_appointment" : true};
+                                Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: args);
                               },
                             ),
                           ),
@@ -312,7 +324,9 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
                             color: appUserColor,
                             text: AppLocalizations.of(context)!.profile_add_service,
                             onPressed: (){
-                              Navigator.pushNamed(context, RouteGenerator.SERVICE_FORM,);
+                              Navigator.pushNamed(context, RouteGenerator.SERVICE_FORM,).then((value){
+                                _getServicesProvided();
+                              });
                             },
                           ),
                         );
@@ -324,12 +338,11 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
                         child: ServiceProvidedCard(
                           serviceProvided: serviceProvided,
                           onTap: (){
-                            //Map args = {"user" : widget.user, "serviceProvided" : _servicesProvided[index]};
-                            //Navigator.pushNamed(context, RouteGenerator.MAKE_AN_APPOINTMENT, arguments: args);
-                            Navigator.pushNamed(context, RouteGenerator.SERVICE_FORM, arguments: serviceProvided)
-                                .then((value){
-                              setState(() {});
-                              //_getServicesProvided();
+                            //Map args = {"serviceProvided" : _servicesProvided[index], "onDelete" : (){
+                            //  _servicesProvided.remove(availableSchedule)
+                            //}};
+                            Navigator.pushNamed(context, RouteGenerator.SERVICE_FORM, arguments: serviceProvided).then((value){
+                              _getServicesProvided();
                             });
                           },
                         ),
@@ -342,9 +355,6 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
           ),
         ),
       )
-
-
-
 
     );
   }

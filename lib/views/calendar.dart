@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/necessary_subscription_levels.dart';
 import 'package:booker/helper/user_firebase.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
@@ -150,6 +151,7 @@ class _CalendarState extends State<Calendar> {
     if(itemSelecionado == AppLocalizations.of(context)!.menu_calendar_cancel_all){
       if(_appointmentsList.isNotEmpty){
         AppointmentDetails.cancelAppointmentConfirmation(context, appointmentsList: _appointmentsList, isServiceProvider: true, useCancelAllMessage: true, extraTextForCancelAll: getTimePeriodString());
+        setState(() {});
       }
       else{
         showDialog(
@@ -189,6 +191,7 @@ class _CalendarState extends State<Calendar> {
 
   @override
   void initState() {
+    Utils.quitScreenIfUserIsNotASubscriber(context: context, subscriptionNeeded: NecessarySubscriptionLevels.CALENDAR);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       DateTime? initialDate = _controller.displayDate;
       if(initialDate != null) {

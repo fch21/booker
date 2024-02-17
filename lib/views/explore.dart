@@ -94,7 +94,8 @@ class _ExploreState extends State<Explore> {
       resetInitialServiceProviderId();
       AppUser? user = await AppUser.getUserFromId(id);
       if(user != null && context.mounted){
-        await Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: user);
+        Map args = {"user" : user};
+        await Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: args);
       }
     }
     //String? eventId = appGlobalKey.currentState?.linkEventId;
@@ -265,7 +266,8 @@ class _ExploreState extends State<Explore> {
                           return AppUserItem(
                               appUser: user,
                               onTapItem: () async {
-                                await Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: user);
+                                Map args = {"user" : user};
+                                await Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: args);
                                 if(widget.onEventClick != null) widget.onEventClick!();
                               },
                             );

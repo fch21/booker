@@ -1,3 +1,4 @@
+import 'package:booker/helper/necessary_subscription_levels.dart';
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
@@ -26,7 +27,7 @@ class _ClientPageState extends State<ClientPage> {
   bool clientAppointmentsAreLoaded = false;
 
   Future<void> _getClientAppointments() async {
-    List<AppointmentDetails> appointments = await currentAppUser!.getAppointmentDetailsOfClient(client: widget.client);
+    List<AppointmentDetails> appointments = await currentAppUser!.getOrderedAppointmentDetailsOfClient(client: widget.client);
     setState(() {
       clientAppointments = appointments;
       clientAppointmentsAreLoaded = true;
@@ -34,15 +35,21 @@ class _ClientPageState extends State<ClientPage> {
     return;
   }
 
-  _changeClientBlockedStatus(bool isBlocked){
+  _changeClientBlockedStatus(bool isBlocked) async {
     if(isBlocked){
       currentAppUser!.blockedClientsIds.remove(widget.client.id);
+      currentAppUser!.updateAppUserInFirestore(context);
+      setState(() {});
     }
     else{
-      currentAppUser!.blockedClientsIds.add(widget.client.id);
+      bool canAccess = await Utils.showSubscriptionNeededDialogIfNecessary(context: context, subscriptionNeeded: NecessarySubscriptionLevels.BLOCK_CLIENT);
+      if(canAccess){
+        currentAppUser!.blockedClientsIds.add(widget.client.id);
+        currentAppUser!.updateAppUserInFirestore(context);
+        setState(() {});
+      }
     }
-    currentAppUser!.updateAppUserInFirestore(context);
-    setState(() {});
+
   }
 
   _changeClientBlockedStatusDialog(bool isBlocked){
@@ -65,9 +72,9 @@ class _ClientPageState extends State<ClientPage> {
             ),
             TextButton(
               child: Text(isBlocked ? "Desbloquear" : "Bloquear"),
-              onPressed: () {
-                _changeClientBlockedStatus(isBlocked);
+              onPressed: () async {
                 Navigator.of(context).pop();
+                await _changeClientBlockedStatus(isBlocked);
               },
             ),
           ],

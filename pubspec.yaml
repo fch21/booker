@@ -78,7 +78,6 @@ flutter:
   assets:
     - assets/booker_icon.png
     - assets/booker_logo.png
-    - assets/booker_logo_animation.gif
     - assets/facebook_logo.png
     - assets/google_logo.png
     - assets/instagram_logo.png

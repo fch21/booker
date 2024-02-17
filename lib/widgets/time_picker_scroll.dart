@@ -16,11 +16,14 @@ class _TimePickerScrollState extends State<TimePickerScroll> {
   late FixedExtentScrollController _hourController;
   late FixedExtentScrollController _minuteController;
 
+  late TimeOfDay _timeOfDay;
+
   @override
   void initState() {
-    super.initState();
+    _timeOfDay = widget.time;
     _hourController = FixedExtentScrollController(initialItem: widget.time.hour);
     _minuteController = FixedExtentScrollController(initialItem: widget.time.minute);
+    super.initState();
   }
 
   @override
@@ -46,7 +49,8 @@ class _TimePickerScrollState extends State<TimePickerScroll> {
               itemExtent: 60,
               physics: const FixedExtentScrollPhysics(),
               onSelectedItemChanged: (index) {
-                widget.onTimeChanged(TimeOfDay(hour: index % 24, minute: widget.time.minute));
+                _timeOfDay = TimeOfDay(hour: index % 24, minute: _timeOfDay.minute);
+                widget.onTimeChanged(_timeOfDay);
               },
               childDelegate: ListWheelChildBuilderDelegate(
                 builder: (context, index) {
@@ -69,7 +73,8 @@ class _TimePickerScrollState extends State<TimePickerScroll> {
               itemExtent: 60,
               physics: const FixedExtentScrollPhysics(),
               onSelectedItemChanged: (index) {
-                widget.onTimeChanged(TimeOfDay(hour: widget.time.hour, minute: index % 60));
+                _timeOfDay = TimeOfDay(hour: _timeOfDay.hour, minute: index % 60);
+                widget.onTimeChanged(_timeOfDay);
               },
               childDelegate: ListWheelChildBuilderDelegate(
                 builder: (context, index) {

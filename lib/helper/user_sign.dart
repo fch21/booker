@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:booker/widgets/loading_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
@@ -27,12 +30,15 @@ class UserSign {
     print("firebaseUser.user?.email = ${firebaseUser.user?.email}");
     String? userId = firebaseUser.user?.uid;
     String? email = firebaseUser.user?.email;
-    //String nameFromEmail = firebaseUser.user?.email?.split("@").first ?? "";
     if(userId != null && email != null){
       appUser.id = userId;
       appUser.email = email;
       //appUser.userName = nameFromEmail;
       //print("appUser.toMap() = ${appUser.toMap()}");
+      if(appUser.name.isEmpty){
+        String nameFromEmail = firebaseUser.user?.email?.split("@").first ?? "";
+        appUser.name = nameFromEmail;
+      }
 
       try{
         await db.collection(Strings.COLLECTION_USERS).doc(firebaseUser.user?.uid).set(appUser.toMap());
@@ -77,9 +83,13 @@ class UserSign {
     return result;
   }
 
-  static void verifyPhoneNumber({required BuildContext context, required String phoneNumber, VoidCallback? onConfirmed}) async {
 
-    String? phoneNumberVerificationId;
+  static void sendVerificationCode({
+    required BuildContext context,
+    required String phoneNumber,
+    int? initialResendToken,
+    required void Function(String verificationId, int? resendToken) onCodeSent
+  }) async {
 
     FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumber,
@@ -90,52 +100,135 @@ class UserSign {
           await FirebaseAuth.instance.currentUser!.updatePhoneNumber(credential);
           // Número de telefone adicionado com sucesso ao usuário
         } catch (e) {
-          print("ERROR in updatePhoneNumber");
+          Utils.showSnackBar(context, "verificationCompleted: Erro ao atualizar número de telefone. $e");
         }
       },
       verificationFailed: (FirebaseAuthException e) {
-        print("verificationFailed >>>> $e");
+        Navigator.of(context).pop();
+        Utils.showSnackBar(context, "verificationFailed: Erro ao atualizar número de telefone. $e");
         // Trate os erros de verificação aqui
       },
       codeSent: (String verificationId, int? resendToken) {
         // Salve o verificationId para uso posterior
-        print("codeSent >>>> $verificationId");
-        phoneNumberVerificationId = verificationId;
         // Atualize a interface do usuário para permitir que o usuário insira o código de SMS
+        onCodeSent(verificationId, resendToken);
       },
       codeAutoRetrievalTimeout: (String verificationId) {
         // Este callback é opcional em seu caso
       },
+      forceResendingToken: initialResendToken
     );
+
+  }
+
+  static Future<void> verifyPhoneNumber({required BuildContext buildContext, required String phoneNumber, VoidCallback? onConfirmed}) async {
+
+    String? phoneNumberVerificationId;
+    int? phoneNumberResendToken;
+    int resendWaitSeconds = 60;
+    StreamController<bool> canResendStreamController = StreamController.broadcast();
+    StreamController<bool> dialogStreamController = StreamController.broadcast();
+    Timer? resendTimer;
+    bool isVerifyingCode = false;
+
+    void startTimer(){
+      resendWaitSeconds = 60;
+      resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (resendWaitSeconds == 0) {
+          resendTimer?.cancel();
+          canResendStreamController.add(true);
+        } else {
+          resendWaitSeconds--;
+          canResendStreamController.add(false);
+        }
+      });
+    }
+
+    startTimer();
+
+    sendVerificationCode(context: buildContext, phoneNumber: phoneNumber, initialResendToken: phoneNumberResendToken, onCodeSent:(String verificationId, int? resendToken){
+      phoneNumberVerificationId = verificationId;
+      phoneNumberResendToken = resendToken;
+      dialogStreamController.add(true);
+    });
 
     TextEditingController pinCodeController = TextEditingController();
 
     await showDialog(
-      context: context,
+      context: buildContext,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           actionsAlignment: MainAxisAlignment.spaceBetween,
-          title: const Text("Código de verificação"),
-          content: PinCodeTextField(
-            appContext: context,
-            length: 6, // o número de caracteres do código
-            controller: pinCodeController,
-            keyboardType: TextInputType.number,
-            pinTheme: PinTheme(
-              shape: PinCodeFieldShape.box,
-              borderRadius: BorderRadius.circular(5),
-              fieldHeight: 50,
-              fieldWidth: 35,
-              activeColor: standartTheme.primaryColor,
-              selectedColor: Colors.grey,
-              inactiveColor: Colors.grey,
-              activeFillColor: Colors.white,
-              inactiveFillColor: Colors.white,
-              //selectedFillColor: Colors.lightGreen[50],
-            ),
-            onCompleted: (String value) {
-              // Você pode optar por confirmar o código automaticamente após o preenchimento
-            },
+          title: const Center(child: Text("Código de verificação")),
+          content: StreamBuilder<bool>(
+            stream: dialogStreamController.stream,
+            builder: (context, snapshot) {
+
+              /*
+              if(phoneNumberVerificationId == null) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 16.0),
+                      child: Text("Enviando código..."),
+                    ),
+                    LoadingData(),
+                  ],
+                );
+              }
+               */
+
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  PinCodeTextField(
+                    appContext: context,
+                    length: 6, // o número de caracteres do código
+                    controller: pinCodeController,
+                    keyboardType: TextInputType.number,
+                    pinTheme: PinTheme(
+                      shape: PinCodeFieldShape.box,
+                      borderRadius: BorderRadius.circular(5),
+                      fieldHeight: 50,
+                      fieldWidth: 35,
+                      activeColor: standartTheme.primaryColor,
+                      selectedColor: Colors.grey,
+                      inactiveColor: Colors.grey,
+                      activeFillColor: Colors.white,
+                      inactiveFillColor: Colors.white,
+                      //selectedFillColor: Colors.lightGreen[50],
+                    ),
+                    onCompleted: (String value) {
+                      // Você pode optar por confirmar o código automaticamente após o preenchimento
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: StreamBuilder<bool>(
+                      stream: canResendStreamController.stream,
+                      builder: (context, snapshot) {
+
+                        bool canResendCode = snapshot.data ?? false;
+
+                        return TextButton(
+                          onPressed: canResendCode ? () {
+                            sendVerificationCode(context: context, phoneNumber: phoneNumber, initialResendToken: phoneNumberResendToken, onCodeSent:(String verificationId, int? resendToken){
+                              phoneNumberVerificationId = verificationId;
+                              phoneNumberResendToken = resendToken;
+                              canResendStreamController.add(false);
+                            });
+                            startTimer();
+                          } : null,
+                          child: Text(canResendCode ? 'Reenviar código' : 'Reenviar em $resendWaitSeconds segundos'),
+                        );
+                      }
+                    ),
+                  )
+                ],
+              );
+            }
           ),
 
           actions: <Widget>[
@@ -148,15 +241,36 @@ class UserSign {
             TextButton(
               child: const Text("Confirmar"),
               onPressed: () async {
-                String smsCode = pinCodeController.text;
-                print("phoneNumberVerificationId = $phoneNumberVerificationId");
-                print("smsCode = $smsCode");
-                if(phoneNumberVerificationId != null && smsCode.isNotEmpty) {
-                  bool confirmed = await _confirmVerificationCode(smsCode: smsCode, verificationId: phoneNumberVerificationId!);
-                  if(confirmed && onConfirmed != null) onConfirmed();
-                }
-                else{
-                  print("ERROR phoneNumberVerificationId == null or SMS code is empty");
+                if(phoneNumberVerificationId != null && !isVerifyingCode){
+                  isVerifyingCode = true;
+                  dialogStreamController.add(true);
+                  String smsCode = pinCodeController.text;
+                  print("phoneNumberVerificationId = $phoneNumberVerificationId");
+                  print("smsCode = $smsCode");
+                  if(smsCode.length == 6) {
+                    bool? confirmed = await _confirmVerificationCode(smsCode: smsCode, verificationId: phoneNumberVerificationId!);
+                    if(confirmed ?? false) {
+                      if(onConfirmed != null) onConfirmed();
+                      Navigator.of(context).pop();
+                      Utils.showSnackBar(buildContext, "Número de telefone salvo com sucesso!");
+                    }
+                    else{
+                      if(confirmed != null){
+                        Utils.showSnackBar(buildContext, "Código incorreto ou expirado");
+                      }
+                      else{
+                        Utils.showSnackBar(buildContext, "Erro ao cadastrar o número. Por favor entre em contato com a assistência para mais informações.");
+                      }
+
+                    }
+                  }
+                  else{
+                    print("SMS code is empty");
+                    Utils.showSnackBar(buildContext, "Digite o código recebido por SMS");
+                  }
+
+                  isVerifyingCode = false;
+                  dialogStreamController.add(true);
                 }
               },
             ),
@@ -164,11 +278,14 @@ class UserSign {
         );
       },
     );
+
+    resendTimer?.cancel();
+    return;
   }
 
-  static Future<bool> _confirmVerificationCode({required String smsCode, required String verificationId}) async {
+  static Future<bool?> _confirmVerificationCode({required String smsCode, required String verificationId}) async {
 
-    bool codeConfirmed;
+    bool? codeConfirmed;
 
     try {
       final PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode,);
@@ -183,6 +300,9 @@ class UserSign {
     // Trate os erros aqui (por exemplo, código inválido)
       codeConfirmed = false;
       print("error = $e");
+      if(e.toString().contains("firebase_auth/account-exists-with-different-credential")){
+        codeConfirmed = null; //para sinalizar um erro diferente
+      }
     }
 
     return codeConfirmed;
@@ -247,6 +367,41 @@ class UserSign {
     return;
   }
 
+  static Future<void> _firstUserAddPhoneNumberDialog(BuildContext context) async {
+    bool addPhoneNumberToUser = false;
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Melhore sua experiência!'),
+          content: const Text('Cadastre seu número para notificações de agendamentos via WhatsApp.'),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Talvez mais tarde'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Cadastrar'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                addPhoneNumberToUser = true;
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if(addPhoneNumberToUser){
+      await currentAppUser!.addPhoneNumberToUser(context);
+    }
+    return;
+  }
+
   static Future<void> checkCurrentUser(BuildContext context, {bool? isNewUser}) async {
     print("_checkCurrentUser");
 
@@ -260,11 +415,15 @@ class UserSign {
       bool loggedWithFacebook = UserSign.isLoggedWithFacebook(firebaseUser);
 
       print("loggedWithFacebook = $loggedWithFacebook");
+      print("isNewUser = $isNewUser");
 
       if(firebaseUser.emailVerified || loggedWithFacebook){
       //if(true){
         currentAppUser = user;
         appGlobalKey.currentState?.redrawApp();
+        if(isNewUser ?? false){
+          await _firstUserAddPhoneNumberDialog(context);
+        }
         //if(isNewUser ?? false){
         if(false){
           if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PRESENTATION, arguments: user);
@@ -275,8 +434,8 @@ class UserSign {
           }
           else{
             //if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.HOME, arguments: user);
-            if(context.mounted) Navigator.pop(context);
-          }
+            // the login now is note made on the first screen, so we should just close the login screen to go back to the previous screen
+            if(context.mounted) Navigator.pop(context); }
         }
       }
       else{

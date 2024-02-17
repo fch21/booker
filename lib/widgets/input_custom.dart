@@ -14,6 +14,8 @@ class InputCustom extends StatefulWidget {
   final String? Function(String?)? validator;
   final String? Function(String?)? onSaved;
   final Function(String)? onChanged;
+  final Function()? onTap;
+  final bool readOnly;
 
   const InputCustom({
     Key? key,
@@ -28,6 +30,8 @@ class InputCustom extends StatefulWidget {
     this.validator,
     this.onSaved,
     this.onChanged,
+    this.onTap,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
@@ -56,7 +60,9 @@ class _InputCustomState extends State<InputCustom> {
       validator: widget.validator,
       onSaved: widget.onSaved,
       onChanged: widget.onChanged,
+      onTap: widget.onTap,
       style: textStyleSmallNormal,
+      readOnly: widget.readOnly,
       textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(
           contentPadding: const EdgeInsets.fromLTRB(16, 20, 10, 20),

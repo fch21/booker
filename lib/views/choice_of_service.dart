@@ -14,10 +14,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class ChoiceOfService extends StatefulWidget {
 
   AppUser appUser;
+  bool manuallyAddAppointment;
 
   ChoiceOfService({
     Key? key,
-    required this.appUser
+    required this.appUser,
+    this.manuallyAddAppointment = false,
   }) : super(key: key);
 
   @override
@@ -63,7 +65,7 @@ class _ChoiceOfServiceState extends State<ChoiceOfService> {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 18.0, vertical: 8.0),
               child: Text(
-                'Escolha seu serviço',
+                'Escolha o serviço',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -98,7 +100,7 @@ class _ChoiceOfServiceState extends State<ChoiceOfService> {
                     return ServiceProvidedCard(
                       serviceProvided: serviceProvided,
                       onTap: (){
-                        Map args = {"user" : widget.appUser, "serviceProvided" : serviceProvided};
+                        Map args = {"user" : widget.appUser, "serviceProvided" : serviceProvided, "manually_add_appointment" : widget.manuallyAddAppointment};
                         Navigator.pushNamed(context, RouteGenerator.MAKE_AN_APPOINTMENT, arguments: args);
                       },
                     );

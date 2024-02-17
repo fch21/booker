@@ -45,7 +45,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
     else{
       appointments = await AppointmentDetails.getClientAppointmentDetails(appUser: currentAppUser!);
     }
-    appointments.sort((a, b) => a.from.compareTo(b.from));
+    //appointments.sort((a, b) => a.from.compareTo(b.from));
 
     for(var appointment in appointments){
       if(appointment.from.isBefore(currentDateTime)){
@@ -55,6 +55,9 @@ class _MyAppointmentsState extends State<MyAppointments> {
         futureAppointments.add(appointment);
       }
     }
+
+    pastAppointments.sort((a, b) => b.from.compareTo(a.from));
+    futureAppointments.sort((a, b) => a.from.compareTo(b.from));
     setState(() {
       appointmentsAreLoaded = true;
     });

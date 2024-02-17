@@ -1,9 +1,16 @@
 import 'dart:async';
+import 'package:booker/helper/route_generator.dart';
+import 'package:booker/main.dart';
+import 'package:booker/models/discount_code.dart';
+import 'package:booker/models/subscription.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:html' as html;
 
 import 'package:url_launcher/url_launcher.dart';
+
+import 'Strings.dart';
 
 
 class Utils {
@@ -139,6 +146,95 @@ class Utils {
       await launchUrl(whatsappUri);
     } else {
       if (context.mounted) Utils.showSnackBar(context, 'Não foi possível abrir o WhatsApp');
+    }
+  }
+
+  static bool checkIfUserCanAccess({required bool subscriptionNeeded}){
+    if(!subscriptionNeeded || (currentAppUser!.subscriptionId.isNotEmpty)){
+      return true;
+    }
+    return false;
+  }
+
+  static Future<bool> showSubscriptionNeededDialogIfNecessary({required BuildContext context, required bool subscriptionNeeded}) async {
+    bool userCanAccess = checkIfUserCanAccess(subscriptionNeeded: subscriptionNeeded);
+
+    if(!userCanAccess){
+      bool goToSubscriptionsPage = false;
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Assinatura necessária'),
+            content: Text('Para acessar essa funcionalidade você precisa fazer a assinatura'),
+            actionsAlignment: MainAxisAlignment.spaceBetween,
+            actions: <Widget>[
+              TextButton(
+                child: Text('Voltar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text('Detalhes da assinatura'),
+                onPressed: () async {
+                  goToSubscriptionsPage = true;
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      if(context.mounted && goToSubscriptionsPage) await  Navigator.pushNamed(context, RouteGenerator.SUBSCRIPTIONS_MANAGEMENT);
+    }
+    return userCanAccess;
+  }
+
+  static Future<void> quitScreenIfUserIsNotASubscriber({
+    required BuildContext context,
+    required bool subscriptionNeeded,
+    Duration duration = const Duration(seconds: 5)
+  }) async {
+    await Future.delayed(duration);
+    if(context.mounted){
+      bool canAccess = await showSubscriptionNeededDialogIfNecessary(context: context, subscriptionNeeded: subscriptionNeeded);
+      if(!canAccess && context.mounted){
+        Navigator.of(context).pop();
+      }
+    }
+  }
+
+  static Future<bool> verifyDiscountCode({required BuildContext context, required String code}) async {
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Strings.COLLECTION_DISCOUNT_CODES)
+        .where(Strings.DISCOUNT_CODE_CODE, isEqualTo: code)
+        .get();
+
+    if(querySnapshot.docs.isEmpty){
+      return false;
+    }
+    else if(querySnapshot.docs.length > 1){
+      return false;
+    }
+    else { //only one doc
+      DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+      DiscountCode discountCode = DiscountCode.fromDocumentSnapshot(documentSnapshot);
+
+      if(discountCode.status == "valid"){
+        Subscription subscription = Subscription();
+        subscription.userId =  currentAppUser!.id;
+        subscription.discountCodeId = discountCode.code;
+
+        FirebaseFirestore.instance.collection(Strings.COLLECTION_SUBSCRIPTIONS).add(subscription.toMap());
+        //maybe add a limitation in the security rules, or use cloud functions to users do not update the subscriptionLevel themselves.
+        //currentAppUser!.subscriptionLevel = 1;
+        //currentAppUser!.updateAppUserInFirestore(context);
+        return true;
+      }
+      return false;
+
     }
   }
 

@@ -17,8 +17,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyClients extends StatefulWidget {
 
+  Function(AppUser)? onTapUser;
+
   MyClients({
     Key? key,
+    this.onTapUser,
   }) : super(key: key);
 
   @override
@@ -90,9 +93,14 @@ class _MyClientsState extends State<MyClients> {
                             child: ClientCard(
                               client: client,
                               onTap: (){
-                                Navigator.pushNamed(context, RouteGenerator.CLIENT_PAGE, arguments: client).then((value){
-                                  _getClientsList();
-                                });
+                                if(widget.onTapUser != null){
+                                  widget.onTapUser!(client);
+                                }
+                                else{
+                                  Navigator.pushNamed(context, RouteGenerator.CLIENT_PAGE, arguments: client).then((value){
+                                    _getClientsList();
+                                  });
+                                }
                               },
                             ),
                           );

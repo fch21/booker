@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:booker/helper/necessary_subscription_levels.dart';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/user_firebase.dart';
 import 'package:booker/helper/utils.dart';
@@ -175,7 +176,7 @@ class AppointmentDetails {
     return;
   }
 
-  Future<bool> updateAppointmentDetailsInFirestore(BuildContext context) async {
+  Future<bool> updateAppointmentDetailsInFirestore(BuildContext context, {AppUser? client}) async {
     print("updateServiceProvidedInFirestore>>>");
 
     FirebaseFirestore db = FirebaseFirestore.instance;
@@ -184,11 +185,11 @@ class AppointmentDetails {
 
     try{
       if(id.isEmpty){
-        CollectionReference servicesProvided = db.collection(Strings.COLLECTION_APPOINTMENTS_DETAILS);
-        id = servicesProvided.doc().id;
+        CollectionReference appointmentsDetailsRef = db.collection(Strings.COLLECTION_APPOINTMENTS_DETAILS);
+        id = appointmentsDetailsRef.doc().id;
       }
-      if(userId.isEmpty) userId = UserFirebase.getCurrentUser()?.uid ?? "";
-      if(userId.isNotEmpty && serviceId.isNotEmpty && serviceProviderUserId.isNotEmpty){
+      if(userId.isEmpty) userId = client?.id ?? UserFirebase.getCurrentUser()?.uid ?? "";
+      if((userId.isNotEmpty || (client?.id.isEmpty ?? false)) && serviceId.isNotEmpty && serviceProviderUserId.isNotEmpty){
         await db.collection(Strings.COLLECTION_APPOINTMENTS_DETAILS).doc(id).set(toMap());
         await db.collection(Strings.COLLECTION_APPOINTMENTS_DETAILS_PUBLIC).doc(id).set(toMapPublic());
         result = true;
@@ -286,6 +287,14 @@ class AppointmentDetails {
       },
     );
 
+    print("useCancelAllMessage && confirmed = ${useCancelAllMessage && confirmed}");
+    if(useCancelAllMessage && confirmed){
+      bool canAccess = await Utils.showSubscriptionNeededDialogIfNecessary(context: context, subscriptionNeeded: NecessarySubscriptionLevels.CANCEL_ALL_APPOINTMENTS);
+      print("canAccess = ${canAccess}");
+      if(!canAccess) return false;
+    }
+
+
     if(showCancelAppointmentAddMessageDialog && context.mounted){
       String cancelMessage = "";
       if(isServiceProvider) {
@@ -339,11 +348,13 @@ class AppointmentDetails {
             ),
             TextButton(
               child: Text('Enviar'),
-              onPressed: () {
-                // Adicione a lógica para cancelar o agendamento
-                print("message = ${textEditingController.text}");
-                cancelMessage = textEditingController.text;
-                Navigator.of(context).pop();
+              onPressed: () async {
+                bool canAccess = await Utils.showSubscriptionNeededDialogIfNecessary(context: context, subscriptionNeeded: NecessarySubscriptionLevels.SEND_CANCELATION_MESSAGE);
+                if(canAccess){
+                  print("message = ${textEditingController.text}");
+                  cancelMessage = textEditingController.text;
+                  Navigator.of(context).pop();
+                }
               },
             ),
           ],

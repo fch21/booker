@@ -83,6 +83,25 @@ class ServiceProvided {
     return result;
   }
 
+  Future<bool> deleteServiceProvidedInFirestore(BuildContext context) async {
+    print("deleteServiceProvidedInFirestore>>>");
+
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
+    bool result = false;
+
+    try{
+      await db.collection(Strings.COLLECTION_SERVICES_PROVIDED).doc(id).delete();
+      result = true;
+    }
+    catch(e){
+      Utils.showSnackBar(context, "${AppLocalizations.of(context)!.error_updating_service_provided_message} $e");
+      result = false;
+    }
+
+    return result;
+  }
+
   static Future<List<ServiceProvided>> getServicesProvidedByUser(AppUser appUser) async {
     List<ServiceProvided> servicesProvidedList = [];
 

@@ -20,9 +20,10 @@ class EditProfileServiceProvider extends StatefulWidget {
 }
 
 class _EditProfileServiceProviderState extends State<EditProfileServiceProvider> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _userNameController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController(text: currentAppUser!.phone);
   Color _selectedColor = Colors.blue;
 
   bool _isLoading = false;
@@ -69,6 +70,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
     _nameController.text = currentAppUser!.name;
     _userNameController.text = currentAppUser!.userName;
     _descriptionController.text = currentAppUser!.description;
+    _phoneController.text = currentAppUser!.phone;
     _selectedColor = currentAppUser!.color;
   }
 
@@ -102,85 +104,105 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                   }
                 },
               ),
-              SizedBox(height: 12),
-              InputCustom(
-                label: 'Nome de usuário',
-                controller: _userNameController,
-                onSaved: (name){
-                  currentAppUser!.userName = name ?? "";
-                },
-                validator: (value) {
-                  if(value == "" || value == null ){
-                    return AppLocalizations.of(context)!.required_field;
-                  }
-                  else{
-                    if(!_userNameIsAvailable) return AppLocalizations.of(context)!.register_unavailable_user_name_message;
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: InputCustom(
+                  label: 'Nome de usuário',
+                  controller: _userNameController,
+                  onSaved: (name){
+                    currentAppUser!.userName = name ?? "";
+                  },
+                  validator: (value) {
+                    if(value == "" || value == null ){
+                      return AppLocalizations.of(context)!.required_field;
+                    }
+                    else{
+                      if(!_userNameIsAvailable) return AppLocalizations.of(context)!.register_unavailable_user_name_message;
+                      return null;
+                    }
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: InputCustom(
+                  label: 'Descrição',
+                  controller: _descriptionController,
+                  maxLength: 120,
+                  maxLines: 2,
+                  onSaved: (description){
+                    currentAppUser!.description = description ?? "";
+                  },
+                  validator: (value) {
                     return null;
-                  }
-                },
+                  },
+                ),
               ),
-              SizedBox(height: 12),
-              InputCustom(
-                label: 'Descrição',
-                controller: _descriptionController,
-                maxLength: 120,
-                maxLines: 2,
-                onSaved: (description){
-                  currentAppUser!.description = description ?? "";
-                },
-                validator: (value) {
-                  return null;
-                },
-              ),
-              SizedBox(height: 12),
-              InkWell(
-                onTap: () async {
-                  Color? color = await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return ColorPickerDialog(initialColor: _selectedColor);
-                    },
-                  );
-                  print("cor = $color");
-                  if (color != null) {
-                    Color resolvedColor = Utils.getNotTooLightColor(color);
-                    if(resolvedColor != color && mounted) Utils.showSnackBar(context, "A cor escolhida era muito clara. Ela foi ajustada para uma melhor visualização.");
-                    print("cor = $color");
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: InputCustom(
+                  label: 'Telefone',
+                  controller: _phoneController,
+                  readOnly: true,
+                  onTap: () async {
+                    await currentAppUser!.addPhoneNumberToUser(context);
                     setState(() {
-                      _selectedColor = resolvedColor;
-                      currentAppUser!.color = _selectedColor;
+                      _phoneController.text = currentAppUser!.phone;
                     });
-                  }
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text('Escolher Cor', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.65)),),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: _selectedColor,
-                            borderRadius: BorderRadius.circular(4.0),  // Bordas arredondadas
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: InkWell(
+                  onTap: () async {
+                    Color? color = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ColorPickerDialog(initialColor: _selectedColor);
+                      },
+                    );
+                    print("cor = $color");
+                    if (color != null) {
+                      Color resolvedColor = Utils.getNotTooLightColor(color);
+                      if(resolvedColor != color && mounted) Utils.showSnackBar(context, "A cor escolhida era muito clara. Ela foi ajustada para uma melhor visualização.");
+                      print("cor = $color");
+                      setState(() {
+                        _selectedColor = resolvedColor;
+                        currentAppUser!.color = _selectedColor;
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text('Escolher Cor', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.65)),),
                           ),
                         ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Icon(Icons.chevron_right, color: Colors.grey),
-                      ),
-                    ],
+                        Expanded(
+                          child: Container(
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: _selectedColor,
+                              borderRadius: BorderRadius.circular(4.0),  // Bordas arredondadas
+                            ),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Icon(Icons.chevron_right, color: Colors.grey),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

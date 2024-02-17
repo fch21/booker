@@ -13,6 +13,7 @@ import 'package:booker/views/calendar.dart';
 import 'package:booker/views/choice_of_service.dart';
 import 'package:booker/views/client_page.dart';
 import 'package:booker/views/configurations_home.dart';
+import 'package:booker/views/edit_profile_client.dart';
 import 'package:booker/views/edit_profile_service_provided.dart';
 import 'package:booker/views/login.dart';
 import 'package:booker/views/long_text.dart';
@@ -21,7 +22,7 @@ import 'package:booker/views/my_appointments.dart';
 import 'package:booker/views/my_clients.dart';
 import 'package:booker/views/presentation.dart';
 import 'package:booker/views/profile_service_provider.dart';
-import 'package:booker/views/profile_customer.dart';
+import 'package:booker/views/edit_profile_client.dart';
 import 'package:booker/views/register.dart';
 import 'package:booker/views/reset_password.dart';
 import 'package:booker/views/service_form.dart';
@@ -40,7 +41,7 @@ class RouteGenerator {
   static const String PRESENTATION = "/presentation";
   static const String WAITING_EMAIL_VERIFICATION = "/waiting_email_verification";
   static const String CONFIGURATIONS_HOME = "/configurations";
-  static const String PROFILE_CUSTOMER = "/profile_customer";
+  static const String EDIT_PROFILE_CLIENT = "/edit_profile_client";
   static const String PROFILE_SERVICE_PROVIDED = "/profile_service_provided";
   static const String EDIT_PROFILE_SERVICE_PROVIDED = "/edit_profile_service_provided";
   static const String CALENDAR = "/calendar";
@@ -109,8 +110,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => SubscriptionManagementPage());
       case PROFILE_SERVICE_PROVIDED:
         return MaterialPageRoute(builder: (_) => ProfileServiceProvider());
-      case PROFILE_CUSTOMER:
-        return MaterialPageRoute(builder: (_) => ProfileCustomer());
+      case EDIT_PROFILE_CLIENT:
+        return MaterialPageRoute(builder: (_) => EditProfileClient());
       case EDIT_PROFILE_SERVICE_PROVIDED:
         return MaterialPageRoute(builder: (_) => EditProfileServiceProvider());
       case CALENDAR:
@@ -147,9 +148,9 @@ class RouteGenerator {
       case LONG_TEXT:
         return MaterialPageRoute(builder: (_) => LongText(appBarTitle: (args as Map)["appBarTitle"] as String, title: args["title"] as String, content: args["content"] as String,));
       case CHOICE_OF_SERVICE:
-        return MaterialPageRoute(builder: (_) => ChoiceOfService(appUser: args as AppUser,));
+        return MaterialPageRoute(builder: (_) => ChoiceOfService(appUser: (args as Map)["user"] as AppUser, manuallyAddAppointment: (args["manually_add_appointment"] ?? false) as bool));
       case MAKE_AN_APPOINTMENT:
-        return MaterialPageRoute(builder: (_) => MakeAnAppointment(appUser: (args as Map)["user"] as AppUser, serviceProvided: args["serviceProvided"] as ServiceProvided,));
+        return MaterialPageRoute(builder: (_) => MakeAnAppointment(appUser: (args as Map)["user"] as AppUser, serviceProvided: args["serviceProvided"] as ServiceProvided, manuallyAddAppointment: (args["manually_add_appointment"] ?? false) as bool));
       case SERVICE_FORM:
         return MaterialPageRoute(builder: (_) => ServiceForm(serviceProvided: args as ServiceProvided?,));
       case AVAILABLE_SCHEDULE_FORM:

@@ -12,31 +12,62 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class ProfileCustomer extends StatefulWidget {
+class EditProfileClient extends StatefulWidget {
 
-  ProfileCustomer();
+  EditProfileClient();
 
   @override
-  _ProfileCustomerState createState() => _ProfileCustomerState();
+  _EditProfileClientState createState() => _EditProfileClientState();
 }
 
-class _ProfileCustomerState extends State<ProfileCustomer> {
+class _EditProfileClientState extends State<EditProfileClient> {
   final TextEditingController _nameController = TextEditingController(text: currentAppUser!.name);
+  final TextEditingController _emailController = TextEditingController(text: currentAppUser!.email);
+  final TextEditingController _phoneController = TextEditingController(text: currentAppUser!.phone);
 
   final _formKey = GlobalKey<FormState>();
+
+  Future<void> _mustHavePhoneNumberDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          content: const Text('Para se tornar um prestador de serviço, é necessário configurar um número de telefone.'),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Adicionar'),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await currentAppUser!.addPhoneNumberToUser(context);
+                setState(() {});
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return;
+  }
 
   void _createUserNameDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        final _userNameFormKey = GlobalKey<FormState>();
+        final userNameFormKey = GlobalKey<FormState>();
         TextEditingController userNameController = TextEditingController();
         bool userNameIsAvailable = false;
 
         return AlertDialog(
           title: Text('Criar nome de usuário:'),
           content: Form(
-            key: _userNameFormKey,
+            key: userNameFormKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -79,8 +110,8 @@ class _ProfileCustomerState extends State<ProfileCustomer> {
                 userNameIsAvailable = userNameIsAvailableResult;
                 //print("userNameIsAvailableResult = $userNameIsAvailableResult");
                 //print("userNameIsAvailable = $userNameIsAvailable");
-                if (_userNameFormKey.currentState?.validate() ?? false) {
-                  _userNameFormKey.currentState?.save(); //saves the userName
+                if (userNameFormKey.currentState?.validate() ?? false) {
+                  userNameFormKey.currentState?.save(); //saves the userName
                   currentAppUser!.isServiceProvider = true;
                   currentAppUser!.updateAppUserInFirestore(context);
                   Navigator.of(context).pop();
@@ -136,26 +167,44 @@ class _ProfileCustomerState extends State<ProfileCustomer> {
                 },
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 32.0),
+                padding: const EdgeInsets.only(top: 16.0),
                 child: ButtonCustom(
                   onPressed: _validateFields,
-                  text: 'Salvar mudanças',
+                  text: 'Salvar nome',
                 ),
               ),
-              const CustomDivider(),
-              const Padding(
-                  padding: EdgeInsets.only(top: 32.0),
-                  child: Center(child: Text("Quer receber notificações por Whatsapp?", style: textStyleMediumNormal,))
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 32.0),
-                child: ButtonCustom(
-                  onPressed: (){
-                    currentAppUser!.addPhoneNumberToUser(context);
-                  },
-                  text: 'Adicionar número de telefone',
+              if(currentAppUser!.phone.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 32.0),
+                  child: InputCustom(
+                    label: 'Telefone',
+                    controller: _phoneController,
+                    readOnly: true,
+                    onTap: () async {
+                      await currentAppUser!.addPhoneNumberToUser(context);
+                      setState(() {
+                        _phoneController.text = currentAppUser!.phone;
+                      });
+                    },
+                  ),
                 ),
-              ),
+              if(currentAppUser!.phone.isEmpty)
+                const CustomDivider(),
+              if(currentAppUser!.phone.isEmpty)
+                const Padding(
+                    padding: EdgeInsets.only(top: 32.0),
+                    child: Center(child: Text("Quer receber notificações por Whatsapp?", style: textStyleMediumNormal,))
+                ),
+              if(currentAppUser!.phone.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 32.0),
+                  child: ButtonCustom(
+                    onPressed: (){
+                      currentAppUser!.addPhoneNumberToUser(context);
+                    },
+                    text: 'Adicionar número de telefone',
+                  ),
+                ),
               const CustomDivider(),
               const Padding(
                 padding: EdgeInsets.only(top: 32.0),
@@ -165,7 +214,12 @@ class _ProfileCustomerState extends State<ProfileCustomer> {
                 padding: const EdgeInsets.only(top: 32.0),
                 child: ButtonCustom(
                   onPressed: (){
-                    _createUserNameDialog(context);
+                    if(currentAppUser!.phone.isNotEmpty){
+                      _createUserNameDialog(context);
+                    }
+                    else{
+                      _mustHavePhoneNumberDialog();
+                    }
                   },
                   text: 'Quero ser prestador de serviço',
                 ),

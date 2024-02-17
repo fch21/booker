@@ -40,13 +40,13 @@ class Strings {
   static const String USER_URL_PROFILE_BG_IMAGE = "url_profile_bg_image";
   static const String USER_TOKENS = "tokens";
   static const String USER_COLOR = "color";
-  static const String USER_SUBSCRIPTION_LEVEL = "subscription_level";
+  static const String USER_SUBSCRIPTION_ID = "subscription_id";
 
   static const String USER_IS_SERVICE_PROVIDER = "is_service_provider";
   static const String USER_BLOCKED_CLIENTS_IDS = "blocked_clients_ids";
   static const String USER_AVAILABILITY_MAP = "availability_map";
 
-  //strings Service Category
+  //strings Service
   static const String SERVICE_ID = "id";
   static const String SERVICE_USER_ID = "user_id";
   static const String SERVICE_NAME = "name";
@@ -55,9 +55,25 @@ class Strings {
   static const String SERVICE_PRICE = "price";
   static const String SERVICE_COLOR = "color";
 
+  static const String SUBSCRIPTION_ID = "id";
+  static const String SUBSCRIPTION_USER_ID = "user_id";
+  static const String SUBSCRIPTION_PAYMENT_METHOD_ID = "payment_method_id";
+  static const String SUBSCRIPTION_DISCOUNT_CODE_ID = "discount_code_id";
+  static const String SUBSCRIPTION_STATUS = "status";
+
+  static const String DISCOUNT_CODE_ID = "id";
+  static const String DISCOUNT_CODE_SALES_REP_ID = "sales_rep_id";
+  static const String DISCOUNT_CODE_CODE = "code";
+  static const String DISCOUNT_CODE_DISCOUNT_PERCENTAGE = "discount_percentage";
+  static const String DISCOUNT_CODE_STATUS = "status";
+
+  static const String SALES_REP_ID = "id";
+  static const String SALES_REP_NAME = "name";
+  static const String SALES_REP_NUMBER_OF_CLIENTS = "number_of_clients";
 
 
-  //Drink Unit
+
+  //Appointment
   static const String APPOINTMENT_ID = "id";
   static const String APPOINTMENT_USER_NAME = "user_name";
   static const String APPOINTMENT_SERVICE_PROVIDER_NAME = "service_provider_name";
@@ -79,6 +95,7 @@ class Strings {
   static const String APPOINTMENT_IS_ALL_DAY = "is_all_day";
   static const String APPOINTMENT_REMINDER_SENT = "reminder_sent";
 
+  //
 
   static const String STRIPE_MAP_AMOUNT = "amount";
   static const String STRIPE_MAP_CURRENCY = "currency";
@@ -116,6 +133,9 @@ class Strings {
 
   //Firestore
   static const String COLLECTION_USERS = "users";
+  static const String COLLECTION_SUBSCRIPTIONS = "subscriptions";
+  static const String COLLECTION_DISCOUNT_CODES = "discount_codes";
+  static const String COLLECTION_SALES_REPS = "sales_reps";
   static const String COLLECTION_CLIENTS = "clients";
   static const String COLLECTION_USERS_PUBLIC = "users_public";
   static const String COLLECTION_SERVICES_PROVIDED = "services_provided";
