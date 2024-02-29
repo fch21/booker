@@ -1,3 +1,8 @@
+class Consts{
+  //premium subscription price
+  static const double SUBSCRIPTION_PRICE = 9.99;
+}
+
 class Strings {
 
   static const List<String> WEEK_DAYS = ['Dom','Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb',];
@@ -7,8 +12,10 @@ class Strings {
   static const String BOOKER_INSTAGRAM_LINK = "https://instagram.com/app.booker";
 
   //Stripe
-  static const String STRIPE_TEST_PUBLISHABLE_KEY = "pk_test_51N1eo7AP3Df2AKXCoAuo8wFeOZ7vHChGB1Q74v4bxyXsHhod4tEhIbnwsFtgO3bdqvmPAUjVY3mfoOfrPYTv9ilH00tDrRrMgN";
-  static const String STRIPE_LIVE_PUBLISHABLE_KEY = "pk_live_51N1eo7AP3Df2AKXCkOZSYNo7wivBmQsczpHcrBxxzZ1Rrdzsgok8g3nien2iwpqkfKB6opRfCNpPb2kVSVa9olBo008KUMiRE6";
+  //test
+  static const String STRIPE_PUBLISHABLE_KEY = "pk_test_51OmofUAnghrwvGGzW6bDqfKqZr9ztV0KcyZ5kpP5yqw5Y1dpA4y4uCgtKpIQTul9io9YtCIqobKYlzgXENYZxXat00TiOHKMaa";
+  //live
+  //static const String STRIPE_PUBLISHABLE_KEY = "pk_live_51OmofUAnghrwvGGz1lBeZQnetZC0BcxeOJUHKMk17BsgZX1GDviRYFG9cvVwIICAN4XQZ8hGjAXfSbuRG0B3t7YO00bHtPXe5p";
 
   //languages
   static const String ENGLISH = "English";
@@ -40,9 +47,10 @@ class Strings {
   static const String USER_URL_PROFILE_BG_IMAGE = "url_profile_bg_image";
   static const String USER_TOKENS = "tokens";
   static const String USER_COLOR = "color";
-  static const String USER_SUBSCRIPTION_ID = "subscription_id";
+  //static const String USER_SUBSCRIPTION_ID = "subscription_id";
 
   static const String USER_IS_SERVICE_PROVIDER = "is_service_provider";
+  static const String USER_HAS_ACTIVE_SUBSCRIPTION = "has_active_subscription";
   static const String USER_BLOCKED_CLIENTS_IDS = "blocked_clients_ids";
   static const String USER_AVAILABILITY_MAP = "availability_map";
 
@@ -60,12 +68,16 @@ class Strings {
   static const String SUBSCRIPTION_PAYMENT_METHOD_ID = "payment_method_id";
   static const String SUBSCRIPTION_DISCOUNT_CODE_ID = "discount_code_id";
   static const String SUBSCRIPTION_STATUS = "status";
+  static const String SUBSCRIPTION_CREATION_DATE = "creation_date";
+  static const String SUBSCRIPTION_NEXT_RENEWAL_DATE = "next_renewal_date";
 
   static const String DISCOUNT_CODE_ID = "id";
   static const String DISCOUNT_CODE_SALES_REP_ID = "sales_rep_id";
   static const String DISCOUNT_CODE_CODE = "code";
   static const String DISCOUNT_CODE_DISCOUNT_PERCENTAGE = "discount_percentage";
   static const String DISCOUNT_CODE_STATUS = "status";
+  static const String DISCOUNT_CODE_DURATION = "duration";
+  static const String DISCOUNT_CODE_DURATION_UNIT = "duration_unit";
 
   static const String SALES_REP_ID = "id";
   static const String SALES_REP_NAME = "name";
@@ -104,6 +116,7 @@ class Strings {
   static const String STRIPE_MAP_USER_EMAIL = "user_email";
   static const String STRIPE_MAP_CUSTOMER_ID = "customer_id";
   static const String STRIPE_MAP_PAYMENT_METHOD_ID = "payment_method_id";
+  static const String STRIPE_MAP_PROMOTION_CODE = "promotion_code";
   static const String STRIPE_MAP_CARD_DETAILS = "card_details";
 
   static const String STRIPE_CURRENCY_BRL = "brl";
@@ -147,17 +160,21 @@ class Strings {
   static const String HTTPS_LINK_VALIDATE_DRINK_UNIT = "https://us-central1-drinqr-context"".cloudfunctions.net/validateDrinkUnit";
   //static const String HTTPS_LINK_STRIPE_PAYMENT_AUTOMATIC = "https://us-central1-drinqr-context"".cloudfunctions.net/stripePaymentAutomatic";
   //static const String HTTPS_LINK_STRIPE_PAYMENT_MANUAL = "https://us-central1-drinqr-context"".cloudfunctions.net/stripePaymentManual";
-  static const String HTTPS_LINK_GET_STRIPE_CONNECT_ACCOUNT_LOGIN_LINK = "https://us-central1-drinqr-context"".cloudfunctions.net/getStripeConnectAccountLoginLink";
-  static const String HTTPS_LINK_GET_STRIPE_ACCOUNT_STATUS = "https://us-central1-drinqr-context"".cloudfunctions.net/getStripeAccountStatus";
-  static const String HTTPS_LINK_GET_STRIPE_ACCOUNT_PENDING_BALANCE = "https://us-central1-drinqr-context"".cloudfunctions.net/getStripeAccountPendingBalance";
-  static const String HTTPS_LINK_CREATE_STRIPE_CONNECTED_ACCOUNT = "https://us-central1-drinqr-context"".cloudfunctions.net/createStripeConnectedAccount";
+  //static const String HTTPS_LINK_GET_STRIPE_CONNECT_ACCOUNT_LOGIN_LINK = "https://us-central1-drinqr-context"".cloudfunctions.net/getStripeConnectAccountLoginLink";
+  //static const String HTTPS_LINK_GET_STRIPE_ACCOUNT_STATUS = "https://us-central1-drinqr-context"".cloudfunctions.net/getStripeAccountStatus";
+  //static const String HTTPS_LINK_GET_STRIPE_ACCOUNT_PENDING_BALANCE = "https://us-central1-drinqr-context"".cloudfunctions.net/getStripeAccountPendingBalance";
+  //static const String HTTPS_LINK_CREATE_STRIPE_CONNECTED_ACCOUNT = "https://us-central1-drinqr-context"".cloudfunctions.net/createStripeConnectedAccount";
   //static const String HTTPS_LINK_ATTACH_PAYMENT_METHOD_TO_CUSTOMER = "https://us-central1-drinqr-context"".cloudfunctions.net/attachPaymentMethodToCustomer";
-  static const String HTTPS_LINK_DETACH_PAYMENT_METHOD_FROM_CUSTOMER = "https://us-central1-drinqr-context"".cloudfunctions.net/detachPaymentMethodFromCustomer";
-  static const String HTTPS_LINK_CREATE_SETUP_INTENT = "https://us-central1-drinqr-context"".cloudfunctions.net/createSetupIntent";
+  //static const String HTTPS_LINK_DETACH_PAYMENT_METHOD_FROM_CUSTOMER = "https://us-central1-booker-context.cloudfunctions.net/detachPaymentMethodFromCustomer";
+  static const String HTTPS_LINK_GET_COUPON_FROM_PROMOTION_CODE = "https://us-central1-booker-context.cloudfunctions.net/getCouponFromPromotionCode";
+  static const String HTTPS_LINK_CREATE_SUBSCRIPTION_FOR_CUSTOMER = "https://us-central1-booker-context.cloudfunctions.net/createSubscriptionForCustomer";
+  static const String HTTPS_LINK_GET_CUSTOMER_SUBSCRIPTION = "https://us-central1-booker-context.cloudfunctions.net/getCustomerSubscription";
+  static const String HTTPS_LINK_CANCEL_CUSTOMER_SUBSCRIPTION = "https://us-central1-booker-context.cloudfunctions.net/cancelCustomerSubscription";
+  static const String HTTPS_LINK_CREATE_SETUP_INTENT = "https://us-central1-booker-context.cloudfunctions.net/createSetupIntent";
   //static const String HTTPS_LINK_CHARGE_CARD_OFF_SESSION = "https://us-central1-drinqr-context"".cloudfunctions.net/chargeCardOffSession";
-  static const String HTTPS_LINK_GET_CUSTOMER_PAYMENT_METHODS = "https://us-central1-drinqr-context"".cloudfunctions.net/getCustomerPaymentMethods";
-  static const String HTTPS_LINK_GET_CUSTOMER_PAYMENT_INTENTS = "https://us-central1-drinqr-context"".cloudfunctions.net/getCustomerPaymentIntents";
-  static const String HTTPS_LINK_GET_USER_BY_EMAIL = "https://us-central1-drinqr-context"".cloudfunctions.net/getUserByEmail";
+  static const String HTTPS_LINK_GET_CUSTOMER_PAYMENT_METHODS = "https://us-central1-booker-context.cloudfunctions.net/getCustomerPaymentMethods";
+  static const String HTTPS_LINK_GET_CUSTOMER_PAYMENT_INTENTS = "https://us-central1-booker-context.cloudfunctions.net/getCustomerPaymentIntents";
+  //static const String HTTPS_LINK_GET_USER_BY_EMAIL = "https://us-central1-drinqr-context"".cloudfunctions.net/getUserByEmail";
 
 
   static const String TERMS_OF_USE = '''

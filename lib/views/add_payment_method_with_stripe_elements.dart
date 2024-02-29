@@ -95,7 +95,7 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
     </div>
   </form>
   <script>
-  var stripe = Stripe('${Strings.STRIPE_LIVE_PUBLISHABLE_KEY}');
+  var stripe = Stripe('${Strings.STRIPE_PUBLISHABLE_KEY}');
     
     const options = {
       clientSecret: '$clientSecret',

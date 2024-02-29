@@ -1,5 +1,6 @@
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
@@ -74,7 +75,7 @@ class _ClientCardState extends State<ClientCard> {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text('Último agendamento: ${lastAppointmentDetails == null
                     ? "Carregando..."
-                    : AppointmentDetails.formatDateTimeToVisualize(lastAppointmentDetails!.from)}',
+                    : Utils.formatDateTimeToVisualize(lastAppointmentDetails!.from)}',
                   style: const TextStyle(fontSize: fontSizeSmall),),
               ),
             ],

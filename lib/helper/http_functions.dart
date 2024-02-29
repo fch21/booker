@@ -14,10 +14,11 @@ class HttpFunctions {
 
        if(uri != null){
          final reqBody = json.encode(requestMap);
-         //print('reqBody = ${reqBody}');
+         print('uri = ${uri}');
+         print('reqBody = ${reqBody}');
          //print('reqBidTokenody = ${idToken}');
          final response = await http.post(uri,
-             headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $idToken'},
+             headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $idToken', },
              body: reqBody);
 
          //print('response.body = ${response.body}');

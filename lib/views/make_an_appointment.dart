@@ -52,11 +52,6 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     return dateTimeFormatted;
   }
 
-  DateTime getDateTimeSimplified(DateTime dateTime){
-    DateTime dateTimeSimplified = DateTime(dateTime.year, dateTime.month, dateTime.day);
-    return dateTimeSimplified;
-  }
-
   String _getWeekDay(DateTime date) {
     // Dart 'weekday' dá 1 para Segunda-feira, 2 para Terça-feira e assim por diante.
     // Por isso vamos realizar o resto da divisao por 7 para fazer com que domingo (7) seja 0, segunda (1) seja 1...
@@ -66,8 +61,8 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
   // Function to get made appointments for a specific day
   Future<List<AppointmentDetails>> _getAppointmentsMade(DateTime dateTime) async {
     //print("_getAppointmentsMade >>>>>>");
-    DateTime simplifiedDateTime = getDateTimeSimplified(dateTime);
-    String dayDateTimeString = AppointmentDetails.dateFormat.format(simplifiedDateTime);
+    DateTime simplifiedDateTime = Utils.getDateTimeSimplified(dateTime);
+    String dayDateTimeString = Utils.dateFormatForOrdering.format(simplifiedDateTime);
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS_PUBLIC)
@@ -208,7 +203,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       appointmentDetails.userName = client.name;
       appointmentDetails.serviceProviderName = widget.appUser.name;
       appointmentDetails.serviceName = widget.serviceProvided.name;
-      appointmentDetails.day = getDateTimeSimplified(selectedDateTime!);
+      appointmentDetails.day = Utils.getDateTimeSimplified(selectedDateTime!);
       appointmentDetails.from = startingDateTime;
       appointmentDetails.to = startingDateTime.add(widget.serviceProvided.duration);
 

@@ -20,12 +20,12 @@ class Login extends StatefulWidget {
 
 class LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  //TextEditingController _controllerEmail = TextEditingController(text: "fccmansur@gmail.com");
+  TextEditingController _controllerEmail = TextEditingController(text: "fccmansur@gmail.com");
   //TextEditingController _controllerEmail = TextEditingController(text: "contact.context.development@gmail.com");
-  final TextEditingController _controllerEmail = TextEditingController(text: "");
+  //final TextEditingController _controllerEmail = TextEditingController(text: "");
   //TextEditingController _controllerPassword = TextEditingController(text: "123456");
-  //TextEditingController _controllerPassword = TextEditingController(text: "Ff123456");
-  final TextEditingController _controllerPassword = TextEditingController(text: "");
+  TextEditingController _controllerPassword = TextEditingController(text: "Ff123456");
+  //final TextEditingController _controllerPassword = TextEditingController(text: "");
   //String _errorMessage = "";
   //bool _isLoading = true;
   bool _isLoading = false;

@@ -51,9 +51,6 @@ class AppointmentDetailsDataSource extends CalendarDataSource {
 
 class AppointmentDetails {
 
-  static DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
-  static DateFormat dateFormatVisualize = DateFormat('dd/MM/yyyy HH:mm');
-
   String id = "";
   String userName = "";
   String serviceProviderName = "";
@@ -90,9 +87,9 @@ class AppointmentDetails {
       Strings.APPOINTMENT_STATUS: status,
       Strings.APPOINTMENT_CANCELED_BY: canceledBy,
       Strings.APPOINTMENT_CANCEL_MESSAGE: cancelMessage,
-      Strings.APPOINTMENT_DAY: dateFormat.format(day),
-      Strings.APPOINTMENT_FROM: dateFormat.format(from),
-      Strings.APPOINTMENT_TO: dateFormat.format(to),
+      Strings.APPOINTMENT_DAY: Utils.dateFormatForOrdering.format(day),
+      Strings.APPOINTMENT_FROM: Utils.dateFormatForOrdering.format(from),
+      Strings.APPOINTMENT_TO: Utils.dateFormatForOrdering.format(to),
       Strings.APPOINTMENT_REMINDER_SENT: reminderSent,
       Strings.APPOINTMENT_IS_ALL_DAY: isAllDay,
     };
@@ -108,9 +105,9 @@ class AppointmentDetails {
       Strings.APPOINTMENT_STATUS: status,
       Strings.APPOINTMENT_CANCELED_BY: canceledBy,
       Strings.APPOINTMENT_CANCEL_MESSAGE: cancelMessage,
-      Strings.APPOINTMENT_DAY: dateFormat.format(day),
-      Strings.APPOINTMENT_FROM: dateFormat.format(from),
-      Strings.APPOINTMENT_TO: dateFormat.format(to),
+      Strings.APPOINTMENT_DAY: Utils.dateFormatForOrdering.format(day),
+      Strings.APPOINTMENT_FROM: Utils.dateFormatForOrdering.format(from),
+      Strings.APPOINTMENT_TO: Utils.dateFormatForOrdering.format(to),
       Strings.APPOINTMENT_IS_ALL_DAY: isAllDay,
     };
 
@@ -132,9 +129,9 @@ class AppointmentDetails {
       //day = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
       //from = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
       //to = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ??  Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
-      day = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? "");
-      from = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? "");
-      to = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ?? "");
+      day = Utils.dateFormatForOrdering.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? "");
+      from = Utils.dateFormatForOrdering.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? "");
+      to = Utils.dateFormatForOrdering.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ?? "");
       reminderSent = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_REMINDER_SENT] ?? false;
       isAllDay = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_IS_ALL_DAY] ?? false;
     }
@@ -151,9 +148,9 @@ class AppointmentDetails {
       //day = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
       //from = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
       //to = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ??  Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
-      day = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? "");
-      from = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? "");
-      to = dateFormat.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ?? "");
+      day = Utils.dateFormatForOrdering.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? "");
+      from = Utils.dateFormatForOrdering.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? "");
+      to = Utils.dateFormatForOrdering.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ?? "");
       isAllDay = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_IS_ALL_DAY] ?? false;
     }
   }
@@ -206,15 +203,7 @@ class AppointmentDetails {
     return result;
   }
 
-  static String formatDateTime(DateTime dateTime) {
-    final DateFormat formatter = dateFormat;
-    return formatter.format(dateTime);
-  }
 
-  static String formatDateTimeToVisualize(DateTime dateTime) {
-    final DateFormat formatter = dateFormatVisualize;
-    return formatter.format(dateTime).replaceAll(" ", " às ");
-  }
 
   static Future<List<AppointmentDetails>> getClientAppointmentDetails({required AppUser appUser}) async {
     return getUserAppointmentDetails(appUser: appUser, client: true);
@@ -316,6 +305,7 @@ class AppointmentDetails {
     String cancelMessage = "";
 
     await showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
 
@@ -331,7 +321,7 @@ class AppointmentDetails {
                 padding: const EdgeInsets.only(top: 16.0),
                 child: InputCustom(
                   label: "",
-                  maxLines: 5,
+                  maxLines: 4,
                   maxLength: 500,
                   controller: textEditingController,
                 ),

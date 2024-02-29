@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/main.dart';
-import 'package:booker/models/discount_code.dart';
-import 'package:booker/models/subscription.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'dart:html' as html;
 
@@ -150,7 +148,8 @@ class Utils {
   }
 
   static bool checkIfUserCanAccess({required bool subscriptionNeeded}){
-    if(!subscriptionNeeded || (currentAppUser!.subscriptionId.isNotEmpty)){
+    //if(!subscriptionNeeded || (currentAppUser!.subscriptionId.isNotEmpty)){
+    if(!subscriptionNeeded || (currentAppUser!.hasActiveSubscription)){
       return true;
     }
     return false;
@@ -186,7 +185,7 @@ class Utils {
           );
         },
       );
-      if(context.mounted && goToSubscriptionsPage) await  Navigator.pushNamed(context, RouteGenerator.SUBSCRIPTIONS_MANAGEMENT);
+      if(context.mounted && goToSubscriptionsPage) await  Navigator.pushNamed(context, RouteGenerator.SUBSCRIPTION_MANAGEMENT);
     }
     return userCanAccess;
   }
@@ -205,37 +204,28 @@ class Utils {
     }
   }
 
-  static Future<bool> verifyDiscountCode({required BuildContext context, required String code}) async {
+  static DateFormat dateFormatForOrdering = DateFormat('yyyy-MM-dd HH:mm');
+  static DateFormat dateFormatForVisualization = DateFormat('dd/MM/yyyy HH:mm');
 
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection(Strings.COLLECTION_DISCOUNT_CODES)
-        .where(Strings.DISCOUNT_CODE_CODE, isEqualTo: code)
-        .get();
+  static String formatDateTimeToOrder(DateTime dateTime) {
+    final DateFormat formatter = dateFormatForOrdering;
+    return formatter.format(dateTime);
+  }
 
-    if(querySnapshot.docs.isEmpty){
-      return false;
+  static String formatDateTimeToVisualize(DateTime dateTime, {bool onlyDate = false}) {
+    final DateFormat formatter = dateFormatForVisualization;
+    String dateTimeString = formatter.format(dateTime);
+    if(!onlyDate){
+      return dateTimeString.replaceAll(" ", " às ");
     }
-    else if(querySnapshot.docs.length > 1){
-      return false;
+    else{
+      return dateTimeString.substring(0, 10);
     }
-    else { //only one doc
-      DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
-      DiscountCode discountCode = DiscountCode.fromDocumentSnapshot(documentSnapshot);
+  }
 
-      if(discountCode.status == "valid"){
-        Subscription subscription = Subscription();
-        subscription.userId =  currentAppUser!.id;
-        subscription.discountCodeId = discountCode.code;
-
-        FirebaseFirestore.instance.collection(Strings.COLLECTION_SUBSCRIPTIONS).add(subscription.toMap());
-        //maybe add a limitation in the security rules, or use cloud functions to users do not update the subscriptionLevel themselves.
-        //currentAppUser!.subscriptionLevel = 1;
-        //currentAppUser!.updateAppUserInFirestore(context);
-        return true;
-      }
-      return false;
-
-    }
+  static DateTime getDateTimeSimplified(DateTime dateTime){
+    DateTime dateTimeSimplified = DateTime(dateTime.year, dateTime.month, dateTime.day);
+    return dateTimeSimplified;
   }
 
 }

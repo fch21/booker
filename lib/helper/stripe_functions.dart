@@ -4,6 +4,8 @@ import 'package:booker/helper/http_functions.dart';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/user_firebase.dart';
 import 'package:booker/models/app_user.dart';
+import 'package:booker/models/coupon.dart';
+import 'package:booker/models/subscription.dart';
 //import 'package:js/js_util.dart';
 //import 'package:pay/pay.dart' as pay;
 //import 'package:drinqr/main.dart';
@@ -168,6 +170,7 @@ class StripeFunctions {
   static Future<Map<String, dynamic>?> fetchSetupIntent() async {
     print("fetchSetupIntent>>>>> ");
     Map<String, dynamic>? responseBody = await HttpFunctions.getResponseMap(url: Strings.HTTPS_LINK_CREATE_SETUP_INTENT, requestMap: {});
+    print("responseBody = $responseBody ");
     return responseBody;
   }
 
@@ -291,6 +294,7 @@ class StripeFunctions {
 
  */
 
+  /*
   static Future<void> detachCardFromCustomer({
     required AppUser user,
     required String paymentMethodId
@@ -313,8 +317,9 @@ class StripeFunctions {
         return;
       }
     }
-
+    return;
   }
+   */
 
   static Future<List> getCustomerPaymentMethods({
     required String userId,
@@ -368,6 +373,96 @@ class StripeFunctions {
     }
     print(Strings.STRIPE_HTTP_RESPONSE_UNKNOWN_ERROR);
     return [];
+  }
+
+  static Future<Subscription?> getCustomerSubscription() async {
+
+    final requestMap = {};
+
+    Map<String, dynamic>? responseBody = await HttpFunctions.getResponseMap(url: Strings.HTTPS_LINK_GET_CUSTOMER_SUBSCRIPTION, requestMap: requestMap);
+
+    if(responseBody != null){
+      if(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS].toString().contains(Strings.STRIPE_HTTP_RESPONSE_ERROR)){
+        print(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS]);
+        return null;
+      }
+      else{
+        print(responseBody);
+        Subscription subscription = Subscription.fromStripeJson(responseBody);
+        return subscription;
+      }
+    }
+
+    return null;
+  }
+
+  static Future<bool> cancelCustomerSubscription() async {
+
+    final requestMap = {};
+
+    Map<String, dynamic>? responseBody = await HttpFunctions.getResponseMap(url: Strings.HTTPS_LINK_CANCEL_CUSTOMER_SUBSCRIPTION, requestMap: requestMap);
+
+    if(responseBody != null){
+      if(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS].toString().contains(Strings.STRIPE_HTTP_RESPONSE_ERROR)){
+        print(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS]);
+        return false;
+      }
+      else{
+        print(responseBody);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  static Future<Coupon?> getCouponFromPromotionCode({
+    String? promotionCode,
+  }) async {
+
+    final requestMap = {
+      Strings.STRIPE_MAP_PROMOTION_CODE: promotionCode,
+    };
+
+    Map<String, dynamic>? responseBody = await HttpFunctions.getResponseMap(url: Strings.HTTPS_LINK_GET_COUPON_FROM_PROMOTION_CODE, requestMap: requestMap);
+
+    if(responseBody != null){
+      if(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS].toString().contains(Strings.STRIPE_HTTP_RESPONSE_ERROR)){
+        print(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS]);
+        return null;
+      }
+      else{
+        print(responseBody);
+        Coupon promotionCode = Coupon.fromStripeJson(responseBody);
+        return promotionCode;
+      }
+    }
+
+    return null;
+  }
+
+  static Future<bool> createSubscriptionForCustomer({
+    String? promotionCode,
+  }) async {
+
+    final requestMap = {
+      Strings.STRIPE_MAP_PROMOTION_CODE: promotionCode,
+    };
+
+    Map<String, dynamic>? responseBody = await HttpFunctions.getResponseMap(url: Strings.HTTPS_LINK_CREATE_SUBSCRIPTION_FOR_CUSTOMER, requestMap: requestMap);
+
+    if(responseBody != null){
+      if(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS].toString().contains(Strings.STRIPE_HTTP_RESPONSE_ERROR)){
+        print(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS]);
+        return false;
+      }
+      else{
+        print(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS]);
+        return true;
+      }
+    }
+
+    return false;
   }
 
 }

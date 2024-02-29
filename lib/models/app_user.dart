@@ -26,9 +26,10 @@ class AppUser {
   String urlProfileUserImage = "";
   String urlProfileBgImage = "";
   Color color = Colors.white;
-  String subscriptionId = "";
+  //String subscriptionId = "";
 
   bool isServiceProvider = false;
+  bool hasActiveSubscription = false;
   Map<String, dynamic> availabilityMap = {};
   List blockedClientsIds = [];
 
@@ -50,7 +51,7 @@ class AppUser {
     copy.urlProfileUserImage = urlProfileUserImage;
     copy.urlProfileBgImage = urlProfileBgImage;
     copy.color = color;
-    copy.subscriptionId = subscriptionId;
+    //copy.subscriptionId = subscriptionId;
 
     return copy;
   }
@@ -106,9 +107,10 @@ class AppUser {
       Strings.USER_URL_PROFILE_USER_IMAGE: urlProfileUserImage,
       Strings.USER_URL_PROFILE_BG_IMAGE: urlProfileBgImage,
       Strings.USER_COLOR: color.value,
-      Strings.USER_SUBSCRIPTION_ID: subscriptionId,
+      //Strings.USER_SUBSCRIPTION_ID: subscriptionId,
 
       Strings.USER_IS_SERVICE_PROVIDER: isServiceProvider,
+      Strings.USER_HAS_ACTIVE_SUBSCRIPTION: hasActiveSubscription,
       Strings.USER_BLOCKED_CLIENTS_IDS: blockedClientsIds,
       Strings.USER_AVAILABILITY_MAP: convertAvailabilityMapToMap(),
     };
@@ -168,9 +170,10 @@ class AppUser {
       urlProfileUserImage = data[Strings.USER_URL_PROFILE_USER_IMAGE] ?? "";
       urlProfileBgImage = data[Strings.USER_URL_PROFILE_BG_IMAGE] ?? "";
       color = Color((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_COLOR] ?? Colors.white.value);
-      subscriptionId = data[Strings.USER_SUBSCRIPTION_ID] ?? "";
+      //subscriptionId = data[Strings.USER_SUBSCRIPTION_ID] ?? "";
 
       isServiceProvider = data[Strings.USER_IS_SERVICE_PROVIDER] ?? false;
+      hasActiveSubscription = data[Strings.USER_HAS_ACTIVE_SUBSCRIPTION] ?? false;
       blockedClientsIds = data[Strings.USER_BLOCKED_CLIENTS_IDS] ?? [];
       //availabilityMap = (documentSnapshot.data() as Map<String, dynamic>)[Strings.USER_AVAILABILITY_MAP] ?? {};
       convertMapToAvailabilityMap(data[Strings.USER_AVAILABILITY_MAP] as Map<String, dynamic>?);

@@ -48,7 +48,7 @@ class RouteGenerator {
   static const String PROFILE_CONFIGURATIONS = "/profile_configurations";
   static const String LANGUAGE_CONFIGURATIONS = "/language_configurations";
   //static const String PAYMENT_CONFIGURATIONS = "/payment_configurations";
-  static const String SUBSCRIPTIONS_MANAGEMENT = "/subscriptions_management";
+  static const String SUBSCRIPTION_MANAGEMENT = "/subscription_management";
   static const String USER_PAYMENT_METHODS = "/user_payment_methods";
   static const String PAYMENT_SCREEN = "/payment_screen";
   static const String CREDIT_CARDS = "/credit_cards";
@@ -106,7 +106,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => WaitingEmailVerification(args as AppUser));
       case CONFIGURATIONS_HOME:
         return MaterialPageRoute(builder: (_) => ConfigurationsHome());
-      case SUBSCRIPTIONS_MANAGEMENT:
+      case SUBSCRIPTION_MANAGEMENT:
         return MaterialPageRoute(builder: (_) => SubscriptionManagementPage());
       case PROFILE_SERVICE_PROVIDED:
         return MaterialPageRoute(builder: (_) => ProfileServiceProvider());
@@ -141,9 +141,6 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => CreditCards(args as AppUser));
       case ADD_CREDIT_CARD:
         return MaterialPageRoute(builder: (_) => AddCreditCard(args as AppUser));
-      case ADD_PAYMENT_METHOD_WITH_STRIPE_ELEMENTS:
-        return MaterialPageRoute(builder: (_) => const AddPaymentMethodWithStripeElements());
-
          */
       case LONG_TEXT:
         return MaterialPageRoute(builder: (_) => LongText(appBarTitle: (args as Map)["appBarTitle"] as String, title: args["title"] as String, content: args["content"] as String,));

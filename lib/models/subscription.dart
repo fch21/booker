@@ -2,64 +2,50 @@ import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/user_firebase.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/models/app_user.dart';
+import 'package:booker/models/coupon.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Subscription {
   String id = "";
-  String userId = "";
-  String paymentMethodId = "";
-  String discountCodeId = "";
+  DateTime creationDate = DateTime.now();
+  List<String> planIds = [];
   String status = "";
+  DateTime currentPeriodStart = DateTime.now();
+  DateTime currentPeriodEnd = DateTime.now();
+  Coupon? coupon;
 
   Subscription();
 
-  Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = {
-      Strings.SUBSCRIPTION_ID: id,
-      Strings.SUBSCRIPTION_USER_ID: userId,
-      Strings.SUBSCRIPTION_PAYMENT_METHOD_ID: paymentMethodId,
-      Strings.SUBSCRIPTION_DISCOUNT_CODE_ID: discountCodeId,
-      Strings.SUBSCRIPTION_STATUS: status,
-    };
-
-    return map;
+  bool checkStatus(String statusName) {
+    return status == statusName;
   }
 
-  Subscription.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
-    if(documentSnapshot.data() != null){
-      id = documentSnapshot.id;
-      userId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.SUBSCRIPTION_USER_ID] ?? "";
-      paymentMethodId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.SUBSCRIPTION_PAYMENT_METHOD_ID] ?? "";
-      discountCodeId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.SUBSCRIPTION_DISCOUNT_CODE_ID] ?? "";
-      status = (documentSnapshot.data() as Map<String, dynamic>)[Strings.SUBSCRIPTION_STATUS] ?? "";
+  bool get isValid => status == "active";
+  bool get isCanceled => status ==  "canceled";
+
+  Subscription.fromStripeJson(Map<String, dynamic> map) {
+    id = map['id'];
+    status = map['status'];
+    creationDate = DateTime.fromMillisecondsSinceEpoch(map['created'] * 1000);
+    currentPeriodStart = DateTime.fromMillisecondsSinceEpoch(map['current_period_start'] * 1000);
+    currentPeriodEnd = DateTime.fromMillisecondsSinceEpoch(map['current_period_end'] * 1000);
+
+    if (map.containsKey('discount') && map['discount'] != null) {
+      coupon = Coupon.fromStripeJson(map['discount']['coupon']);
+    }
+
+    if (map.containsKey('items') && map['items']['data'] is List) {
+      //planIds = map['items']['data'].map<String>((item) => item['plan']['id']).toList();
     }
   }
 
-  Future<bool> updateSubscriptionInFirestore(BuildContext context) async {
-    print("updateSubscriptionInFirestore>>>");
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    bool result = false;
-
-    try{
-      if(id.isEmpty){
-        CollectionReference servicesProvided = db.collection(Strings.COLLECTION_SUBSCRIPTIONS);
-        id = servicesProvided.doc().id;
-      }
-      if(userId.isEmpty) userId = UserFirebase.getCurrentUser()?.uid ?? "";
-      if(userId.isNotEmpty){
-        await db.collection(Strings.COLLECTION_SUBSCRIPTIONS).doc(id).set(toMap());
-        result = true;
-      }
+  static String getSubscriptionPriceString(Coupon? coupon){
+    double amount = Consts.SUBSCRIPTION_PRICE;
+    if(coupon != null){
+      amount = amount * (1 - (coupon.percentOff/100));
     }
-    catch(e){
-      Utils.showSnackBar(context, "Erro ao atualizar assinatura: $e");
-      result = false;
-    }
-
-    return result;
+    return "R\$ ${amount.toStringAsFixed(2).replaceAll('.', ',')}";
   }
 }

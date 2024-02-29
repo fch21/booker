@@ -43,11 +43,11 @@ class _ConfigurationsProfileServiceProviderState extends State<ConfigurationsPro
               ),
               ClickableItem(
                 //text: AppLocalizations.of(context)!.configurations_payments,
-                text: "Assinaturas",
+                text: "Assinatura",
                 //iconData: Icons.payments_rounded,
                 iconData: Icons.diamond_outlined,
                 onTap: () {
-                  Navigator.pushNamed(context, RouteGenerator.SUBSCRIPTIONS_MANAGEMENT, arguments: currentAppUser!);
+                  Navigator.pushNamed(context, RouteGenerator.SUBSCRIPTION_MANAGEMENT, arguments: currentAppUser!);
                 },
               ),
               ClickableItem(

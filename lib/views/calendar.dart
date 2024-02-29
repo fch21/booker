@@ -78,8 +78,8 @@ class _CalendarState extends State<Calendar> {
     print("startDate = $startDate");
     print("endDate = $endDate");
 
-    String formattedStartDate = AppointmentDetails.formatDateTime(startDate);
-    String formattedEndDate = AppointmentDetails.formatDateTime(endDate);
+    String formattedStartDate = Utils.formatDateTimeToOrder(startDate);
+    String formattedEndDate = Utils.formatDateTimeToOrder(endDate);
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS)
