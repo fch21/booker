@@ -10,10 +10,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class Subscription {
   String id = "";
   DateTime creationDate = DateTime.now();
-  List<String> planIds = [];
+  //List<String> planIds = [];
   String status = "";
   DateTime currentPeriodStart = DateTime.now();
   DateTime currentPeriodEnd = DateTime.now();
+  bool cancelAtPeriodEnd = false; // Indica se a assinatura está marcada para cancelamento no final do período
   Coupon? coupon;
 
   Subscription();
@@ -22,8 +23,9 @@ class Subscription {
     return status == statusName;
   }
 
-  bool get isValid => status == "active";
-  bool get isCanceled => status ==  "canceled";
+  bool get isActive => status == "active";
+  bool get isCanceled => status == "canceled";
+  bool get willNotRenew => cancelAtPeriodEnd;
 
   Subscription.fromStripeJson(Map<String, dynamic> map) {
     id = map['id'];
@@ -31,17 +33,18 @@ class Subscription {
     creationDate = DateTime.fromMillisecondsSinceEpoch(map['created'] * 1000);
     currentPeriodStart = DateTime.fromMillisecondsSinceEpoch(map['current_period_start'] * 1000);
     currentPeriodEnd = DateTime.fromMillisecondsSinceEpoch(map['current_period_end'] * 1000);
+    cancelAtPeriodEnd = map['cancel_at_period_end'] ?? false;
 
     if (map.containsKey('discount') && map['discount'] != null) {
       coupon = Coupon.fromStripeJson(map['discount']['coupon']);
     }
 
-    if (map.containsKey('items') && map['items']['data'] is List) {
+    //if (map.containsKey('items') && map['items']['data'] is List) {
       //planIds = map['items']['data'].map<String>((item) => item['plan']['id']).toList();
-    }
+    //}
   }
 
-  static String getSubscriptionPriceString(Coupon? coupon){
+  static String getSubscriptionPriceString({Coupon? coupon}){
     double amount = Consts.SUBSCRIPTION_PRICE;
     if(coupon != null){
       amount = amount * (1 - (coupon.percentOff/100));

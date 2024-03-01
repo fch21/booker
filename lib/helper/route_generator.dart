@@ -42,8 +42,8 @@ class RouteGenerator {
   static const String WAITING_EMAIL_VERIFICATION = "/waiting_email_verification";
   static const String CONFIGURATIONS_HOME = "/configurations";
   static const String EDIT_PROFILE_CLIENT = "/edit_profile_client";
-  static const String PROFILE_SERVICE_PROVIDED = "/profile_service_provided";
-  static const String EDIT_PROFILE_SERVICE_PROVIDED = "/edit_profile_service_provided";
+  static const String PROFILE_SERVICE_PROVIDER = "/profile_service_provider";
+  static const String EDIT_PROFILE_SERVICE_PROVIDER = "/edit_profile_service_provideR";
   static const String CALENDAR = "/calendar";
   static const String PROFILE_CONFIGURATIONS = "/profile_configurations";
   static const String LANGUAGE_CONFIGURATIONS = "/language_configurations";
@@ -108,11 +108,11 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ConfigurationsHome());
       case SUBSCRIPTION_MANAGEMENT:
         return MaterialPageRoute(builder: (_) => SubscriptionManagementPage());
-      case PROFILE_SERVICE_PROVIDED:
+      case PROFILE_SERVICE_PROVIDER:
         return MaterialPageRoute(builder: (_) => ProfileServiceProvider());
       case EDIT_PROFILE_CLIENT:
         return MaterialPageRoute(builder: (_) => EditProfileClient());
-      case EDIT_PROFILE_SERVICE_PROVIDED:
+      case EDIT_PROFILE_SERVICE_PROVIDER:
         return MaterialPageRoute(builder: (_) => EditProfileServiceProvider());
       case CALENDAR:
         return MaterialPageRoute(builder: (_) => Calendar());

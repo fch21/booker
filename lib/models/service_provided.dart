@@ -14,6 +14,7 @@ class ServiceProvided {
   double price = 0.0;
   Duration duration = Duration.zero;
   Color color = Colors.white;
+  bool hasPeriodicAppointments = false;
 
   ServiceProvided();
 
@@ -26,6 +27,7 @@ class ServiceProvided {
     copy.price = price;
     copy.duration = duration;
     copy.color = color;
+    copy.hasPeriodicAppointments = hasPeriodicAppointments;
 
     return copy;
   }
@@ -40,6 +42,7 @@ class ServiceProvided {
       Strings.SERVICE_PRICE: price,
       Strings.SERVICE_DURATION: duration.inMinutes,
       Strings.SERVICE_COLOR: color.value,
+      Strings.SERVICE_HAS_PERIODIC_APPOINTMENTS: hasPeriodicAppointments,
     };
 
     return map;
@@ -54,6 +57,7 @@ class ServiceProvided {
       price = ((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_PRICE] ?? 0.0) + .0;
       duration = Duration(minutes: (documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_DURATION] ?? 0);
       color = Color((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_COLOR] ?? Colors.white.value);
+      hasPeriodicAppointments = (documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_HAS_PERIODIC_APPOINTMENTS] ?? false;
     }
   }
 

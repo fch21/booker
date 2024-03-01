@@ -27,7 +27,7 @@ class Calendar extends StatefulWidget {
 class _CalendarState extends State<Calendar> {
 
   List<AppointmentDetails> _appointmentsList = [];
-  CalendarController _controller = CalendarController();
+  final CalendarController _controller = CalendarController();
   DateTime? _lastInitialDateTime;
   List<String> _menuItems = [];
   StreamController<bool> loadingStreamController = StreamController.broadcast();
@@ -36,7 +36,7 @@ class _CalendarState extends State<Calendar> {
   void _changeCalendarView(CalendarView newView) {
     //print("newView = $newView");
     _controller.view = newView;
-    //setState(() {});
+    setState(() {});
   }
 
   DateTime getEndDate(DateTime startDate){
@@ -81,25 +81,65 @@ class _CalendarState extends State<Calendar> {
     String formattedStartDate = Utils.formatDateTimeToOrder(startDate);
     String formattedEndDate = Utils.formatDateTimeToOrder(endDate);
 
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+    QuerySnapshot querySnapshotForOneTimeAppointments = await FirebaseFirestore.instance
         .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS)
         .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: currentAppUser!.id)
         .where(Strings.APPOINTMENT_DAY, isGreaterThanOrEqualTo: formattedStartDate)
         .where(Strings.APPOINTMENT_DAY, isLessThanOrEqualTo: formattedEndDate)
         .get();
 
+    bool getAllWeekDays = _controller.view != CalendarView.day;
+    bool isMonthView = _controller.view == CalendarView.month;
+
+    QuerySnapshot querySnapshotForPeriodicalAppointments;
+    Query queryForPeriodicalAppointments = FirebaseFirestore.instance
+        .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS)
+        .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: currentAppUser!.id);
+
+    if(getAllWeekDays){
+      querySnapshotForPeriodicalAppointments = await queryForPeriodicalAppointments
+          .where(Strings.APPOINTMENT_PERIODICAL_WEEK_DAY, isNull: false)
+          .get();
+
+    }
+    else{
+      querySnapshotForPeriodicalAppointments = await queryForPeriodicalAppointments
+          .where(Strings.APPOINTMENT_PERIODICAL_WEEK_DAY, isEqualTo: Utils.getWeekDay(startDate))
+          .get();
+    }
+
+    List<DocumentSnapshot> allDocs = [...querySnapshotForPeriodicalAppointments.docs, ...querySnapshotForOneTimeAppointments.docs];
+    //List<DocumentSnapshot> allDocs = [...querySnapshotForOneTimeAppointments.docs];
+
     List<AppointmentDetails> appointments = [];
-    for (var doc in querySnapshot.docs) {
+    for (var doc in allDocs) {
       AppointmentDetails appointmentDetails = AppointmentDetails.fromDocumentSnapshot(doc);
       if(mounted) await appointmentDetails.initServiceProvided(context);
       //if(appointmentDetails.status == Strings.APPOINTMENT_STATUS_CANCELED) appointmentDetails.serviceProvided.color = Colors.red.withOpacity(0.5);
       //appointments.add(appointmentDetails);
-      if(appointmentDetails.to.isBefore(DateTime.now())) appointmentDetails.serviceProvided.color = appointmentDetails.serviceProvided.color.withOpacity(0.5);
-      if(appointmentDetails.status != Strings.APPOINTMENT_STATUS_CANCELED){
-        appointments.add(appointmentDetails);
+      if(getAllWeekDays && appointmentDetails.periodicalWeekDay != null){
+        //to show the periodic appointment in all week days
+        appointmentDetails.from = appointmentDetails.from.copyWith(year: startDate.year, month: startDate.month, day: startDate.day).add(Duration(days: appointmentDetails.periodicalWeekDay!));
+        appointmentDetails.to = appointmentDetails.to.copyWith(year: startDate.year, month: startDate.month, day: startDate.day).add(Duration(days: appointmentDetails.periodicalWeekDay!));
+      }
+      if(!appointmentDetails.isCanceled){
+        AppointmentDetails copy = appointmentDetails.copy();
+        if(copy.to.isBefore(DateTime.now())) copy.serviceProvided.color = copy.serviceProvided.color.withOpacity(0.5);
+        appointments.add(copy);
+        //print("isMonthView = ${isMonthView}");
+        if(appointmentDetails.periodicalWeekDay != null && isMonthView){
+          for(int i = 0; i < 4; i++) {//the month view shows 6 weeks, so we should add 5 more periodic appointments
+            AppointmentDetails copy = appointmentDetails.copy();
+            copy.from = appointmentDetails.from.add(Duration(days: 7 * (i + 1)));
+            copy.to = appointmentDetails.to.add(Duration(days: 7 * (i + 1)));
+            if(copy.to.isBefore(DateTime.now())) copy.serviceProvided.color = copy.serviceProvided.color.withOpacity(0.5);
+            appointments.add(copy);
+          }
+        }
       }
     }
-    print("appointments = ${appointments.length}");
+
+    print("number of appointments = ${appointments.length}");
 
     setState(() {
       _appointmentsList = appointments;
@@ -147,14 +187,14 @@ class _CalendarState extends State<Calendar> {
     return "";
   }
 
-  _selectMenuItem(String itemSelecionado) {
+  _selectMenuItem(String itemSelecionado) async {
     if(itemSelecionado == AppLocalizations.of(context)!.menu_calendar_cancel_all){
       if(_appointmentsList.isNotEmpty){
-        AppointmentDetails.cancelAppointmentConfirmation(context, appointmentsList: _appointmentsList, isServiceProvider: true, useCancelAllMessage: true, extraTextForCancelAll: getTimePeriodString());
-        setState(() {});
+        bool canceled = await AppointmentDetails.cancelAppointmentConfirmation(context, appointmentsList: _appointmentsList, isServiceProvider: true, useCancelAllMessage: true, extraTextForCancelAll: getTimePeriodString());
+        if(canceled && _lastInitialDateTime != null) await _getAppointments(_lastInitialDateTime!);
       }
       else{
-        showDialog(
+        await showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
@@ -173,7 +213,6 @@ class _CalendarState extends State<Calendar> {
           },
         );
       }
-
     }
   }
 
@@ -192,12 +231,12 @@ class _CalendarState extends State<Calendar> {
   @override
   void initState() {
     Utils.quitScreenIfUserIsNotASubscriber(context: context, subscriptionNeeded: NecessarySubscriptionLevels.CALENDAR);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      DateTime? initialDate = _controller.displayDate;
-      if(initialDate != null) {
-        _getAppointments(initialDate);
-      }
-    });
+    //WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+    //  DateTime? initialDate = _controller.displayDate;
+     // if(initialDate != null) {
+        //await _getAppointments(initialDate);
+      //}
+    //});
     super.initState();
 
   }
@@ -229,56 +268,56 @@ class _CalendarState extends State<Calendar> {
             )
           ],
         ),
-      body: Column(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(
-                  color: standartTheme.primaryColor, // Bordas na cor azul
-                  width: 2, // Espessura da borda
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    border: Border.all(
+                      color: standartTheme.primaryColor, // Bordas na cor azul
+                      width: 2, // Espessura da borda
+                    ),
+                    color: Colors.white
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<CalendarView>(
+                      value: _controller.view,
+                      isExpanded: true,
+                      icon: const Icon(Icons.arrow_drop_down_circle),
+                      iconSize: 24,
+                      iconEnabledColor: standartTheme.primaryColor, // Cor do ícone
+                      onChanged: (CalendarView? newValue) {
+                        if (newValue != null) {
+                          _changeCalendarView(newValue);
+                        }
+                      },
+                      items: const [
+                        DropdownMenuItem(
+                          value: CalendarView.day,
+                          child: Text('Dia'),
+                        ),
+                        DropdownMenuItem(
+                          value: CalendarView.week,
+                          child: Text('Semana'),
+                        ),
+                        DropdownMenuItem(
+                          value: CalendarView.month,
+                          child: Text('Mês'),
+                        ),
+                      ],
+                      style: textStyleSmallNormal,
+                      dropdownColor: Colors.white, // Cor de fundo do menu suspenso
+                    ),
+                  ),
                 ),
-                color: Colors.white
               ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<CalendarView>(
-                  value: _controller.view,
-                  isExpanded: true,
-                  icon: const Icon(Icons.arrow_drop_down_circle),
-                  iconSize: 24,
-                  iconEnabledColor: standartTheme.primaryColor, // Cor do ícone
-                  onChanged: (CalendarView? newValue) {
-                    if (newValue != null) {
-                      _changeCalendarView(newValue);
-                    }
-                  },
-                  items: [
-                    DropdownMenuItem(
-                      value: CalendarView.day,
-                      child: Text('Dia'),
-                    ),
-                    DropdownMenuItem(
-                      value: CalendarView.week,
-                      child: Text('Semana'),
-                    ),
-                    DropdownMenuItem(
-                      value: CalendarView.month,
-                      child: Text('Mês'),
-                    ),
-                  ],
-                  style: textStyleSmallNormal,
-                  dropdownColor: Colors.white, // Cor de fundo do menu suspenso
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Stack(
-              children: [
-                SfCalendar(
+              Expanded(
+                child: SfCalendar(
                   controller: _controller,
                   dataSource: AppointmentDetailsDataSource(_appointmentsList),
                   specialRegions: _getAvailableSchedulesSpecialRegions(),
@@ -293,6 +332,10 @@ class _CalendarState extends State<Calendar> {
                   onTap: (CalendarTapDetails details) {
                     if (details.targetElement == CalendarElement.appointment) {
                       final AppointmentDetails appointmentDetails = details.appointments!.first;
+                      //print("appointmentDetails.periodicalWeekDay = ${appointmentDetails.periodicalWeekDay}");
+                      //print("appointmentDetails.serviceName = ${appointmentDetails.serviceName}");
+                      //print("appointmentDetails.from = ${appointmentDetails.from}");
+                      //print("appointmentDetails.to = ${appointmentDetails.to}");
                       Navigator.pushNamed(context, RouteGenerator.APPOINTMENT_DETAILS_PAGE, arguments: appointmentDetails);
                     }
                   },
@@ -310,24 +353,24 @@ class _CalendarState extends State<Calendar> {
                     shape: BoxShape.rectangle,
                   ),
                 ),
-                StreamBuilder<bool>(
-                  stream: loadingStreamController.stream,
-                  builder: (context, snapshot) {
-                    if(snapshot.hasData) {
-                      bool isLoading = snapshot.data!;
-                      if(isLoading){
-                        return Container(
-                          color: Colors.white.withOpacity(0.5),
-                          child: LoadingData(),
-                        );
-                      }
-                    }
-                    return Container();
-                  }
-                )
-              ],
-            ),
+              ),
+            ],
           ),
+          StreamBuilder<bool>(
+              stream: loadingStreamController.stream,
+              builder: (context, snapshot) {
+                if(snapshot.hasData) {
+                  bool isLoading = snapshot.data!;
+                  if(isLoading){
+                    return Container(
+                      color: Colors.white.withOpacity(0.5),
+                      child: LoadingData(),
+                    );
+                  }
+                }
+                return Container();
+              }
+          )
         ],
       )
     );

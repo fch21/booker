@@ -1,5 +1,6 @@
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
@@ -47,7 +48,10 @@ class AppointmentDetailsCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Text('Data: ${DateFormat('dd/MM/yyyy').format(appointmentDetails.from)}      Hora: ${DateFormat('HH:mm').format(appointmentDetails.from)}', style: TextStyle(color: Colors.black54, fontSize: fontSizeSmall),),
+              if(appointmentDetails.periodicalWeekDay == null)
+                Text('Data: ${DateFormat('dd/MM/yyyy').format(appointmentDetails.from)}      Hora: ${DateFormat('HH:mm').format(appointmentDetails.from)}', style: TextStyle(color: Colors.black54, fontSize: fontSizeSmall),),
+              if(appointmentDetails.periodicalWeekDay != null)
+                Text('Dia: ${Utils.getFullWeekDayUpperCaseString(appointmentDetails.from)}s  Hora: ${DateFormat('HH:mm').format(appointmentDetails.from)}', style: TextStyle(color: Colors.black54, fontSize: fontSizeSmall),),
             ],
           ),
         ),

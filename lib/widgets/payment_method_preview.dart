@@ -1,16 +1,17 @@
+import 'package:booker/models/payment_method.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PaymentMethodPreview extends StatelessWidget {
 
-  Map paymentMethodMap;
+  PaymentMethod paymentMethod;
   void Function(String?)? onSelected;
   void Function(String?)? onLongPressed;
   void Function(String?)? onTrailingPressed;
   Widget? trailing;
 
   PaymentMethodPreview({
-    required this.paymentMethodMap,
+    required this.paymentMethod,
     this.onSelected,
     this.onLongPressed,
     this.onTrailingPressed,
@@ -55,7 +56,7 @@ class PaymentMethodPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    dynamic brandName = paymentMethodMap["card"]["brand"];
+    dynamic brandName = paymentMethod.cardBrand;
     String? brandIconPath;
     IconData? brandIconData;
 
@@ -67,10 +68,10 @@ class PaymentMethodPreview extends StatelessWidget {
 
     return GestureDetector(
       onTap: (){
-        if(onSelected != null) onSelected!(paymentMethodMap["id"]);
+        if(onSelected != null) onSelected!(paymentMethod.id);
       },
       onLongPress: (){
-        if(onLongPressed != null) onLongPressed!(paymentMethodMap["id"]);
+        if(onLongPressed != null) onLongPressed!(paymentMethod.id);
       },
       child: Card(
         elevation: 3,
@@ -86,12 +87,12 @@ class PaymentMethodPreview extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("**** ${paymentMethodMap["card"]["last4"].toString()}", maxLines: 1, overflow: TextOverflow.ellipsis,),
+                    Text(paymentMethod.getCardNumberString(), maxLines: 1, overflow: TextOverflow.ellipsis,),
                     if(trailing != null) Padding(
                       padding: const EdgeInsets.only(left: 16.0),
                       child: GestureDetector(
                         onTap: (){
-                          if(onTrailingPressed != null) onTrailingPressed!(paymentMethodMap["id"]);
+                          if(onTrailingPressed != null) onTrailingPressed!(paymentMethod.id);
                         },
                         child: trailing!
                       ),

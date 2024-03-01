@@ -117,99 +117,142 @@ class _ServiceFormState extends State<ServiceForm> {
                   }
                 },
               ),
-              SizedBox(height: 12),
-              InputCustom(
-                label: 'Descrição',
-                controller: _descriptionController,
-                onSaved: (description){
-                  _serviceProvided.description = description ?? "";
-                },
-                validator: (value) {
-                  return null;
-                },
-              ),
-              SizedBox(height: 12),
-              InputCustom(
-                label: 'Preço em R\$',
-                controller: _priceController,
-                textInputType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [DecimalTextInputFormatter()],
-                onSaved: (price){
-                  _serviceProvided.price = double.tryParse(price?.replaceAll(',','.') ?? "") ?? 0.0;
-                },
-                validator: (value) {
-                  if(value == "" || value == null ){
-                    return AppLocalizations.of(context)!.required_field;
-                  }
-                  else{
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: InputCustom(
+                  label: 'Descrição',
+                  controller: _descriptionController,
+                  onSaved: (description){
+                    _serviceProvided.description = description ?? "";
+                  },
+                  validator: (value) {
                     return null;
-                  }
-                },
+                  },
+                ),
               ),
-              SizedBox(height: 12),
-              InputCustom(
-                label: 'Duração (em minutos)',
-                controller: _durationController,
-                textInputType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [IntegerTextInputFormatter()],
-                onSaved: (durationInMinutes){
-                  _serviceProvided.duration = Duration(minutes: (int.tryParse(durationInMinutes ?? "0") ?? 0));
-                },
-                validator: (value) {
-                  if(value == "" || value == null ){
-                    return AppLocalizations.of(context)!.required_field;
-                  }
-                  else{
-                    return null;
-                  }
-                },
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: InputCustom(
+                  label: 'Preço em R\$',
+                  controller: _priceController,
+                  textInputType: const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [DecimalTextInputFormatter()],
+                  onSaved: (price){
+                    _serviceProvided.price = double.tryParse(price?.replaceAll(',','.') ?? "") ?? 0.0;
+                  },
+                  validator: (value) {
+                    if(value == "" || value == null ){
+                      return AppLocalizations.of(context)!.required_field;
+                    }
+                    else{
+                      return null;
+                    }
+                  },
+                ),
               ),
-              SizedBox(height: 12),
-              InkWell(
-                onTap: () async {
-                  Color? color = await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return ColorPickerDialog(initialColor: _selectedColor);
-                    },
-                  );
-                  print("cor = $color");
-                  if (color != null) {
-                    setState(() {
-                      _selectedColor = color;
-                      _serviceProvided.color = _selectedColor;
-                    });
-                  }
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(4.0),
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: InputCustom(
+                  label: 'Duração (em minutos)',
+                  controller: _durationController,
+                  textInputType: const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [IntegerTextInputFormatter()],
+                  onSaved: (durationInMinutes){
+                    _serviceProvided.duration = Duration(minutes: (int.tryParse(durationInMinutes ?? "0") ?? 0));
+                  },
+                  validator: (value) {
+                    if(value == "" || value == null ){
+                      return AppLocalizations.of(context)!.required_field;
+                    }
+                    else{
+                      return null;
+                    }
+                  },
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 12, bottom: 8),
+                child: Text('Tipo de agendamento para esse serviço:', style: textStyleSmallNormal,),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ListTile(
+                    leading: Radio<bool>(
+                      activeColor: standartTheme.primaryColor,
+                      value: false,
+                      groupValue: _serviceProvided.hasPeriodicAppointments,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _serviceProvided.hasPeriodicAppointments = value!;
+                        });
+                      },
+                    ),
+                    title: const Text('Agendamento único'),
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text('Escolher Cor', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.65)),),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: _selectedColor,
-                            borderRadius: BorderRadius.circular(4.0),  // Bordas arredondadas
+                  ListTile(
+                    leading: Radio<bool>(
+                      activeColor: standartTheme.primaryColor,
+                      value: true,
+                      groupValue: _serviceProvided.hasPeriodicAppointments,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _serviceProvided.hasPeriodicAppointments = value!;
+                        });
+                      },
+                    ),
+                    title: const Text('Agendamento Periódico\n(Se repete todas as semanas no mesmo horário)'),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: InkWell(
+                  onTap: () async {
+                    Color? color = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ColorPickerDialog(initialColor: _selectedColor);
+                      },
+                    );
+                    print("cor = $color");
+                    if (color != null) {
+                      setState(() {
+                        _selectedColor = color;
+                        _serviceProvided.color = _selectedColor;
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text('Escolher Cor', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.65)),),
                           ),
                         ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Icon(Icons.chevron_right, color: Colors.grey),
-                      ),
-                    ],
+                        Expanded(
+                          child: Container(
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: _selectedColor,
+                              borderRadius: BorderRadius.circular(4.0),  // Bordas arredondadas
+                            ),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Icon(Icons.chevron_right, color: Colors.grey),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

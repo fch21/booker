@@ -51,12 +51,6 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     String dateTimeFormatted = DateFormat('dd/MM').format(dateTime);
     return dateTimeFormatted;
   }
-
-  String _getWeekDay(DateTime date) {
-    // Dart 'weekday' dá 1 para Segunda-feira, 2 para Terça-feira e assim por diante.
-    // Por isso vamos realizar o resto da divisao por 7 para fazer com que domingo (7) seja 0, segunda (1) seja 1...
-    return  Strings.WEEK_DAYS[(date.weekday) % 7];
-  }
   
   // Function to get made appointments for a specific day
   Future<List<AppointmentDetails>> _getAppointmentsMade(DateTime dateTime) async {
@@ -64,20 +58,32 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     DateTime simplifiedDateTime = Utils.getDateTimeSimplified(dateTime);
     String dayDateTimeString = Utils.dateFormatForOrdering.format(simplifiedDateTime);
 
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+    QuerySnapshot querySnapshotForPeriodicalAppointments = await FirebaseFirestore.instance
         .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS_PUBLIC)
         .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: widget.appUser.id)
-        //.where(Strings.APPOINTMENT_DAY, isEqualTo: simplifiedDateTime)
+        .where(Strings.APPOINTMENT_PERIODICAL_WEEK_DAY, isEqualTo: Utils.getWeekDay(dateTime))
+        .get();
+
+    QuerySnapshot querySnapshotForOneTimeAppointments = await FirebaseFirestore.instance
+        .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS_PUBLIC)
+        .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: widget.appUser.id)
         .where(Strings.APPOINTMENT_DAY, isEqualTo: dayDateTimeString)
         .get();
 
+    List<DocumentSnapshot> allDocs = [...querySnapshotForPeriodicalAppointments.docs, ...querySnapshotForOneTimeAppointments.docs];
+
     List<AppointmentDetails> appointments = [];
-    for (var doc in querySnapshot.docs) {
+    for (var doc in allDocs) {
       AppointmentDetails appointmentDetails = AppointmentDetails.fromDocumentSnapshotPublic(doc);
       //print("appointmentDetails>>>>>>>");
       //print("appointmentDetails.from = ${appointmentDetails.from}");
       //print("appointmentDetails.to = ${appointmentDetails.to}");
       if(!appointmentDetails.isCanceled){
+        if(appointmentDetails.periodicalWeekDay != null){
+          //to show the periodic appointment in the selected date
+          appointmentDetails.from = appointmentDetails.from.copyWith(year: dateTime.year, month: dateTime.month, day: dateTime.day);
+          appointmentDetails.to = appointmentDetails.to.copyWith(year: dateTime.year, month: dateTime.month, day: dateTime.day);
+        }
         appointments.add(appointmentDetails);
       }
     }
@@ -124,7 +130,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     });
     //print("generateAvailableTimes >>>>>>");
     // Find out the week day of the provided date
-    String weekDay = _getWeekDay(dateTime);
+    String weekDay = Utils.getWeekDayString(dateTime);
     //print("weekDay = $weekDay");
 
     // Get intervals for the specific day
@@ -193,6 +199,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
   }
 
   Future<bool> _makeAppointment(AppUser client) async {
+    print("_makeAppointment >>>");
     if(selectedTimeOfDay != null && selectedDateTime != null){
 
       DateTime startingDateTime = selectedDateTime!.copyWith(hour: selectedTimeOfDay!.hour, minute: selectedTimeOfDay!.minute, second: 0, millisecond: 0, microsecond: 0);
@@ -203,7 +210,13 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       appointmentDetails.userName = client.name;
       appointmentDetails.serviceProviderName = widget.appUser.name;
       appointmentDetails.serviceName = widget.serviceProvided.name;
-      appointmentDetails.day = Utils.getDateTimeSimplified(selectedDateTime!);
+      print("widget.serviceProvided.hasPeriodicAppointments = ${widget.serviceProvided.hasPeriodicAppointments}");
+      if(widget.serviceProvided.hasPeriodicAppointments){
+        appointmentDetails.periodicalWeekDay = Utils.getWeekDay(selectedDateTime!);
+      }
+      else{
+        appointmentDetails.day = Utils.getDateTimeSimplified(selectedDateTime!);
+      }
       appointmentDetails.from = startingDateTime;
       appointmentDetails.to = startingDateTime.add(widget.serviceProvided.duration);
 
@@ -240,6 +253,8 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       StreamController<bool> updateDialogStreamController = StreamController.broadcast();
       TextEditingController controllerClientName = TextEditingController(text: "");
       AppUser? selectedClient;
+
+      int weekday = Utils.getWeekDay(selectedDateTime!);
 
       Widget unLoggedUserDialog = AlertDialog(
         actionsAlignment: MainAxisAlignment.spaceBetween,
@@ -321,7 +336,11 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
               );
             }
           )
-         : Text("Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
+         : Text(
+            widget.serviceProvided.hasPeriodicAppointments
+                ? "Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
+                : "Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
+          ),
 
         actions: <Widget>[
           TextButton(
@@ -413,92 +432,94 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
         foregroundColor: Utils.getContrastingColor(widget.appUser.getUserColorResolved()),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ProfileHeader(appUser: widget.appUser,),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  splashRadius: 20,
-                  icon: const Icon(Icons.arrow_back),
-                  iconSize: 18,
-                  onPressed: () {
-                    currentDateTime = currentDateTime.subtract(const Duration(days: 1));
-                    generateAvailableTimes(currentDateTime);
-                    setState(() {});
-                  },
-                ),
-                InkWell(
-                  onTap: () async {
-                    DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                      builder: (BuildContext context, Widget? child) {
-                        return Theme(
-                          data: Theme.of(context).copyWith(
-                            colorScheme: ColorScheme.light(
-                              primary: widget.appUser.color, // header background color
-                              onPrimary: Utils.getContrastingColor(widget.appUser.color) ?? Colors.black, // header text color
-                            ),
-                            textButtonTheme: TextButtonThemeData(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.black87, // button text color
-                              ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ProfileHeader(appUser: widget.appUser,),
+          const Divider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                splashRadius: 20,
+                icon: const Icon(Icons.arrow_back),
+                iconSize: 18,
+                onPressed: () {
+                  currentDateTime = currentDateTime.subtract(const Duration(days: 1));
+                  generateAvailableTimes(currentDateTime);
+                  setState(() {});
+                },
+              ),
+              InkWell(
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                    builder: (BuildContext context, Widget? child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: ColorScheme.light(
+                            primary: widget.appUser.color, // header background color
+                            onPrimary: Utils.getContrastingColor(widget.appUser.color) ?? Colors.black, // header text color
+                          ),
+                          textButtonTheme: TextButtonThemeData(
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.black87, // button text color
                             ),
                           ),
-                          child: child!,
-                        );
-                      },
-                    );
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
 
-                    if (pickedDate != null) {
-                      currentDateTime = pickedDate;
-                      generateAvailableTimes(currentDateTime);
-                      setState(() {});
-                    }
-                  },
-                  child: Text(
-                    getDateTimeFormatted(currentDateTime),
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  splashRadius: 20,
-                  icon: const Icon(Icons.arrow_forward),
-                  iconSize: 18,
-                  onPressed: () {
-                    currentDateTime = currentDateTime.add(const Duration(days: 1));
+                  if (pickedDate != null) {
+                    currentDateTime = pickedDate;
                     generateAvailableTimes(currentDateTime);
                     setState(() {});
-                  },
+                  }
+                },
+                child: Text(
+                  getDateTimeFormatted(currentDateTime),
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
                 ),
-              ],
-            ),
-            const Divider(),
-            if(isLoadingCurrentAvailableTimes)
-              Padding(
+              ),
+              IconButton(
+                splashRadius: 20,
+                icon: const Icon(Icons.arrow_forward),
+                iconSize: 18,
+                onPressed: () {
+                  currentDateTime = currentDateTime.add(const Duration(days: 1));
+                  generateAvailableTimes(currentDateTime);
+                  setState(() {});
+                },
+              ),
+            ],
+          ),
+          const Divider(height: 1.5),
+          if(isLoadingCurrentAvailableTimes)
+            Expanded(
+              child: Padding(
                 padding: const EdgeInsets.all(64.0),
                 child: LoadingData(color: widget.appUser.getUserColorResolved(),),
               ),
-            if(!isLoadingCurrentAvailableTimes)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: currentAvailableTimes.isEmpty
-                  ? Padding(
-                    padding: const EdgeInsets.only(top: 32.0, bottom: 16),
-                    child: Center(
-                      child: Text(AppLocalizations.of(context)!.no_available_times_message, style: textStyleSmallNormal,)
-                    ),
-                  )
-                  : Center(
+            ),
+          if(!isLoadingCurrentAvailableTimes)
+            Expanded(
+              child: currentAvailableTimes.isEmpty
+                ? Padding(
+                  padding: const EdgeInsets.only(top: 32.0, bottom: 16),
+                  child: Center(
+                    child: Text(AppLocalizations.of(context)!.no_available_times_message, style: textStyleSmallNormal,)
+                  ),
+                )
+                : SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                  child: Center(
                     child: Wrap(
                         spacing: 10,
                         runSpacing: 10,
@@ -533,18 +554,19 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                         }).toList(),
                       ),
                   ),
-              ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 32),
-              child: ButtonCustom(
-                color: widget.appUser.getUserColorResolved(),
-                text: "Marcar horário",
-                textColor: Utils.getContrastingColor(widget.appUser.getUserColorResolved()),
-                onPressed: _showMakeAppointmentDialog,
-              ),
-            )
-          ],
-        ),
+                ),
+            ),
+          const Divider(height: 1.5),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 32),
+            child: ButtonCustom(
+              color: widget.appUser.getUserColorResolved(),
+              text: "Marcar horário",
+              textColor: Utils.getContrastingColor(widget.appUser.getUserColorResolved()),
+              onPressed: _showMakeAppointmentDialog,
+            ),
+          )
+        ],
       )
     );
   }

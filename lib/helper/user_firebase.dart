@@ -1,3 +1,5 @@
+import 'package:booker/helper/stripe_functions.dart';
+import 'package:booker/models/subscription.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -20,6 +22,9 @@ class UserFirebase {
     DocumentSnapshot snapshot = await db.collection(Strings.COLLECTION_USERS).doc(userId).get();
 
     AppUser user = AppUser.fromDocumentSnapshot(snapshot);
+    if(user.isServiceProvider){
+      await user.initUserSubscription();
+    }
 
     return user;
   }

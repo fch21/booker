@@ -176,7 +176,7 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
         setState(() {
           loading = false;
         });
-        Navigator.of(context).pop();
+        if(mounted) Navigator.of(context).pop();
       }
     }
   }
@@ -190,10 +190,7 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
               content: Text(AppLocalizations.of(context)!.payment_method_created_message, style: textStyleSmallNormal,),
               actions: <Widget>[
                 TextButton(
-                  child: Text(
-                    AppLocalizations.of(context)!.ok,
-                    style: const TextStyle(color: Colors.green, fontSize: fontSizeSmall),
-                  ),
+                  child: const Text("Continuar"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },

@@ -116,7 +116,7 @@ class _EditProfileClientState extends State<EditProfileClient> {
                   currentAppUser!.updateAppUserInFirestore(context);
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();// to pop the Profile Customer screen
-                  Navigator.pushNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDED);
+                  Navigator.pushNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDER);
                 }
               },
             ),

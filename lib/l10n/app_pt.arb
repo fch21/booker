@@ -467,7 +467,7 @@
     "confirmation_message_drink_purchase_part_3": "Pagamento automático ao coletar no bar",
     "confirmation_message_selected_card": "Cartão selecionado:",
     "successful_drink_purchase_message": "Bebidas selecionadas!\n\nVá para o seu carrinho.\n\nO valor só será descontado após pegar as bebidas.",
-    "payment_method_created_message": "Método de pagamento adicionado",
+    "payment_method_created_message": "Método de pagamento atualizado com sucesso",
 
 
     "generate_event_qrcode_orientations": "Orientações",

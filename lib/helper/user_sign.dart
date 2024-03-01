@@ -430,7 +430,7 @@ class UserSign {
         }
         else{
           if(user.isServiceProvider){
-            if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDED);
+            if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.PROFILE_SERVICE_PROVIDER, (Route<dynamic> route) => false,);
           }
           else{
             //if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.HOME, arguments: user);

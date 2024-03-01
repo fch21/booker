@@ -5,6 +5,7 @@ import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/user_firebase.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/coupon.dart';
+import 'package:booker/models/payment_method.dart';
 import 'package:booker/models/subscription.dart';
 //import 'package:js/js_util.dart';
 //import 'package:pay/pay.dart' as pay;
@@ -321,7 +322,7 @@ class StripeFunctions {
   }
    */
 
-  static Future<List> getCustomerPaymentMethods({
+  static Future<List<PaymentMethod>> getCustomerPaymentMethods({
     required String userId,
   }) async {
 
@@ -337,9 +338,13 @@ class StripeFunctions {
       }
       else{
 
-        List paymentMethods = [];
+        List<PaymentMethod> paymentMethods = [];
 
-        paymentMethods = responseBody[Strings.STRIPE_HTTP_RESPONSE_PAYMENT_METHODS] ?? [];
+        List paymentMethodsMap = responseBody[Strings.STRIPE_HTTP_RESPONSE_PAYMENT_METHODS] ?? [];
+
+        for(var paymentMethodMap in paymentMethodsMap){
+          paymentMethods.add(PaymentMethod.fromStripeJson(paymentMethodMap));
+        }
 
         print(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS]);
         return paymentMethods;
@@ -401,6 +406,27 @@ class StripeFunctions {
     final requestMap = {};
 
     Map<String, dynamic>? responseBody = await HttpFunctions.getResponseMap(url: Strings.HTTPS_LINK_CANCEL_CUSTOMER_SUBSCRIPTION, requestMap: requestMap);
+
+    if(responseBody != null){
+      if(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS].toString().contains(Strings.STRIPE_HTTP_RESPONSE_ERROR)){
+        print(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS]);
+        return false;
+      }
+      else{
+        print(responseBody);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /// Only useful if the subscription is canceled but still valid
+  static Future<bool> reactivateCustomerSubscription() async {
+
+    final requestMap = {};
+
+    Map<String, dynamic>? responseBody = await HttpFunctions.getResponseMap(url: Strings.HTTPS_LINK_REACTIVATE_CUSTOMER_SUBSCRIPTION, requestMap: requestMap);
 
     if(responseBody != null){
       if(responseBody[Strings.STRIPE_HTTP_RESPONSE_STATUS].toString().contains(Strings.STRIPE_HTTP_RESPONSE_ERROR)){

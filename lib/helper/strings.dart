@@ -6,6 +6,7 @@ class Consts{
 class Strings {
 
   static const List<String> WEEK_DAYS = ['Dom','Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb',];
+  static const List<String> FULL_WEEK_DAYS = ['domingo','segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado',];
   static const String BOOKER = "Booker";
   static const String BOOKER_DOMAIN = "https://bookerweb.com/";
   static const String BOOKER_EMAIL = "central.booker@gmail.com";
@@ -50,7 +51,6 @@ class Strings {
   //static const String USER_SUBSCRIPTION_ID = "subscription_id";
 
   static const String USER_IS_SERVICE_PROVIDER = "is_service_provider";
-  static const String USER_HAS_ACTIVE_SUBSCRIPTION = "has_active_subscription";
   static const String USER_BLOCKED_CLIENTS_IDS = "blocked_clients_ids";
   static const String USER_AVAILABILITY_MAP = "availability_map";
 
@@ -62,6 +62,7 @@ class Strings {
   static const String SERVICE_DURATION = "duration";
   static const String SERVICE_PRICE = "price";
   static const String SERVICE_COLOR = "color";
+  static const String SERVICE_HAS_PERIODIC_APPOINTMENTS = "has_periodic_appointments";
 
   static const String SUBSCRIPTION_ID = "id";
   static const String SUBSCRIPTION_USER_ID = "user_id";
@@ -96,6 +97,7 @@ class Strings {
   static const String APPOINTMENT_STATUS = "status";
   static const String APPOINTMENT_CANCELED_BY = "canceled_by";
   static const String APPOINTMENT_CANCEL_MESSAGE = "cancel_message";
+  static const String APPOINTMENT_PERIODICAL_WEEK_DAY = "periodical_week_day";
   static const String APPOINTMENT_STATUS_PENDING = "pending";
   static const String APPOINTMENT_STATUS_CONFIRMED = "confirmed";
   static const String APPOINTMENT_STATUS_CANCELED = "canceled";
@@ -104,7 +106,7 @@ class Strings {
   static const String APPOINTMENT_DAY = "day";
   static const String APPOINTMENT_FROM = "from";
   static const String APPOINTMENT_TO = "to";
-  static const String APPOINTMENT_IS_ALL_DAY = "is_all_day";
+  //static const String APPOINTMENT_IS_ALL_DAY = "is_all_day";
   static const String APPOINTMENT_REMINDER_SENT = "reminder_sent";
 
   //
@@ -170,6 +172,7 @@ class Strings {
   static const String HTTPS_LINK_CREATE_SUBSCRIPTION_FOR_CUSTOMER = "https://us-central1-booker-context.cloudfunctions.net/createSubscriptionForCustomer";
   static const String HTTPS_LINK_GET_CUSTOMER_SUBSCRIPTION = "https://us-central1-booker-context.cloudfunctions.net/getCustomerSubscription";
   static const String HTTPS_LINK_CANCEL_CUSTOMER_SUBSCRIPTION = "https://us-central1-booker-context.cloudfunctions.net/cancelCustomerSubscription";
+  static const String HTTPS_LINK_REACTIVATE_CUSTOMER_SUBSCRIPTION = "https://us-central1-booker-context.cloudfunctions.net/reactivateCustomerSubscription";
   static const String HTTPS_LINK_CREATE_SETUP_INTENT = "https://us-central1-booker-context.cloudfunctions.net/createSetupIntent";
   //static const String HTTPS_LINK_CHARGE_CARD_OFF_SESSION = "https://us-central1-drinqr-context"".cloudfunctions.net/chargeCardOffSession";
   static const String HTTPS_LINK_GET_CUSTOMER_PAYMENT_METHODS = "https://us-central1-booker-context.cloudfunctions.net/getCustomerPaymentMethods";

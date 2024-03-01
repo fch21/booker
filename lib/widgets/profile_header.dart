@@ -229,7 +229,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: TextButton(
                       onPressed: () async {
-                        await Navigator.pushNamed(context, RouteGenerator.EDIT_PROFILE_SERVICE_PROVIDED, arguments: widget.appUser)
+                        await Navigator.pushNamed(context, RouteGenerator.EDIT_PROFILE_SERVICE_PROVIDER, arguments: widget.appUser)
                             .then((value){
                               setState(() {});
                               if(widget.onReload != null) widget.onReload!();

@@ -467,7 +467,7 @@
     "confirmation_message_drink_purchase_part_3": "Automatic payment when picking up at the bar",
     "confirmation_message_selected_card": "Selected card:",
     "successful_drink_purchase_message": "Drinks added!\n\nGo to your cart\n\nAutomatic payment upon collecting drinks.",
-    "payment_method_created_message": "Your payment method has been successfully added and will be available for your next purchases.",
+    "payment_method_created_message": "Payment method successfully updated.",
 
 
     "generate_event_qrcode_orientations": "Orientations",

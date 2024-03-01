@@ -1,8 +1,10 @@
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/stripe_functions.dart';
 import 'package:booker/helper/text_input_formatters.dart';
 import 'package:booker/helper/user_sign.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
+import 'package:booker/models/subscription.dart';
 import 'package:booker/models/time_interval.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +31,10 @@ class AppUser {
   //String subscriptionId = "";
 
   bool isServiceProvider = false;
-  bool hasActiveSubscription = false;
   Map<String, dynamic> availabilityMap = {};
   List blockedClientsIds = [];
+
+  Subscription? subscription;
 
   AppUser();
 
@@ -110,7 +113,6 @@ class AppUser {
       //Strings.USER_SUBSCRIPTION_ID: subscriptionId,
 
       Strings.USER_IS_SERVICE_PROVIDER: isServiceProvider,
-      Strings.USER_HAS_ACTIVE_SUBSCRIPTION: hasActiveSubscription,
       Strings.USER_BLOCKED_CLIENTS_IDS: blockedClientsIds,
       Strings.USER_AVAILABILITY_MAP: convertAvailabilityMapToMap(),
     };
@@ -173,7 +175,6 @@ class AppUser {
       //subscriptionId = data[Strings.USER_SUBSCRIPTION_ID] ?? "";
 
       isServiceProvider = data[Strings.USER_IS_SERVICE_PROVIDER] ?? false;
-      hasActiveSubscription = data[Strings.USER_HAS_ACTIVE_SUBSCRIPTION] ?? false;
       blockedClientsIds = data[Strings.USER_BLOCKED_CLIENTS_IDS] ?? [];
       //availabilityMap = (documentSnapshot.data() as Map<String, dynamic>)[Strings.USER_AVAILABILITY_MAP] ?? {};
       convertMapToAvailabilityMap(data[Strings.USER_AVAILABILITY_MAP] as Map<String, dynamic>?);
@@ -196,6 +197,11 @@ class AppUser {
     isServiceProvider = data[Strings.USER_IS_SERVICE_PROVIDER] ?? false;
     //availabilityMap = data[Strings.USER_AVAILABILITY_MAP] ?? {};
     convertMapToAvailabilityMap(data[Strings.USER_AVAILABILITY_MAP] as Map<String, dynamic>?);
+  }
+
+  Future<void> initUserSubscription() async {
+    Subscription? customerSubscription = await StripeFunctions.getCustomerSubscription();
+    subscription = customerSubscription;
   }
 
   Future<bool> updateAppUserInFirestore(BuildContext context) async {

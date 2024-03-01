@@ -52,7 +52,7 @@ class _ConfigurationsHomeState extends State<ConfigurationsHome> {
                       iconData: Icons.person,
                       onTap: () {
                         if(currentAppUser!.isServiceProvider){
-                          Navigator.pushNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDED);
+                          Navigator.pushNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDER);
                         }
                         else{
                           Navigator.pushNamed(context, RouteGenerator.EDIT_PROFILE_CLIENT);

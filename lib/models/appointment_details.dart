@@ -61,7 +61,8 @@ class AppointmentDetails {
   String status = Strings.APPOINTMENT_STATUS_CONFIRMED;
   String canceledBy = "";
   String cancelMessage = "";
-  DateTime day =  DateTime.fromMillisecondsSinceEpoch(0);
+  int? periodicalWeekDay;//only for periodical services
+  DateTime? day; //only for one time services
   DateTime from =  DateTime.fromMillisecondsSinceEpoch(0);
   DateTime to =  DateTime.fromMillisecondsSinceEpoch(0);
   bool reminderSent = false;
@@ -73,6 +74,29 @@ class AppointmentDetails {
 
   bool get isCanceled {
     return status == Strings.APPOINTMENT_STATUS_CANCELED;
+  }
+
+  AppointmentDetails copy(){
+    AppointmentDetails copy = AppointmentDetails();
+    copy.id = id;
+    copy.userName = userName;
+    copy.serviceProviderName = serviceProviderName;
+    copy.serviceName = serviceName;
+    copy.userId = userId;
+    copy.serviceId = serviceId;
+    copy.serviceProviderUserId = serviceProviderUserId;
+    copy.status = status;
+    copy.canceledBy = canceledBy;
+    copy.cancelMessage = cancelMessage;
+    copy.periodicalWeekDay = periodicalWeekDay;
+    copy.day = day;
+    copy.from = from;
+    copy.to = to;
+    copy.reminderSent = reminderSent;
+    copy.isAllDay = isAllDay;
+    copy.serviceProvided = serviceProvided.copy();
+
+    return copy;
   }
 
   Map<String, dynamic> toMap() {
@@ -87,11 +111,14 @@ class AppointmentDetails {
       Strings.APPOINTMENT_STATUS: status,
       Strings.APPOINTMENT_CANCELED_BY: canceledBy,
       Strings.APPOINTMENT_CANCEL_MESSAGE: cancelMessage,
-      Strings.APPOINTMENT_DAY: Utils.dateFormatForOrdering.format(day),
+      if(periodicalWeekDay != null)
+        Strings.APPOINTMENT_PERIODICAL_WEEK_DAY: periodicalWeekDay,
+      if(day != null)
+        Strings.APPOINTMENT_DAY: Utils.dateFormatForOrdering.format(day!),
       Strings.APPOINTMENT_FROM: Utils.dateFormatForOrdering.format(from),
       Strings.APPOINTMENT_TO: Utils.dateFormatForOrdering.format(to),
       Strings.APPOINTMENT_REMINDER_SENT: reminderSent,
-      Strings.APPOINTMENT_IS_ALL_DAY: isAllDay,
+      //Strings.APPOINTMENT_IS_ALL_DAY: isAllDay,
     };
 
     return map;
@@ -105,10 +132,13 @@ class AppointmentDetails {
       Strings.APPOINTMENT_STATUS: status,
       Strings.APPOINTMENT_CANCELED_BY: canceledBy,
       Strings.APPOINTMENT_CANCEL_MESSAGE: cancelMessage,
-      Strings.APPOINTMENT_DAY: Utils.dateFormatForOrdering.format(day),
+      if(periodicalWeekDay != null)
+        Strings.APPOINTMENT_PERIODICAL_WEEK_DAY: periodicalWeekDay,
+      if(day != null)
+        Strings.APPOINTMENT_DAY: Utils.dateFormatForOrdering.format(day!),
       Strings.APPOINTMENT_FROM: Utils.dateFormatForOrdering.format(from),
       Strings.APPOINTMENT_TO: Utils.dateFormatForOrdering.format(to),
-      Strings.APPOINTMENT_IS_ALL_DAY: isAllDay,
+      //Strings.APPOINTMENT_IS_ALL_DAY: isAllDay,
     };
 
     return map;
@@ -116,49 +146,55 @@ class AppointmentDetails {
 
   AppointmentDetails.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
     if(documentSnapshot.data() != null){
+      Map<String, dynamic> documentMap = (documentSnapshot.data() as Map<String, dynamic>);
       id = documentSnapshot.id;
-      userName = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_USER_NAME] ?? "";
-      serviceProviderName = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_PROVIDER_NAME] ?? "";
-      serviceName = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_NAME] ?? "";
-      userId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_USER_ID] ?? "";
-      serviceId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_ID] ?? "";
-      serviceProviderUserId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID] ?? "";
-      status = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_STATUS] ?? "";
-      canceledBy = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_CANCELED_BY] ?? "";
-      cancelMessage = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_CANCEL_MESSAGE] ?? "";
-      //day = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
-      //from = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
-      //to = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ??  Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
-      day = Utils.dateFormatForOrdering.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? "");
-      from = Utils.dateFormatForOrdering.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? "");
-      to = Utils.dateFormatForOrdering.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ?? "");
-      reminderSent = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_REMINDER_SENT] ?? false;
-      isAllDay = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_IS_ALL_DAY] ?? false;
+      userName = documentMap[Strings.APPOINTMENT_USER_NAME] ?? "";
+      serviceProviderName = documentMap[Strings.APPOINTMENT_SERVICE_PROVIDER_NAME] ?? "";
+      serviceName = documentMap[Strings.APPOINTMENT_SERVICE_NAME] ?? "";
+      userId = documentMap[Strings.APPOINTMENT_USER_ID] ?? "";
+      serviceId = documentMap[Strings.APPOINTMENT_SERVICE_ID] ?? "";
+      serviceProviderUserId = documentMap[Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID] ?? "";
+      status = documentMap[Strings.APPOINTMENT_STATUS] ?? "";
+      canceledBy = documentMap[Strings.APPOINTMENT_CANCELED_BY] ?? "";
+      cancelMessage = documentMap[Strings.APPOINTMENT_CANCEL_MESSAGE] ?? "";
+      periodicalWeekDay = documentMap[Strings.APPOINTMENT_PERIODICAL_WEEK_DAY];
+      if(documentMap[Strings.APPOINTMENT_DAY] != null) {
+        day = Utils.dateFormatForOrdering.parse(documentMap[Strings.APPOINTMENT_DAY]);
+      }
+      from = Utils.dateFormatForOrdering.parse(documentMap[Strings.APPOINTMENT_FROM] ?? "");
+      to = Utils.dateFormatForOrdering.parse(documentMap[Strings.APPOINTMENT_TO] ?? "");
+      reminderSent = documentMap[Strings.APPOINTMENT_REMINDER_SENT] ?? false;
+      //isAllDay = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_IS_ALL_DAY] ?? false;
+      print("serviceName = $serviceName");
+      print("documentMap = $documentMap");
     }
+
   }
 
   AppointmentDetails.fromDocumentSnapshotPublic(DocumentSnapshot documentSnapshot) {
     if(documentSnapshot.data() != null){
+      Map<String, dynamic> documentMap = (documentSnapshot.data() as Map<String, dynamic>);
       id = documentSnapshot.id;
-      serviceId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_ID] ?? "";
-      serviceProviderUserId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID] ?? "";
-      status = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_STATUS] ?? "";
-      canceledBy = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_CANCELED_BY] ?? "";
-      cancelMessage = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_CANCEL_MESSAGE] ?? "";
-      //day = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
-      //from = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
-      //to = (((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ??  Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp).toDate();
-      day = Utils.dateFormatForOrdering.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_DAY] ?? "");
-      from = Utils.dateFormatForOrdering.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_FROM] ?? "");
-      to = Utils.dateFormatForOrdering.parse((documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_TO] ?? "");
-      isAllDay = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_IS_ALL_DAY] ?? false;
+      serviceId = documentMap[Strings.APPOINTMENT_SERVICE_ID] ?? "";
+      serviceProviderUserId = documentMap[Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID] ?? "";
+      status = documentMap[Strings.APPOINTMENT_STATUS] ?? "";
+      canceledBy = documentMap[Strings.APPOINTMENT_CANCELED_BY] ?? "";
+      cancelMessage = documentMap[Strings.APPOINTMENT_CANCEL_MESSAGE] ?? "";
+      periodicalWeekDay = documentMap[Strings.APPOINTMENT_PERIODICAL_WEEK_DAY];
+      if(documentMap[Strings.APPOINTMENT_DAY] != null) {
+        day = Utils.dateFormatForOrdering.parse(documentMap[Strings.APPOINTMENT_DAY]);
+      }
+      from = Utils.dateFormatForOrdering.parse(documentMap[Strings.APPOINTMENT_FROM] ?? "");
+      to = Utils.dateFormatForOrdering.parse(documentMap[Strings.APPOINTMENT_TO] ?? "");
+      //isAllDay = documentMap[Strings.APPOINTMENT_IS_ALL_DAY] ?? false;
     }
   }
 
   Future<void> initServiceProvided(BuildContext context) async {
-    //print("initServiceProvided>>>");
+    print("initServiceProvided>>>");
     FirebaseFirestore db = FirebaseFirestore.instance;
     try{
+      print("serviceId = $serviceId");
       if(serviceId.isNotEmpty){
         DocumentSnapshot documentSnapshot = await db.collection(Strings.COLLECTION_SERVICES_PROVIDED).doc(serviceId).get();
         serviceProvided = ServiceProvided.fromDocumentSnapshot(documentSnapshot);
@@ -187,6 +223,7 @@ class AppointmentDetails {
       }
       if(userId.isEmpty) userId = client?.id ?? UserFirebase.getCurrentUser()?.uid ?? "";
       if((userId.isNotEmpty || (client?.id.isEmpty ?? false)) && serviceId.isNotEmpty && serviceProviderUserId.isNotEmpty){
+        print("toMap() = ${toMap()}");
         await db.collection(Strings.COLLECTION_APPOINTMENTS_DETAILS).doc(id).set(toMap());
         await db.collection(Strings.COLLECTION_APPOINTMENTS_DETAILS_PUBLIC).doc(id).set(toMapPublic());
         result = true;
@@ -224,8 +261,10 @@ class AppointmentDetails {
     });
 
     for(var doc in querySnapshot.docs){
-      appointmentDetailsList.add(AppointmentDetails.fromDocumentSnapshot(doc));
+      AppointmentDetails appointmentDetails = AppointmentDetails.fromDocumentSnapshot(doc);
+      appointmentDetailsList.add(appointmentDetails);
     }
+
 
     return appointmentDetailsList;
   }

@@ -148,8 +148,7 @@ class Utils {
   }
 
   static bool checkIfUserCanAccess({required bool subscriptionNeeded}){
-    //if(!subscriptionNeeded || (currentAppUser!.subscriptionId.isNotEmpty)){
-    if(!subscriptionNeeded || (currentAppUser!.hasActiveSubscription)){
+    if(!subscriptionNeeded || (currentAppUser!.subscription?.isActive ?? false)){
       return true;
     }
     return false;
@@ -158,6 +157,7 @@ class Utils {
   static Future<bool> showSubscriptionNeededDialogIfNecessary({required BuildContext context, required bool subscriptionNeeded}) async {
     bool userCanAccess = checkIfUserCanAccess(subscriptionNeeded: subscriptionNeeded);
 
+    print("userCanAccess = $userCanAccess");
     if(!userCanAccess){
       bool goToSubscriptionsPage = false;
       await showDialog(
@@ -228,4 +228,29 @@ class Utils {
     return dateTimeSimplified;
   }
 
+  static int getWeekDay(DateTime date) {
+    // Dart 'weekday' dá 1 para Segunda-feira, 2 para Terça-feira e assim por diante.
+    // Por isso vamos realizar o resto da divisao por 7 para fazer com que domingo (7) seja 0, segunda (1) seja 1...
+    return  (date.weekday) % 7;
+  }
+
+  static String getWeekDayString(DateTime date) {
+    return  Strings.WEEK_DAYS[getWeekDay(date)];
+  }
+
+  static String getFullWeekDayString(DateTime date) {
+    return  Strings.FULL_WEEK_DAYS[getWeekDay(date)];
+  }
+
+  static String capitalizeFirstLetter(String text) {
+    if (text.isEmpty) {
+      return text;
+    }
+    return text[0].toUpperCase() + text.substring(1);
+  }
+
+  static String getFullWeekDayUpperCaseString(DateTime date) {
+    return  capitalizeFirstLetter(Strings.FULL_WEEK_DAYS[getWeekDay(date)]);
+  }
+  
 }
