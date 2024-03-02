@@ -309,6 +309,7 @@ class _RegisterState extends State<Register> {
                                       });
                                     }),
                               ),
+                              /*
                               Padding(
                                 padding: const EdgeInsets.only(top: 16, bottom: 64),
                                 child: UserSign.facebookSignInButton(
@@ -324,6 +325,8 @@ class _RegisterState extends State<Register> {
                                       });
                                     }),
                               ),
+
+                               */
 
                               /*
                                 Padding(

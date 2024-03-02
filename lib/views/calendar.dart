@@ -35,8 +35,9 @@ class _CalendarState extends State<Calendar> {
 
   void _changeCalendarView(CalendarView newView) {
     //print("newView = $newView");
-    _controller.view = newView;
-    setState(() {});
+    setState(() {
+      _controller.view = newView;
+    });
   }
 
   DateTime getEndDate(DateTime startDate){

@@ -34,7 +34,7 @@ class RouteGenerator {
   static const String MAIN = "/";
   static const String HOME = "/home";
   static const String SPLASH_SCREEN = "/splash";
-  static const String HOME_WITH_INDEX = "/home_with_index";
+  //static const String HOME_WITH_INDEX = "/home_with_index";
   static const String LOGIN = "/login";
   static const String REGISTER = "/register";
   static const String RESET_PASSWORD = "/reset_password";
@@ -78,11 +78,11 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Home());
       case SPLASH_SCREEN:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
-      case HOME_WITH_INDEX:
-        return PageRouteBuilder(
-          pageBuilder: (_, __, ___) => Home(index: args as int),
-          transitionDuration: const Duration(seconds: 0),
-        );
+      //case HOME_WITH_INDEX:
+      //  return PageRouteBuilder(
+      //    pageBuilder: (_, __, ___) => Home(index: args as int),
+      //    transitionDuration: const Duration(seconds: 0),
+      //  );
       case LOGIN:
         //return MaterialPageRoute(builder: (_) => Login());
         return PageRouteBuilder(
@@ -145,7 +145,11 @@ class RouteGenerator {
       case LONG_TEXT:
         return MaterialPageRoute(builder: (_) => LongText(appBarTitle: (args as Map)["appBarTitle"] as String, title: args["title"] as String, content: args["content"] as String,));
       case CHOICE_OF_SERVICE:
-        return MaterialPageRoute(builder: (_) => ChoiceOfService(appUser: (args as Map)["user"] as AppUser, manuallyAddAppointment: (args["manually_add_appointment"] ?? false) as bool));
+        return MaterialPageRoute(builder: (_) => ChoiceOfService(
+            appUser: (args as Map)["user"] as AppUser,
+            manuallyAddAppointment: (args["manually_add_appointment"] ?? false) as bool,
+            //showMenu: (args["show_menu"] ?? false) as bool
+        ));
       case MAKE_AN_APPOINTMENT:
         return MaterialPageRoute(builder: (_) => MakeAnAppointment(appUser: (args as Map)["user"] as AppUser, serviceProvided: args["serviceProvided"] as ServiceProvided, manuallyAddAppointment: (args["manually_add_appointment"] ?? false) as bool));
       case SERVICE_FORM:

@@ -199,8 +199,12 @@ class _EditProfileClientState extends State<EditProfileClient> {
                 Padding(
                   padding: const EdgeInsets.only(top: 32.0),
                   child: ButtonCustom(
-                    onPressed: (){
-                      currentAppUser!.addPhoneNumberToUser(context);
+                    onPressed: () async {
+                      await currentAppUser!.addPhoneNumberToUser(context);
+                      print("setting state after addPhoneNumberToUser>>>>>");
+                      setState(() {
+                        _phoneController.text = currentAppUser!.phone;
+                      });
                     },
                     text: 'Adicionar número de telefone',
                   ),

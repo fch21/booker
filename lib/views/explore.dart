@@ -94,8 +94,10 @@ class _ExploreState extends State<Explore> {
       resetInitialServiceProviderId();
       AppUser? user = await AppUser.getUserFromId(id);
       if(user != null && context.mounted){
-        Map args = {"user" : user};
+        Map args = {"user" : user, "show_menu" : true};
         await Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: args);
+        // do not offer the possibility to go back to the explore screen
+        //await Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.CHOICE_OF_SERVICE,(route) => false , arguments: args);
       }
     }
     //String? eventId = appGlobalKey.currentState?.linkEventId;
@@ -225,9 +227,9 @@ class _ExploreState extends State<Explore> {
                   QuerySnapshot querySnapshot = snapshot.data as QuerySnapshot;
 
                   if (querySnapshot.docs.isEmpty) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 64),
-                      child: Text(AppLocalizations.of(context)!.explore_no_events),
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 64),
+                      child: Text("Sem resultados"),
                     );
                   }
 
@@ -242,16 +244,16 @@ class _ExploreState extends State<Explore> {
                         filterList.add(element);
                       }
                     }
-                    else{
-                      filterList.add(element);
-                     }
+                    //else{ // will show all users if the _controllerSearch is empty
+                    //  filterList.add(element);
+                    // }
                   }
                   users = filterList;
 
                   if (users.isEmpty) {
                     return Padding(
-                      padding: const EdgeInsets.only(top: 64),
-                      child: Text(AppLocalizations.of(context)!.explore_no_events),
+                      padding: EdgeInsets.only(top: 64),
+                      child: Text(_controllerSearch.text != "" ? "Sem resultados para essa pesquisa" : "Digite sua busca no campo de pesquisa"),
                     );
                   }
                   return Expanded(

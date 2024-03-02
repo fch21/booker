@@ -26,7 +26,7 @@ class _ConfigurationsProfileServiceProviderState extends State<ConfigurationsPro
         backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: currentAppUser!.color,
+          backgroundColor: currentAppUser!.getUserColorResolved(),
           title: Text(AppLocalizations.of(context)!.configurations_appbar),
         ),
         body: Container(

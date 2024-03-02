@@ -251,8 +251,27 @@ class UserSign {
                     bool? confirmed = await _confirmVerificationCode(smsCode: smsCode, verificationId: phoneNumberVerificationId!);
                     if(confirmed ?? false) {
                       if(onConfirmed != null) onConfirmed();
-                      Navigator.of(context).pop();
-                      Utils.showSnackBar(buildContext, "Número de telefone salvo com sucesso!");
+                      if(context.mounted) Navigator.of(context).pop();
+                      if(buildContext.mounted){
+                        await showDialog(
+                          context: buildContext,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              content: const Text("Número de telefone salvo com sucesso!"),
+                              actionsAlignment: MainAxisAlignment.end,
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Continuar'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                      //Utils.showSnackBar(buildContext, "Número de telefone salvo com sucesso!");
                     }
                     else{
                       if(confirmed != null){
