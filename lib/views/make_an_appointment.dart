@@ -210,7 +210,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       appointmentDetails.userName = client.name;
       appointmentDetails.serviceProviderName = widget.appUser.name;
       appointmentDetails.serviceName = widget.serviceProvided.name;
-      print("widget.serviceProvided.hasPeriodicAppointments = ${widget.serviceProvided.hasPeriodicAppointments}");
+      //print("widget.serviceProvided.hasPeriodicAppointments = ${widget.serviceProvided.hasPeriodicAppointments}");
       if(widget.serviceProvided.hasPeriodicAppointments){
         appointmentDetails.periodicalWeekDay = Utils.getWeekDay(selectedDateTime!);
       }
@@ -225,8 +225,8 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     return false;
   }
 
-  _showAppointmentMadeDialog(){
-    showDialog(
+  Future<void> _showAppointmentMadeDialog() async {
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -245,9 +245,10 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
         );
       },
     );
+    return;
   }
 
-  _showMakeAppointmentDialog(){
+  Future<void> _showMakeAppointmentDialog() async {
     if(selectedTimeOfDay != null && selectedDateTime != null){
 
       StreamController<bool> updateDialogStreamController = StreamController.broadcast();
@@ -255,7 +256,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       AppUser? selectedClient;
 
       int weekday = Utils.getWeekDay(selectedDateTime!);
-
+      //print("widget.serviceProvided.hasPeriodicAppointments = ${widget.serviceProvided.hasPeriodicAppointments}");
       Widget unLoggedUserDialog = AlertDialog(
         actionsAlignment: MainAxisAlignment.spaceBetween,
         title: Text("Faça o login"),
@@ -287,7 +288,10 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
+                  Text(widget.serviceProvided.hasPeriodicAppointments
+                      ? "Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
+                      : "Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
+                  ),
                   Padding(
                     padding: EdgeInsets.only(top: 24.0, bottom: 16.0),
                     child: Text(
@@ -336,10 +340,10 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
               );
             }
           )
-         : Text(
+          : Text(
             widget.serviceProvided.hasPeriodicAppointments
-                ? "Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
-                : "Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
+                ? "Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
+                : "Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
           ),
 
         actions: <Widget>[
@@ -383,7 +387,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
         ],
       );
 
-      showDialog(
+      await showDialog(
         context: context,
         builder: (BuildContext context) {
           return currentAppUser == null
@@ -393,7 +397,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       );
     }
     else{
-      showDialog(
+      await showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -412,6 +416,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
         },
       );
     }
+    return;
   }
 
   @override
