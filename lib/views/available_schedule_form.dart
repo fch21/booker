@@ -112,13 +112,16 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
 
   @override
   Widget build(BuildContext context) {
+
+    bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.profile_add_available_schedule),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.symmetric(horizontal: greaterWidthLayout ? MediaQuery.of(context).size.width/4 : 16 , vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

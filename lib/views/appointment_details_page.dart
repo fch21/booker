@@ -1,4 +1,6 @@
+import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
@@ -25,22 +27,39 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
 
   Future<void> getClientInfo() async {
 
-    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
-        .collection(Strings.COLLECTION_USERS)
-        .doc(isServiceProvider ? widget.appointmentDetails.userId : widget.appointmentDetails.serviceProviderUserId)
-        .get();
+    AppUser appUser;
 
-    AppUser appUser = AppUser.fromDocumentSnapshot(documentSnapshot);
+    String id = isServiceProvider ? widget.appointmentDetails.userId : widget.appointmentDetails.serviceProviderUserId;
+
+    if(id.isNotEmpty){
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection(Strings.COLLECTION_USERS)
+          .doc(id)
+          .get();
+
+      appUser = AppUser.fromDocumentSnapshot(documentSnapshot);
+    }
+    else{ // only in the case that the userId is empty in the manually added appointments
+      appUser = AppUser()..name = widget.appointmentDetails.userName;
+    }
 
     setState(() {
       _appUser = appUser;
     });
+
 
     return;
   }
 
   @override
   void initState() {
+    widget.appointmentDetails.initServiceProvided(context);
+    //if(widget.appointmentDetails.periodicalWeekDay == null){
+    //  isPastAppointment = widget.appointmentDetails.from.isBefore(DateTime.now());
+    //}
+    //else{
+    //  isPastAppointment = widget.appointmentDetails.isCanceled;
+    //}
     isPastAppointment = widget.appointmentDetails.from.isBefore(DateTime.now());
     getClientInfo();
     super.initState();
@@ -84,7 +103,10 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: Text('Data: ${DateFormat('dd/MM/yyyy').format(widget.appointmentDetails.from)}', style: textStyleSmallNormal),
+                      child: //widget.appointmentDetails.periodicalWeekDay == null ?
+                          Text('Data: ${DateFormat('dd/MM/yyyy').format(widget.appointmentDetails.from)}', style: textStyleSmallNormal)
+                          //: Text('Data: ${DateFormat('dd/MM/yyyy').format(widget.appointmentDetails.from)} (${Utils.getFullWeekDayUpperCaseString(widget.appointmentDetails.from)}s)', style: textStyleSmallNormal,),
+
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
@@ -105,10 +127,27 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                       padding: const EdgeInsets.only(top: 16.0),
                       child: Text("Nome: ${_appUser!.name}", style: textStyleSmallNormal,),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: SelectableText("email: ${_appUser!.email}", style: textStyleSmallNormal,),
-                    ),
+                    if(_appUser!.email.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: SelectableText("email: ${_appUser!.email}", style: textStyleSmallNormal,),
+                      ),
+                    if(isServiceProvider && !widget.appointmentDetails.isCanceled && !isPastAppointment)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 48.0),
+                        child: Center(
+                          child: TextButton(
+                            onPressed: () async {
+                              await widget.appointmentDetails.initServiceProvided(context);
+                              Map args = {"user" : currentAppUser!, "serviceProvided" : widget.appointmentDetails.serviceProvided, "appointmentToChange" : widget.appointmentDetails};
+                              Navigator.pushNamed(context, RouteGenerator.MAKE_AN_APPOINTMENT, arguments: args).then((value){
+                                setState(() {});
+                              });
+                            },
+                            child: Text('Editar Agendamento', style: TextStyle(color: standartTheme.primaryColor, fontSize: fontSizeVerySmall),),
+                          ),
+                        ),
+                      ),
                     if(!widget.appointmentDetails.isCanceled && !isPastAppointment)
                       Padding(
                         padding: const EdgeInsets.only(top: 64.0),

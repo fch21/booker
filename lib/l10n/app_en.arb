@@ -494,5 +494,6 @@
     "no_services_provided_message": "No available services at the moment",
 
 
-    "menu_calendar_cancel_all": "Cancel all"
+    "menu_calendar_cancel_all": "Cancel all",
+    "menu_calendar_block_periods": "Block periods"
 }

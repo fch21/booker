@@ -22,7 +22,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Escolha uma cor'),
+      title: const Text('Escolha uma cor'),
       content: SingleChildScrollView(
         child: ColorPicker(
           enableAlpha: false,
@@ -34,18 +34,19 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
           },
         ),
       ),
+      actionsAlignment: MainAxisAlignment.spaceBetween,
       actions: [
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Cancel'),
+          child: const Text('Voltar'),
         ),
         TextButton(
           onPressed: () {
             Navigator.of(context).pop(_currentColor);
           },
-          child: Text('Select'),
+          child: const Text('Selecionar'),
         ),
       ],
     );

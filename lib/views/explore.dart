@@ -94,7 +94,8 @@ class _ExploreState extends State<Explore> {
       resetInitialServiceProviderId();
       AppUser? user = await AppUser.getUserFromId(id);
       if(user != null && context.mounted){
-        Map args = {"user" : user, "show_menu" : true};
+        //Map args = {"user" : user, "show_menu" : true};
+        Map args = {"user" : user};
         await Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: args);
         // do not offer the possibility to go back to the explore screen
         //await Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.CHOICE_OF_SERVICE,(route) => false , arguments: args);
@@ -238,9 +239,14 @@ class _ExploreState extends State<Explore> {
                   List<DocumentSnapshot> filterList = [];
 
                   for (var element in users) {
-
                     if (_controllerSearch.text != ""){
-                      if ((element[Strings.USER_USERNAME] ?? "").toString().contains(_controllerSearch.text)){
+                      String stringToSearch = (element[Strings.USER_USERNAME] ?? "").toString()
+                          + (element[Strings.USER_NAME]  ?? "").toString()
+                          + (element[Strings.USER_DESCRIPTION]  ?? "").toString();
+
+                      stringToSearch.toLowerCase();
+
+                      if (stringToSearch.contains(_controllerSearch.text.toLowerCase())){
                         filterList.add(element);
                       }
                     }

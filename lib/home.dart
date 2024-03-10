@@ -1,16 +1,8 @@
-import 'dart:async';
-import 'package:booker/views/choice_of_service.dart';
 import 'package:booker/views/configurations_home.dart';
 import 'package:booker/views/explore.dart';
-import 'package:booker/views/make_an_appointment.dart';
-import 'package:booker/views/service_form.dart';
 import 'package:flutter/material.dart' hide MenuItem;
 import 'package:booker/main.dart';
-import 'package:booker/models/app_user.dart';
-import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/Strings.dart';
-import 'package:booker/views/profile_service_provider.dart';
-import 'package:booker/widgets/menu_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 

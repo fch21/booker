@@ -76,6 +76,9 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
 
   @override
   Widget build(BuildContext context) {
+
+    bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.edit),
@@ -83,7 +86,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
         //foregroundColor: Utils.getContrastingColor(currentAppUser!.getUserColorResolved()),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.symmetric(horizontal: greaterWidthLayout ? MediaQuery.of(context).size.width/4 : 16 , vertical: 16),
         child: Form(
           key: _formKey,
           child: Column(

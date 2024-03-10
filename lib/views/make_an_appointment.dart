@@ -6,6 +6,7 @@ import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
+import 'package:booker/models/not_used/appointment_details_change.dart';
 import 'package:booker/models/service_provided.dart';
 import 'package:booker/models/time_interval.dart';
 import 'package:booker/views/my_clients.dart';
@@ -23,6 +24,7 @@ class MakeAnAppointment extends StatefulWidget {
 
   AppUser appUser;
   ServiceProvided serviceProvided;
+  AppointmentDetails? appointmentToChange;
   bool manuallyAddAppointment;
 
   MakeAnAppointment({
@@ -30,6 +32,7 @@ class MakeAnAppointment extends StatefulWidget {
     required this.appUser,
     required this.serviceProvided,
     this.manuallyAddAppointment = false,
+    this.appointmentToChange,
   }) : super(key: key);
 
   @override
@@ -56,35 +59,105 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
   Future<List<AppointmentDetails>> _getAppointmentsMade(DateTime dateTime) async {
     //print("_getAppointmentsMade >>>>>>");
     DateTime simplifiedDateTime = Utils.getDateTimeSimplified(dateTime);
-    String dayDateTimeString = Utils.dateFormatForOrdering.format(simplifiedDateTime);
 
-    QuerySnapshot querySnapshotForPeriodicalAppointments = await FirebaseFirestore.instance
+    List<Future<QuerySnapshot>> queryListToBeDone = [];
+
+    //querySnapshotForPeriodicalAppointments
+    /*
+    queryListToBeDone.add(FirebaseFirestore.instance
         .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS_PUBLIC)
         .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: widget.appUser.id)
         .where(Strings.APPOINTMENT_PERIODICAL_WEEK_DAY, isEqualTo: Utils.getWeekDay(dateTime))
-        .get();
+        .get());
 
-    QuerySnapshot querySnapshotForOneTimeAppointments = await FirebaseFirestore.instance
+     */
+
+    /*
+    if(widget.serviceProvided.hasPeriodicAppointments){
+
+      for(int i = 0; i < widget.serviceProvided.numberOfPeriodicAppointments!; i ++){
+
+        String dayDateTimeString = Utils.dateFormatForOrdering.format(simplifiedDateTime.add(Duration(days: 7 * i)));
+        //querySnapshotForOneTimeAppointments
+        queryListToBeDone.add(FirebaseFirestore.instance
+            .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS_PUBLIC)
+            .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: widget.appUser.id)
+            .where(Strings.APPOINTMENT_DAY, isEqualTo: dayDateTimeString)
+            .get());
+      }
+    }
+
+     */
+
+    String dayDateTimeString = Utils.dateFormatForOrdering.format(simplifiedDateTime);
+    //querySnapshotForOneTimeAppointments
+    queryListToBeDone.add(FirebaseFirestore.instance
         .collection(Strings.COLLECTION_APPOINTMENTS_DETAILS_PUBLIC)
         .where(Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID, isEqualTo: widget.appUser.id)
         .where(Strings.APPOINTMENT_DAY, isEqualTo: dayDateTimeString)
-        .get();
+        .get());
 
-    List<DocumentSnapshot> allDocs = [...querySnapshotForPeriodicalAppointments.docs, ...querySnapshotForOneTimeAppointments.docs];
+    List<QuerySnapshot> queryResults = await Future.wait(queryListToBeDone);
+
+    //List<DocumentSnapshot> docsForPeriodicalAppointments = queryResults.first.docs;
+
+    List<DocumentSnapshot> docsForOneTimeAppointments = [];
+
+    for(var queryResult in queryResults){
+      /*
+      if(queryResult != queryResults.first){
+        docsForOneTimeAppointments.addAll(queryResult.docs);
+      }
+       */
+      docsForOneTimeAppointments.addAll(queryResult.docs);
+    }
+
+
+    //List<DocumentSnapshot> allDocs = [...docsForPeriodicalAppointments, ...docsForOneTimeAppointments];
 
     List<AppointmentDetails> appointments = [];
-    for (var doc in allDocs) {
+    //for (var doc in allDocs) {
+    for (var doc in docsForOneTimeAppointments) {
       AppointmentDetails appointmentDetails = AppointmentDetails.fromDocumentSnapshotPublic(doc);
       //print("appointmentDetails>>>>>>>");
       //print("appointmentDetails.from = ${appointmentDetails.from}");
       //print("appointmentDetails.to = ${appointmentDetails.to}");
       if(!appointmentDetails.isCanceled){
+        /*
         if(appointmentDetails.periodicalWeekDay != null){
           //to show the periodic appointment in the selected date
-          appointmentDetails.from = appointmentDetails.from.copyWith(year: dateTime.year, month: dateTime.month, day: dateTime.day);
-          appointmentDetails.to = appointmentDetails.to.copyWith(year: dateTime.year, month: dateTime.month, day: dateTime.day);
+          AppointmentDetails copy = appointmentDetails.copy();
+          copy.from = copy.from.copyWith(year: dateTime.year, month: dateTime.month, day: dateTime.day);
+          copy.to = copy.to.copyWith(year: dateTime.year, month: dateTime.month, day: dateTime.day);
+          if(await appointmentDetails.isBeforeTheLastPeriodicAppointment(context, copy)) appointments.add(copy);
         }
-        appointments.add(appointmentDetails);
+        else{
+          appointments.add(appointmentDetails);
+        }
+
+         */
+        /*
+        if(appointmentDetails.periodicalWeekDay != null){
+          List<AppointmentDetails> periodicAppointments = await appointmentDetails.getListOfPeriodicAppointments(context);
+          for(var appointment in periodicAppointments) {
+            appointments.add(appointment);
+          }
+        }
+        else{
+          //to show future, but conflicting one time appointment in the selected date
+          if(appointmentDetails.periodicalWeekDay == null){
+            AppointmentDetails copy = appointmentDetails.copy();
+            copy.from = copy.from.copyWith(year: dateTime.year, month: dateTime.month, day: dateTime.day);
+            copy.to = copy.to.copyWith(year: dateTime.year, month: dateTime.month, day: dateTime.day);
+            appointments.add(copy);
+          }
+        }
+
+         */
+        AppointmentDetails copy = appointmentDetails.copy();
+        copy.from = copy.from.copyWith(year: dateTime.year, month: dateTime.month, day: dateTime.day);
+        copy.to = copy.to.copyWith(year: dateTime.year, month: dateTime.month, day: dateTime.day);
+        appointments.add(copy);
       }
     }
 
@@ -124,6 +197,11 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
 
   // Function to generate available times considering existing appointments
   Future<void> generateAvailableTimes(DateTime dateTime) async {
+
+    currentAvailableTimes.clear();
+    //to prevent making appointment in BlockedPeriods
+    print("widget.appUser.name = ${widget.appUser.name}");
+    if(widget.appUser.isWithinBlockedPeriods(dateTime)) return;
 
     setState(() {
       isLoadingCurrentAvailableTimes = true;
@@ -176,13 +254,14 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
             continue;//restart the loop
           }
 
-          if (appointmentStartDateTime.isAfter(DateTime.now())) {
+          if (appointmentStartDateTime.isAfter(DateTime.now()) && widget.serviceProvided.isWithinValidSchedulingInterval(appointmentStartDateTime)) {
             availableTimes.add(TimeOfDay(hour: appointmentStartDateTime.hour, minute: appointmentStartDateTime.minute));
           }
-          print("loop availableTimes = $availableTimes");
+          //print("loop availableTimes = $availableTimes");
           // Calculate the next possible start time
           //appointmentStartDateTime = appointmentStartDateTime.add(Duration(minutes: serviceDurationInMinutes)); //to show start options each serviceDurationInMinutes minutes
-          appointmentStartDateTime = appointmentStartDateTime.add(Duration(minutes: 10));//to show start options each 10 minutes
+          //appointmentStartDateTime = appointmentStartDateTime.add(Duration(minutes: 10));//to show start options each 10 minutes
+          appointmentStartDateTime = appointmentStartDateTime.add(Duration(minutes: widget.serviceProvided.schedulingIntervalInMinutes));//to show start options each schedulingIntervalInMinutes
           appointmentEndDateTime = appointmentStartDateTime.add(Duration(minutes: serviceDurationInMinutes));
         }
       }
@@ -198,29 +277,112 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     return;
   }
 
+  Future<int?> _showChangeOptionsDialog() async {
+    return await showDialog <int>(
+      context: context,
+      builder: (BuildContext context) {
+        TextStyle optionsStyle = const TextStyle(fontSize: fontSizeSmall, color: Colors.blue);
+
+        return SimpleDialog(
+          alignment: Alignment.center,
+          title: const Center(child: Text('Atualizar agendamento periódico')),
+          contentPadding: const EdgeInsets.only(top: 32, bottom: 16),
+          children:[
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 0);
+              },
+              child: Center(child: Text('Somente este agendamento', style: optionsStyle,)),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 1);
+              },
+              child: Center(child: Text('Este e todos os agendamentos seguintes', style: optionsStyle,)),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 2);
+              },
+              child: Center(child: Text('Todos', style: optionsStyle,)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<bool> _makeAppointment(AppUser client) async {
     print("_makeAppointment >>>");
     if(selectedTimeOfDay != null && selectedDateTime != null){
 
       DateTime startingDateTime = selectedDateTime!.copyWith(hour: selectedTimeOfDay!.hour, minute: selectedTimeOfDay!.minute, second: 0, millisecond: 0, microsecond: 0);
 
-      AppointmentDetails appointmentDetails = AppointmentDetails();
-      appointmentDetails.serviceId = widget.serviceProvided.id;
-      appointmentDetails.serviceProviderUserId = widget.serviceProvided.userId;
-      appointmentDetails.userName = client.name;
-      appointmentDetails.serviceProviderName = widget.appUser.name;
-      appointmentDetails.serviceName = widget.serviceProvided.name;
-      //print("widget.serviceProvided.hasPeriodicAppointments = ${widget.serviceProvided.hasPeriodicAppointments}");
-      if(widget.serviceProvided.hasPeriodicAppointments){
-        appointmentDetails.periodicalWeekDay = Utils.getWeekDay(selectedDateTime!);
+      if(widget.appointmentToChange == null){
+        AppointmentDetails appointmentDetails = AppointmentDetails();
+        appointmentDetails.serviceId = widget.serviceProvided.id;
+        appointmentDetails.serviceProviderUserId = widget.serviceProvided.userId;
+        appointmentDetails.userName = client.name;
+        appointmentDetails.serviceProviderName = widget.appUser.name;
+        appointmentDetails.serviceName = widget.serviceProvided.name;
+        //print("widget.serviceProvided.hasPeriodicAppointments = ${widget.serviceProvided.hasPeriodicAppointments}");
+        //if(widget.serviceProvided.hasPeriodicAppointments){
+        //  appointmentDetails.periodicalWeekDay = Utils.getWeekDay(selectedDateTime!);
+        //}
+        //else{
+        // appointmentDetails.day = Utils.getDateTimeSimplified(selectedDateTime!);
+        //}
+        appointmentDetails.day = Utils.getDateTimeSimplified(selectedDateTime!);
+        appointmentDetails.from = startingDateTime;
+        appointmentDetails.to = startingDateTime.add(widget.serviceProvided.duration);
+
+        return await appointmentDetails.updateAppointmentDetailsInFirestore(context, client: client);
       }
       else{
-        appointmentDetails.day = Utils.getDateTimeSimplified(selectedDateTime!);
-      }
-      appointmentDetails.from = startingDateTime;
-      appointmentDetails.to = startingDateTime.add(widget.serviceProvided.duration);
+        AppointmentDetails appointmentDetails = widget.appointmentToChange!;
 
-      return await appointmentDetails.updateAppointmentDetailsInFirestore(context, client: client);
+        /*
+        print("widget.serviceProvided.hasPeriodicAppointments = ${widget.serviceProvided.hasPeriodicAppointments}");
+        if(widget.serviceProvided.hasPeriodicAppointments){
+          //ATTENTION: do not use the updateAppointmentDetailsInFirestore directly
+          //because the appointmentDetails have the from and to modified by
+          //the method getListOfPeriodicAppointments
+          int? option = await _showChangeOptionsDialog();
+
+          print("option = ${option}");
+
+          if(option == 0){//only this appointment
+            appointmentDetails.addAppointmentChange(context, newFrom: startingDateTime);
+          }
+          else if(option == 1){//this and all following appointments
+            appointmentDetails.addAppointmentChange(context, newFrom: startingDateTime, changeFollowing: true);
+          }
+          else if(option == 2){//all appointments
+            appointmentDetails.addAppointmentChange(context, newFrom: startingDateTime, changeAll: true);
+          }
+
+
+          if(option != null){
+            appointmentDetails.updateAppointmentDetailsInFirestore(context, client: client);
+            return true;
+          }
+        }
+        else{
+          appointmentDetails.day = Utils.getDateTimeSimplified(selectedDateTime!);
+          appointmentDetails.from = startingDateTime;
+          appointmentDetails.to = startingDateTime.add(widget.serviceProvided.duration);
+          appointmentDetails.updateAppointmentDetailsInFirestore(context, client: client);
+          return true;
+        }
+
+         */
+
+        appointmentDetails.day = Utils.getDateTimeSimplified(selectedDateTime!);
+        appointmentDetails.from = startingDateTime;
+        appointmentDetails.to = startingDateTime.add(widget.serviceProvided.duration);
+        appointmentDetails.updateAppointmentDetailsInFirestore(context, client: client);
+        return true;
+      }
     }
     return false;
   }
@@ -288,9 +450,9 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.serviceProvided.hasPeriodicAppointments
-                      ? "Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
-                      : "Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
+                  Text(//widget.serviceProvided.hasPeriodicAppointments
+                      //? "Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
+                      "Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 24.0, bottom: 16.0),
@@ -340,12 +502,12 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
               );
             }
           )
-          : Text(
-            widget.serviceProvided.hasPeriodicAppointments
-                ? "Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
-                : "Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
-          ),
-
+          : widget.appointmentToChange == null
+            ? Text(//widget.serviceProvided.hasPeriodicAppointments
+                  //? "Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
+                  "Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
+              )
+            : Text("Você confirma a alteração do agendamento selecionado para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
         actions: <Widget>[
           TextButton(
             child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
@@ -355,7 +517,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           ),
           TextButton(
             child: Text("Confirmar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
-            onPressed: () {
+            onPressed: () async {
 
               if(widget.manuallyAddAppointment){
                 if(controllerClientName.text != "" || selectedClient != null){
@@ -369,18 +531,18 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                   print("client.name = ${client.name}");
                   print("currentAppUser!.id = ${currentAppUser!.id}");
                   print("currentAppUser!.name = ${currentAppUser!.name}");
-                  _makeAppointment(client);
-                  Navigator.of(context).pop();
-                  _showAppointmentMadeDialog();
+                  await _makeAppointment(client);
+                  if(mounted) Navigator.of(context).pop();
+                  await _showAppointmentMadeDialog();
                 }
                 else{
                   Utils.showSnackBar(context, "Você precisa adicionar o nome do cliente ou escolher um cliente existente");
                 }
               }
               else{
-                _makeAppointment(currentAppUser!);
-                Navigator.of(context).pop();
-                _showAppointmentMadeDialog();
+                await _makeAppointment(currentAppUser!);
+                if(mounted) Navigator.of(context).pop();
+                await _showAppointmentMadeDialog();
               }
             },
           ),
@@ -442,6 +604,8 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
         children: [
           ProfileHeader(appUser: widget.appUser,),
           const Divider(),
+          Center(child: Text(widget.serviceProvided.name, style: textStyleSmallNormal)),
+          const Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -459,15 +623,15 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now(),
+                    initialDate: currentDateTime,
                     firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                    lastDate: DateTime.now().add(Duration(days: widget.serviceProvided.maxSchedulingDelayInDays)),
                     builder: (BuildContext context, Widget? child) {
                       return Theme(
                         data: Theme.of(context).copyWith(
                           colorScheme: ColorScheme.light(
-                            primary: widget.appUser.color, // header background color
-                            onPrimary: Utils.getContrastingColor(widget.appUser.color) ?? Colors.black, // header text color
+                            primary: widget.appUser.getUserColorResolved(), // header background color
+                            onPrimary: Utils.getContrastingColor(widget.appUser.getUserColorResolved()) ?? Colors.black, // header text color
                           ),
                           textButtonTheme: TextButtonThemeData(
                             style: TextButton.styleFrom(
@@ -487,10 +651,8 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                   }
                 },
                 child: Text(
-                  getDateTimeFormatted(currentDateTime),
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                  "${getDateTimeFormatted(currentDateTime)} (${Utils.getFullWeekDayUpperCaseString(currentDateTime)})",
+                  style: textStyleSmallNormal,
                 ),
               ),
               IconButton(
@@ -508,10 +670,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           const Divider(height: 1.5),
           if(isLoadingCurrentAvailableTimes)
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(64.0),
-                child: LoadingData(color: widget.appUser.getUserColorResolved(),),
-              ),
+              child: Center(child: LoadingData(color: widget.appUser.getUserColorResolved(),)),
             ),
           if(!isLoadingCurrentAvailableTimes)
             Expanded(
@@ -563,7 +722,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
             ),
           const Divider(height: 1.5),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 32),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             child: ButtonCustom(
               color: widget.appUser.getUserColorResolved(),
               text: "Marcar horário",

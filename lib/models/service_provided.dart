@@ -13,8 +13,12 @@ class ServiceProvided {
   String description = "";
   double price = 0.0;
   Duration duration = Duration.zero;
-  Color color = Colors.white;
-  bool hasPeriodicAppointments = false;
+  Color color = Colors.blue;
+  //bool hasPeriodicAppointments = false;
+  //int? numberOfPeriodicAppointments;
+  int minSchedulingDelayInMinutes = 30;
+  int schedulingIntervalInMinutes = 10;
+  int maxSchedulingDelayInDays = 30;
 
   ServiceProvided();
 
@@ -27,7 +31,11 @@ class ServiceProvided {
     copy.price = price;
     copy.duration = duration;
     copy.color = color;
-    copy.hasPeriodicAppointments = hasPeriodicAppointments;
+    //copy.hasPeriodicAppointments = hasPeriodicAppointments;
+    //copy.numberOfPeriodicAppointments = numberOfPeriodicAppointments;
+    copy.minSchedulingDelayInMinutes = minSchedulingDelayInMinutes;
+    copy.schedulingIntervalInMinutes = schedulingIntervalInMinutes;
+    copy.maxSchedulingDelayInDays = maxSchedulingDelayInDays;
 
     return copy;
   }
@@ -42,7 +50,11 @@ class ServiceProvided {
       Strings.SERVICE_PRICE: price,
       Strings.SERVICE_DURATION: duration.inMinutes,
       Strings.SERVICE_COLOR: color.value,
-      Strings.SERVICE_HAS_PERIODIC_APPOINTMENTS: hasPeriodicAppointments,
+      //Strings.SERVICE_HAS_PERIODIC_APPOINTMENTS: hasPeriodicAppointments,
+      //Strings.SERVICE_NUMBER_OF_PERIODIC_APPOINTMENTS: numberOfPeriodicAppointments,
+      Strings.SERVICE_MINIMUM_SCHEDULING_DELAY_IN_MINUTES: minSchedulingDelayInMinutes,
+      Strings.SERVICE_SCHEDULING_INTERVAL_IN_MINUTES: schedulingIntervalInMinutes,
+      Strings.SERVICE_FURTHEST_APPOINTMENT_ALLOWED_IN_DAYS: maxSchedulingDelayInDays,
     };
 
     return map;
@@ -50,14 +62,19 @@ class ServiceProvided {
 
   ServiceProvided.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
     if(documentSnapshot.data() != null){
+      Map<String, dynamic> documentMap = documentSnapshot.data() as Map<String, dynamic>;
       id = documentSnapshot.id;
-      name = (documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_NAME] ?? "";
-      userId = (documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_USER_ID] ?? "";
-      description = (documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_DESCRIPTION] ?? "";
-      price = ((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_PRICE] ?? 0.0) + .0;
-      duration = Duration(minutes: (documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_DURATION] ?? 0);
-      color = Color((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_COLOR] ?? Colors.white.value);
-      hasPeriodicAppointments = (documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_HAS_PERIODIC_APPOINTMENTS] ?? false;
+      name = documentMap[Strings.SERVICE_NAME] ?? "";
+      userId = documentMap[Strings.SERVICE_USER_ID] ?? "";
+      description = documentMap[Strings.SERVICE_DESCRIPTION] ?? "";
+      price = (documentMap[Strings.SERVICE_PRICE] ?? 0.0) + .0;
+      duration = Duration(minutes: documentMap[Strings.SERVICE_DURATION] ?? 0);
+      color = Color(documentMap[Strings.SERVICE_COLOR] ?? Colors.blue.value);
+      //hasPeriodicAppointments = documentMap[Strings.SERVICE_HAS_PERIODIC_APPOINTMENTS] ?? false;
+      //numberOfPeriodicAppointments = documentMap[Strings.SERVICE_NUMBER_OF_PERIODIC_APPOINTMENTS];
+      minSchedulingDelayInMinutes = documentMap[Strings.SERVICE_MINIMUM_SCHEDULING_DELAY_IN_MINUTES] ?? 30;
+      schedulingIntervalInMinutes = documentMap[Strings.SERVICE_SCHEDULING_INTERVAL_IN_MINUTES] ?? 10;
+      maxSchedulingDelayInDays = documentMap[Strings.SERVICE_FURTHEST_APPOINTMENT_ALLOWED_IN_DAYS] ?? 30;
     }
   }
 
@@ -121,5 +138,14 @@ class ServiceProvided {
     }
 
     return servicesProvidedList;
+  }
+
+  bool isWithinValidSchedulingInterval(DateTime dateTimeToCheck) {
+    //print("isWithinBlockedPeriod>>>>>>>>>");
+    //print("this = $this");
+    DateTime dateTimeToCheckSimplified = Utils.getDateTimeSimplified(dateTimeToCheck);
+    DateTime dateTimeNowSimplified = Utils.getDateTimeSimplified(DateTime.now());
+    return !dateTimeToCheck.isBefore(DateTime.now().add(Duration(minutes: minSchedulingDelayInMinutes)))
+        && !dateTimeToCheckSimplified.isAfter(dateTimeNowSimplified.add(Duration(days: maxSchedulingDelayInDays)));
   }
 }

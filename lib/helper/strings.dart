@@ -53,6 +53,11 @@ class Strings {
   static const String USER_IS_SERVICE_PROVIDER = "is_service_provider";
   static const String USER_BLOCKED_CLIENTS_IDS = "blocked_clients_ids";
   static const String USER_AVAILABILITY_MAP = "availability_map";
+  static const String USER_BLOCKED_PERIODS = "blocked_periods";
+
+  //Blocked period
+  static const String BLOCKED_PERIOD_START_DATE = "start_date";
+  static const String BLOCKED_PERIOD_END_DATE = "end_date";
 
   //strings Service
   static const String SERVICE_ID = "id";
@@ -63,6 +68,10 @@ class Strings {
   static const String SERVICE_PRICE = "price";
   static const String SERVICE_COLOR = "color";
   static const String SERVICE_HAS_PERIODIC_APPOINTMENTS = "has_periodic_appointments";
+  static const String SERVICE_NUMBER_OF_PERIODIC_APPOINTMENTS = "number_of_periodic_appointments";
+  static const String SERVICE_MINIMUM_SCHEDULING_DELAY_IN_MINUTES = "minimum_scheduling_delay_in_minutes";
+  static const String SERVICE_SCHEDULING_INTERVAL_IN_MINUTES = "scheduling_interval_in_minutes";
+  static const String SERVICE_FURTHEST_APPOINTMENT_ALLOWED_IN_DAYS = "furthest_appointment_allowed_in_days";
 
   static const String SUBSCRIPTION_ID = "id";
   static const String SUBSCRIPTION_USER_ID = "user_id";
@@ -108,6 +117,14 @@ class Strings {
   static const String APPOINTMENT_TO = "to";
   //static const String APPOINTMENT_IS_ALL_DAY = "is_all_day";
   static const String APPOINTMENT_REMINDER_SENT = "reminder_sent";
+  static const String APPOINTMENT_CHANGES = "changes";
+
+  // appointment change
+  static const String APPOINTMENT_CHANGE_INDEX = "index";
+  static const String APPOINTMENT_CHANGE_NEW_FROM = "new_from";
+  static const String APPOINTMENT_CHANGE_NEW_TO = "new_to";
+  static const String APPOINTMENT_CHANGE_CANCELED = "canceled";
+  static const String APPOINTMENT_CHANGE_CHANGE_FOLLOWING = "change_following";
 
   //
 

@@ -31,13 +31,16 @@ class _MyAppointmentsState extends State<MyAppointments> {
 
   List<AppointmentDetails> futureAppointments = [];
   List<AppointmentDetails> pastAppointments = [];
-  List<AppointmentDetails> periodicAppointments = [];
+  //List<AppointmentDetails> futurePeriodicAppointments = [];
+  //List<AppointmentDetails> pastPeriodicAppointments = [];
   bool appointmentsAreLoaded = false;
   DateTime currentDateTime = DateTime.now();
 
   _getAppointmentsList() async {
     pastAppointments.clear();
     futureAppointments.clear();
+    //futurePeriodicAppointments.clear();
+    //pastPeriodicAppointments.clear();
     List<AppointmentDetails> appointments = [];
     if(currentAppUser!.isServiceProvider){
       appointments = await AppointmentDetails.getServiceProviderAppointmentDetails(appUser: currentAppUser!);
@@ -50,8 +53,16 @@ class _MyAppointmentsState extends State<MyAppointments> {
 
     for(var appointment in appointments){
 
+      /*
       if(appointment.periodicalWeekDay != null){
-        periodicAppointments.add(appointment);
+        //to only show the periodicAppointments that are canceled if we are looking the past appointments
+        if(appointment.isCanceled) {
+          pastPeriodicAppointments.add(appointment);
+        }
+        else {
+          futurePeriodicAppointments.add(appointment);
+        }
+
       }
       else{
         if(appointment.from.isBefore(currentDateTime)){
@@ -60,6 +71,14 @@ class _MyAppointmentsState extends State<MyAppointments> {
         else{
           futureAppointments.add(appointment);
         }
+      }
+
+       */
+      if(appointment.from.isBefore(currentDateTime)){
+        pastAppointments.add(appointment);
+      }
+      else{
+        futureAppointments.add(appointment);
       }
     }
 
@@ -79,7 +98,10 @@ class _MyAppointmentsState extends State<MyAppointments> {
   @override
   Widget build(BuildContext context) {
 
+    bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
+
     List<AppointmentDetails> appointments = widget.showOnlyPastAppointments ? pastAppointments : futureAppointments;
+    //List<AppointmentDetails> periodicAppointments = widget.showOnlyPastAppointments ? pastPeriodicAppointments : futurePeriodicAppointments;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -88,6 +110,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: greaterWidthLayout ? MediaQuery.of(context).size.width/4 : 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -97,9 +120,9 @@ class _MyAppointmentsState extends State<MyAppointments> {
                 child: LoadingData(),
               ),
             if(appointmentsAreLoaded)
-              appointments.isEmpty && periodicAppointments.isEmpty
+              appointments.isEmpty //&& periodicAppointments.isEmpty
                 ? Padding(
-                    padding: const EdgeInsets.only(top: 32.0, bottom: 16),
+                    padding: const EdgeInsets.only(top: 64, bottom: 16),
                     child: Center(
                         child: Text(widget.showOnlyPastAppointments ? "Nenhum agendamento no histórico" : "Nenhum agendamento futuro", style: textStyleSmallNormal,)
                     ),
@@ -110,26 +133,30 @@ class _MyAppointmentsState extends State<MyAppointments> {
                       padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 32.0), // Adicionado o padding lateral
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: (widget.showOnlyPastAppointments ? appointments.length : appointments.length + 1) + periodicAppointments.length,
+                      itemCount: appointments.length, //+ periodicAppointments.length,
                       itemBuilder: (BuildContext context, int index) {
 
-                        if(!widget.showOnlyPastAppointments && index == (appointments.length + periodicAppointments.length)){
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 32.0),
-                            child: ButtonCustom(
-                              text: "Histórico de agendamentos",
-                              onPressed: (){
-                                Navigator.pushNamed(context, RouteGenerator.MY_APPOINTMENTS, arguments: true);
-                              },
-                            ),
-                          );
-                        }
+                        //AppointmentDetails appointmentDetails = index < periodicAppointments.length ? periodicAppointments[index] : appointments[index - periodicAppointments.length];
+                        AppointmentDetails appointmentDetails = appointments[index];
 
-                        AppointmentDetails appointmentDetails = index < periodicAppointments.length ? periodicAppointments[index] : appointments[index - periodicAppointments.length];
+                        return Opacity(
+                          opacity: widget.showOnlyPastAppointments || appointmentDetails.isCanceled ? 0.5 : 1.0,
+                          child: AppointmentDetailsCard(
+                            appointmentDetails: appointmentDetails,
+                            isClient: !currentAppUser!.isServiceProvider,
+                            onTap: (){
+                              Navigator.pushNamed(context, RouteGenerator.APPOINTMENT_DETAILS_PAGE, arguments: appointmentDetails).then((value){
+                                _getAppointmentsList();
+                              });
+                            },
+                          ),
+                        );
 
+                        /*
                         return Column(
                           children: [
-                            if(index == periodicAppointments.length - 1)
+
+                            if(index == 0 && periodicAppointments.isNotEmpty)
                               const Padding(
                                 padding: EdgeInsets.only(top: 12, bottom: 12),
                                 child: Text("Agendamentos Periódicos", style: textStyleSmallBold,),
@@ -153,9 +180,23 @@ class _MyAppointmentsState extends State<MyAppointments> {
                               ),
                           ],
                         );
+
+                         */
                       },
                     ),
                 ),
+            if(appointmentsAreLoaded && !widget.showOnlyPastAppointments)
+              Padding(
+                padding: const EdgeInsets.only(top: 48, bottom: 32),
+                child: Center(
+                  child: TextButton(
+                    onPressed: (){
+                      Navigator.pushNamed(context, RouteGenerator.MY_APPOINTMENTS, arguments: true);
+                    },
+                    child: const Text("Histórico de agendamentos"),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

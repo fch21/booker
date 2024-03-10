@@ -88,18 +88,18 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text('Confirmar cancelamento'),
-          content: Text('Tem certeza que deseja cancelar a sua assinatura?\nApós o cancelamento, você vai perder todos os benefícios da sua conta premium.'),
+          title: const Text('Confirmar cancelamento'),
+          content: const Text('Tem certeza que deseja cancelar a sua assinatura?\nApós o cancelamento, você vai perder todos os benefícios da sua conta premium.'),
           actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: <Widget>[
             TextButton(
-              child: Text('Voltar'),
+              child: const Text('Voltar'),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
               },
             ),
             TextButton(
-              child: Text('Cancelar Assinatura', style: TextStyle(color: Colors.red),),
+              child: const Text('Cancelar Assinatura', style: TextStyle(color: Colors.red),),
               onPressed: () async {
                 Navigator.of(dialogContext).pop();
                 setState(() {

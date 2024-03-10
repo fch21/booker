@@ -12,6 +12,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
 import 'appointment_details.dart';
+import 'period.dart';
 
 class AppUser {
   String id = "";
@@ -33,6 +34,7 @@ class AppUser {
   bool isServiceProvider = false;
   Map<String, dynamic> availabilityMap = {};
   List blockedClientsIds = [];
+  List<Period> blockedPeriods = [];
 
   Subscription? subscription;
 
@@ -54,7 +56,11 @@ class AppUser {
     copy.urlProfileUserImage = urlProfileUserImage;
     copy.urlProfileBgImage = urlProfileBgImage;
     copy.color = color;
-    //copy.subscriptionId = subscriptionId;
+    copy.isServiceProvider = isServiceProvider;
+    copy.availabilityMap = Map.from(availabilityMap);
+    copy.blockedClientsIds = List.from(blockedClientsIds);
+    copy.blockedPeriods = List.from(blockedPeriods);
+    //copy.subscription = subscription.copy();
 
     return copy;
   }
@@ -96,6 +102,10 @@ class AppUser {
     return map;
   }
 
+  List<Map<String, dynamic>> blockedPeriodsToMapList() {
+    return blockedPeriods.map((period) => period.toMap()).toList();
+  }
+
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       Strings.USER_ID: id,
@@ -115,6 +125,7 @@ class AppUser {
       Strings.USER_IS_SERVICE_PROVIDER: isServiceProvider,
       Strings.USER_BLOCKED_CLIENTS_IDS: blockedClientsIds,
       Strings.USER_AVAILABILITY_MAP: convertAvailabilityMapToMap(),
+      Strings.USER_BLOCKED_PERIODS: blockedPeriodsToMapList(),
     };
 
     return map;
@@ -157,6 +168,10 @@ class AppUser {
     });
   }
 
+  void convertMapListToBlockedPeriods(List mapList) {
+    blockedPeriods = mapList.map((map) => Period.fromMap(map)).toList();
+  }
+
   AppUser.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
     if(documentSnapshot.data() != null){
       Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
@@ -171,15 +186,14 @@ class AppUser {
       language = data.containsKey(Strings.USER_LANGUAGE) ? documentSnapshot[Strings.USER_LANGUAGE] ?? "" :  "";
       urlProfileUserImage = data[Strings.USER_URL_PROFILE_USER_IMAGE] ?? "";
       urlProfileBgImage = data[Strings.USER_URL_PROFILE_BG_IMAGE] ?? "";
-      color = Color((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_COLOR] ?? Colors.white.value);
+      color = Color(data[Strings.SERVICE_COLOR] ?? Colors.white.value);
       //subscriptionId = data[Strings.USER_SUBSCRIPTION_ID] ?? "";
 
       isServiceProvider = data[Strings.USER_IS_SERVICE_PROVIDER] ?? false;
       blockedClientsIds = data[Strings.USER_BLOCKED_CLIENTS_IDS] ?? [];
       //availabilityMap = (documentSnapshot.data() as Map<String, dynamic>)[Strings.USER_AVAILABILITY_MAP] ?? {};
       convertMapToAvailabilityMap(data[Strings.USER_AVAILABILITY_MAP] as Map<String, dynamic>?);
-
-
+      convertMapListToBlockedPeriods((data[Strings.USER_BLOCKED_PERIODS] as List?) ?? []);
     }
   }
 
@@ -197,6 +211,7 @@ class AppUser {
     isServiceProvider = data[Strings.USER_IS_SERVICE_PROVIDER] ?? false;
     //availabilityMap = data[Strings.USER_AVAILABILITY_MAP] ?? {};
     convertMapToAvailabilityMap(data[Strings.USER_AVAILABILITY_MAP] as Map<String, dynamic>?);
+    convertMapListToBlockedPeriods((data[Strings.USER_BLOCKED_PERIODS] as List?) ?? []);
   }
 
   Future<void> initUserSubscription() async {
@@ -409,6 +424,21 @@ class AppUser {
 
     return userNameIsAvailable;
 
+  }
+
+  bool isWithinBlockedPeriods(DateTime dateToCheck) {
+    print("isWithinBlockedPeriods user >>>>>>>>>");
+    print("dateToCheck = $dateToCheck");
+    print("blockedPeriods = $blockedPeriods");
+    bool isInBlockedPeriod = false;
+    for(Period blockedPeriod in blockedPeriods){
+      print("blockedPeriod.isWithinBlockedPeriod(dateToCheck) = ${blockedPeriod.isWithinBlockedPeriod(dateToCheck)}");
+      if(blockedPeriod.isWithinBlockedPeriod(dateToCheck)){
+        isInBlockedPeriod = true;
+        break;
+      }
+    }
+    return isInBlockedPeriod;
   }
 
   @override

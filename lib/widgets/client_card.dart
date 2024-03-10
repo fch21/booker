@@ -59,7 +59,7 @@ class _ClientCardState extends State<ClientCard> {
                     Expanded(
                       child: Text(
                         "Nome: ${widget.client.name}",
-                        style: textStyleSmallNormal,
+                        style: textStyleSmallBold,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

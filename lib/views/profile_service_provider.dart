@@ -134,6 +134,9 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
 
   @override
   Widget build(BuildContext context) {
+
+    bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SliderDrawer(
@@ -235,6 +238,7 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
                 controller: _tabController,
                 children: <Widget>[
                   ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: greaterWidthLayout ? MediaQuery.of(context).size.width/4 : 0),
                     shrinkWrap: true,
                     itemCount: _availableSchedules.length + 1,
                     itemBuilder: (context, index){
@@ -313,6 +317,7 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
                     },
                   ), // Primeira Tab: A lista existente
                   ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: greaterWidthLayout ? MediaQuery.of(context).size.width/4 : 0),
                     shrinkWrap: true,
                     itemCount: _servicesProvided.length + 1,
                     itemBuilder: (context, index){

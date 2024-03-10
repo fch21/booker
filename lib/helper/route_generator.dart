@@ -1,5 +1,6 @@
 
 import 'package:booker/home.dart';
+import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
 import 'package:booker/models/available_schedule.dart';
@@ -10,6 +11,7 @@ import 'package:booker/views/add_payment_method_with_stripe_elements.dart';
 import 'package:booker/views/appointment_details_page.dart';
 import 'package:booker/views/available_schedule_form.dart';
 import 'package:booker/views/calendar.dart';
+import 'package:booker/views/calendar_blocked_periods.dart';
 import 'package:booker/views/choice_of_service.dart';
 import 'package:booker/views/client_page.dart';
 import 'package:booker/views/configurations_home.dart';
@@ -25,7 +27,7 @@ import 'package:booker/views/profile_service_provider.dart';
 import 'package:booker/views/edit_profile_client.dart';
 import 'package:booker/views/register.dart';
 import 'package:booker/views/reset_password.dart';
-import 'package:booker/views/service_form.dart';
+import 'package:booker/views/service_provided_form.dart';
 import 'package:booker/views/subscriptions_management.dart';
 import 'package:booker/views/waiting_email_verification.dart';
 import 'package:flutter/material.dart';
@@ -61,9 +63,11 @@ class RouteGenerator {
   static const String SERVICE_FORM = "/service_form";
   static const String AVAILABLE_SCHEDULE_FORM = "/available_schedule_form";
   static const String APPOINTMENT_DETAILS_PAGE = "/appointment_details_page";
+  static const String EDIT_APPOINTMENT_DETAILS_PAGE = "/edit_appointment_details_page";
   static const String CLIENT_PAGE = "/client_page";
   static const String MY_APPOINTMENTS = "/my_appointments";
   static const String MY_CLIENTS = "/my_clients";
+  static const String CALENDAR_BLOCKED_PERIOD = "/calendar_blocked_period";
 
 
 
@@ -151,11 +155,20 @@ class RouteGenerator {
             //showMenu: (args["show_menu"] ?? false) as bool
         ));
       case MAKE_AN_APPOINTMENT:
-        return MaterialPageRoute(builder: (_) => MakeAnAppointment(appUser: (args as Map)["user"] as AppUser, serviceProvided: args["serviceProvided"] as ServiceProvided, manuallyAddAppointment: (args["manually_add_appointment"] ?? false) as bool));
+        return MaterialPageRoute(builder: (_) => MakeAnAppointment(
+            appUser: (args as Map)["user"] as AppUser,
+            serviceProvided: args["serviceProvided"] as ServiceProvided,
+            manuallyAddAppointment: (args["manually_add_appointment"] ?? false) as bool,
+            appointmentToChange: args["appointmentToChange"] as AppointmentDetails?,
+          ),
+        );
       case SERVICE_FORM:
-        return MaterialPageRoute(builder: (_) => ServiceForm(serviceProvided: args as ServiceProvided?,));
+        return MaterialPageRoute(builder: (_) => ServiceProvidedForm(serviceProvided: args as ServiceProvided?,));
       case AVAILABLE_SCHEDULE_FORM:
         return MaterialPageRoute(builder: (_) => AvailableScheduleForm(availableSchedule: (args as Map)["availableSchedule"] as AvailableSchedule?, onDelete: args["onDelete"] as VoidCallback,  onSave: args["onSave"] as VoidCallback));
+      case CALENDAR_BLOCKED_PERIOD:
+        //return MaterialPageRoute(builder: (_) => CalendarBlockedPeriods(showOnlyPastBlockedPeriods: (args ?? false) as bool,));
+        return MaterialPageRoute(builder: (_) => CalendarBlockedPeriods());
       default:
         return _routeError();
     }

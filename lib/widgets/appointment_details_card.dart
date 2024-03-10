@@ -48,10 +48,10 @@ class AppointmentDetailsCard extends StatelessWidget {
                   ),
                 ),
               ),
-              if(appointmentDetails.periodicalWeekDay == null)
+              //if(appointmentDetails.periodicalWeekDay == null)
                 Text('Data: ${DateFormat('dd/MM/yyyy').format(appointmentDetails.from)}      Hora: ${DateFormat('HH:mm').format(appointmentDetails.from)}', style: TextStyle(color: Colors.black54, fontSize: fontSizeSmall),),
-              if(appointmentDetails.periodicalWeekDay != null)
-                Text('Dia: ${Utils.getFullWeekDayUpperCaseString(appointmentDetails.from)}s  Hora: ${DateFormat('HH:mm').format(appointmentDetails.from)}', style: TextStyle(color: Colors.black54, fontSize: fontSizeSmall),),
+              //if(appointmentDetails.periodicalWeekDay != null)
+              //  Text('Dia: ${Utils.getFullWeekDayUpperCaseString(appointmentDetails.from)}s  Hora: ${DateFormat('HH:mm').format(appointmentDetails.from)}', style: TextStyle(color: Colors.black54, fontSize: fontSizeSmall),),
             ],
           ),
         ),
