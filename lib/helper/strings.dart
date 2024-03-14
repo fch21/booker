@@ -18,6 +18,9 @@ class Strings {
   //live
   //static const String STRIPE_PUBLISHABLE_KEY = "pk_live_51OmofUAnghrwvGGz1lBeZQnetZC0BcxeOJUHKMk17BsgZX1GDviRYFG9cvVwIICAN4XQZ8hGjAXfSbuRG0B3t7YO00bHtPXe5p";
 
+  //google
+  static const String GOOGLE_SIGN_CLIENT_ID = "1060470892593-46d486l7p1knpkeglnu2ccqqvl9igjbi.apps.googleusercontent.com";
+
   //languages
   static const String ENGLISH = "English";
   static const String PORTUGUES = "Português";
@@ -198,102 +201,113 @@ class Strings {
 
 
   static const String TERMS_OF_USE = '''
-1- Aceitação dos Termos
+1. Introdução e Aceitação:
 
-Ao acessar e usar o aplicativo ("Aplicativo"), você concorda em cumprir e estar legalmente vinculado a estes Termos de Uso ("Termos"). Caso não concorde com estes Termos, você não está autorizado a utilizar o Aplicativo. Ao utilizar o Aplicativo, você também concorda com a nossa Política de Privacidade, que pode ser encontrada abaixo.
+Bem-vindo ao Booker! Ao acessar nosso aplicativo e website, você aceita estar vinculado por estes Termos de Uso, inclusive quaisquer atualizações futuras. Estes Termos regem sua utilização da Plataforma Booker, que inclui agendar e oferecer serviços. A utilização da Plataforma também implica consentimento com nossa Política de Privacidade.
 
-2 - Elegibilidade
 
-O Aplicativo é destinado a usuários com idade igual ou superior a 18 anos. Ao usar o Aplicativo, você declara e garante que tem idade suficiente para utilizar o Aplicativo e cumprir todos os requisitos de elegibilidade e residência.
+2. Elegibilidade e Consentimento:
 
-3 - Conta do usuário
+A Plataforma é destinada a usuários com 18 anos ou mais. Usuários menores de idade devem obter consentimento dos pais ou responsáveis legais antes de usar a Plataforma. Ao utilizar a Plataforma, você afirma ter a capacidade legal necessária para aderir a estes Termos.
 
-Para acessar e usar o Aplicativo, você deverá criar uma conta de usuário ("Conta"). Você concorda em fornecer informações verdadeiras, precisas e completas ao se registrar e manter essas informações atualizadas. Você é responsável por manter a confidencialidade de sua senha e é totalmente responsável por todas as atividades que ocorram sob sua Conta. Você concorda em notificar-nos imediatamente sobre qualquer uso não autorizado de sua Conta ou qualquer outra violação de segurança.
 
-4 - Uso permitido
+3. Contas de Usuário:
 
-Você concorda em usar o Aplicativo apenas para fins legais e de acordo com estes Termos e todas as leis e regulamentações aplicáveis. Você concorda em não usar o Aplicativo de maneira que possa causar danos, inutilização, sobrecarga ou prejudicar o Aplicativo ou interferir no uso e aproveitamento do Aplicativo por terceiros.
+Você deve fornecer informações precisas e atualizadas ao criar sua conta. Você é responsável pela segurança de sua conta e deve notificar-nos imediatamente sobre qualquer uso não autorizado. A Plataforma se reserva o direito de suspender ou encerrar contas que violem estes Termos.
 
-5 - Propriedade intelectual
 
-O Aplicativo, incluindo seu conteúdo, funcionalidades e design, é protegido por leis de direitos autorais, marcas registradas e outras leis de propriedade intelectual aplicáveis. Você concorda em não copiar, distribuir, modificar, criar trabalhos derivados ou explorar comercialmente qualquer parte do Aplicativo sem nossa permissão prévia por escrito.
+4. Licença de Uso:
 
-6 - Isenção de responsabilidade e limitação de responsabilidade
+Concedemos a você uma licença limitada, não exclusiva, revogável e pessoal para acessar e usar a Plataforma, exclusivamente para fins de agendamento ou oferta de serviços profissionais. É proibido o uso da Plataforma para quaisquer fins ilegais ou não autorizados.
 
-O Aplicativo é fornecido "no estado em que se encontra" e "conforme disponível", sem qualquer garantia expressa ou implícita, incluindo, mas não se limitando a, garantias de comercialização, adequação a um propósito específico e não violação. Nós não garantimos que o Aplicativo atenderá às suas necessidades ou estará disponível ininterruptamente, pontualmente, de forma segura ou livre de erros. Em nenhuma circunstância seremos responsáveis por danos diretos, indiretos, incidentais, consequentes ou punitivos decorrentes do uso ou incapacidade de usar o Aplicativo.
 
-7 - Indenização
+5. Propriedade Intelectual:
 
-Você concorda em defender, indenizar e isentar-nos de todas as reivindicações, responsabilidades, danos, perdas e despesas, incluindo honorários advocatícios razoáveis, decorrentes de ou relacionados ao seu uso do Aplicativo, sua violação destes Termos, ou sua violação de qualquer lei ou direito de terceiros, incluindo, mas não se limitando a, direitos de propriedade intelectual. 
+O conteúdo da Plataforma é protegido por direitos autorais e marcas registradas. Qualquer uso não autorizado do conteúdo pode violar direitos de propriedade intelectual. Você concorda em respeitar todos os direitos de propriedade intelectual relacionados à Plataforma.
 
-8 - Modificação e rescisão
 
-Reservamo-nos o direito de modificar ou encerrar o Aplicativo e estes Termos a qualquer momento e por qualquer motivo, sem aviso prévio. Você concorda em revisar periodicamente estes Termos para garantir que está ciente de quaisquer alterações. Seu uso continuado do Aplicativo após qualquer modificação destes Termos constituirá sua aceitação de tais modificações.
+6. Modificações e Terminação:
 
-9 - Disposições gerais
+A Plataforma se reserva o direito de modificar ou descontinuar qualquer aspecto ou recurso a qualquer momento, com aviso prévio. Seu uso contínuo após tais alterações constitui aceitação dos Termos modificados.
 
-Estes Termos constituem o acordo completo entre você e nós em relação ao uso do Aplicativo e substituem todas as comunicações e propostas anteriores e contemporâneas, sejam eletrônicas, orais ou escritas, entre você e nós com relação ao Aplicativo. Se qualquer disposição destes Termos for considerada inválida, ilegal ou inexequível por qualquer motivo, tal disposição será considerada separada dos demais Termos e não afetará a validade e aplicabilidade das demais disposições.
 
-10 - Lei aplicável e jurisdição
+7. Limitação de Responsabilidade:
 
-Estes Termos são regidos e interpretados de acordo com as leis do Brasil. Você concorda em se submeter à jurisdição exclusiva dos tribunais do Brasil para resolver qualquer disputa decorrente do uso do Aplicativo ou destes Termos.
+A Plataforma não garante que os serviços atenderão suas necessidades específicas ou estarão sempre disponíveis sem interrupções. Até o limite máximo permitido por lei, a Plataforma não será responsável por danos diretos ou indiretos resultantes do uso da Plataforma.
 
-11 - Alterações nos Termos de Uso
 
-Podemos alterar estes Termos de Uso a qualquer momento, a nosso exclusivo critério. Se fizermos alterações, iremos notificá-lo atualizando a data no início destes Termos e, em alguns casos, podemos fornecer um aviso adicional, como enviar um e-mail ou atualizar nosso aplicativo. É importante que você revise estes Termos de Uso sempre que os atualizarmos ou usar nosso aplicativo.
+8. Indenização:
 
-12 - Contato
+Você concorda em indenizar e isentar a Plataforma de quaisquer reivindicações resultantes do seu uso da Plataforma, violação destes Termos ou violação de qualquer direito de terceiros.
 
-Se você tiver alguma dúvida sobre estes Termos de Uso, entre em contato conosco pelo e-mail: ${Strings.BOOKER_EMAIL}.
-  ''';
+
+9. Lei Aplicável:
+
+Estes Termos são regidos pelas leis do Brasil. Quaisquer disputas serão resolvidas nos tribunais brasileiros, salvo disposição em contrário na legislação aplicável.
+
+
+10. Contato:
+
+Para dúvidas ou comentários sobre estes Termos, entre em contato conosco em ${Strings.BOOKER_EMAIL}.
+''';
   static const String PRIVACY_POLICY = '''
-1 - Informações coletadas
+1. Informações Coletadas:
 
-Coletamos informações pessoais quando você se registra e usa o Aplicativo, incluindo seu endereço de e-mail, nome de usuário e informações de pagamento. Também coletamos informações sobre suas transações, como as bebidas compradas e os eventos frequentados. Para organizadores de eventos, coletamos informações adicionais necessárias para a criação de uma conta conectada no Stripe.
+Detalhamos aqui os tipos específicos de dados pessoais coletados pela Plataforma, incluindo, mas não limitado a, nome, e-mail, número de telefone, e informações de pagamento processadas pela Stripe.
 
-2 - Uso das informações
 
-Usamos as informações coletadas para fornecer, manter e melhorar o Aplicativo, processar transações, comunicar-se com você e cumprir nossas obrigações legais.
+2. Finalidade do Processamento:
 
-3 - Compartilhamento de informações
+Explicamos como utilizamos suas informações, incluindo para facilitar o agendamento de serviços, enviar notificações relevantes e cumprir obrigações legais. Seu consentimento será solicitado conforme aplicável.
 
-Compartilhamos suas informações com o serviço de pagamento Stripe para processar transações e com os organizadores de eventos para fornecer informações sobre as vendas de bebidas. Não compartilhamos suas informações com terceiros para fins de marketing.
 
-4 - Segurança
+3. Compartilhamento de Informações:
 
-Implementamos medidas de segurança razoáveis para proteger suas informações, incluindo o uso de criptografia e medidas de segurança do Firebase.
+Descrevemos com quais terceiros suas informações podem ser compartilhadas, como a Stripe para processamento de pagamentos, e sob quais condições, sempre protegendo sua privacidade.
 
-5 - Retenção de dados
 
-Retemos suas informações pelo tempo necessário para cumprir os propósitos descritos nesta Política de Privacidade, a menos que um período de retenção mais longo seja exigido ou permitido por lei.
+4. Direitos dos Titulares:
 
-6 - Seus direitos
+Fornecemos instruções claras sobre como você pode exercer seus direitos de acesso, correção, exclusão, e oposição ao processamento de seus dados.
 
-Você tem o direito de acessar, corrigir ou excluir suas informações pessoais, bem como o direito de limitar ou opor-se ao processamento de suas informações. Para exercer esses direitos, entre em contato conosco pelo e-mail: [email protected]
 
-7 - Alterações na Política de Privacidade
+5. Segurança dos Dados:
 
-Podemos atualizar esta Política de Privacidade a qualquer momento, a nosso exclusivo critério. Se fizermos alterações, iremos notificá-lo atualizando a data no início desta Política e, em alguns casos, podemos fornecer um aviso adicional, como enviar um e-mail ou atualizar nosso aplicativo. É importante que você revise esta Política de Privacidade sempre que a atualizarmos ou usar nosso aplicativo.
+Detalhamos as medidas de segurança adotadas para proteger seus dados, incluindo criptografia e procedimentos de segurança rigorosos.
 
-8 - Transferências de dados internacionais
 
-Suas informações podem ser transferidas para, armazenadas e processadas em países fora do Brasil, onde nossos servidores estão localizados. Ao usar nosso aplicativo, você concorda com a transferência de suas informações para esses países.
+6. Violação de Dados
+Estabeleclecemos procedimentos específicos para notificação de violações de dados, incluindo a comunicação imediata a usuários afetados e autoridades competentes, conforme exigido por lei, detalhando as ações tomadas para mitigar o incidente.
 
-9 - Direitos dos usuários e responsabilidade do controlador de dados
 
-No caso de uma violação de dados, conforme exigido por lei, informaremos as autoridades competentes dentro de 72 horas após a descoberta da violação. Também notificaremos os usuários afetados assim que possível.
+7. Transferências Internacionais de Dados:
 
-10 - Política de cookies
+Clarificamos as medidas de proteção implementadas para dados transferidos internacionalmente, garantindo que todas as transferências cumpram com as normas de proteção de dados aplicáveis, utilizando mecanismos aprovados como Cláusulas Contratuais Padrão.
 
-Nosso aplicativo utiliza cookies para melhorar sua experiência de navegação. Os cookies são pequenos arquivos de texto que são armazenados no seu dispositivo e nos ajudam a entender como você interage com nosso aplicativo. Você pode gerenciar suas preferências de cookies nas configurações do seu dispositivo.
 
-11 - Links para outros sites
+8. Política de Cookies e Tecnologias Similares:
 
-Nosso aplicativo pode conter links para outros sites que não são operados por nós. Se você clicar em um link de terceiros, será direcionado ao site desse terceiro. Recomendamos que você reveja a política de privacidade de cada site que visitar. Não temos controle e não assumimos nenhuma responsabilidade pelo conteúdo, políticas de privacidade ou práticas de sites ou serviços de terceiros.
+Explicamos o uso de cookies e tecnologias similares pela Plataforma, incluindo os propósitos para os quais são usados. Fornecemos orientações sobre como você pode gerenciar suas preferências de cookies nas configurações do seu navegador.
 
-12 - Contato
 
-Se você tiver alguma dúvida sobre esta Política de Privacidade, entre em contato conosco pelo e-mail: ${Strings.BOOKER_EMAIL}.
-  ''';
+9. Atualizações da Política de Privacidade:
+
+Comprometemo-nos a comunicar quaisquer alterações significativas nesta Política, enviando notificações diretas aos usuários, além de atualizar a data de "última modificação" no documento. Incentivamos a revisão periódica desta Política para se manter informado sobre a proteção de seus dados.
+
+
+10. Links para Outros Sites:
+
+Advertimos sobre os links para sites externos presentes na Plataforma, recomendando que os usuários revisem as políticas de privacidade desses sites antes de compartilhar quaisquer informações pessoais, destacando que não nos responsabilizamos pelas práticas de privacidade de terceiros.
+
+
+11. Exercício de Seus Direitos:
+
+Detalhamos o processo para você exercer seus direitos relacionados aos dados pessoais sob nossa custódia, incluindo como fazer solicitações de acesso, correção, exclusão ou portabilidade dos dados, além de como retirar o consentimento para o processamento de seus dados.
+
+
+12. Contato:
+
+Para quaisquer questões ou preocupações relativas à sua privacidade e aos seus dados pessoais, encorajamos o contato direto conosco através do e-mail ${Strings.BOOKER_EMAIL}. Estamos comprometidos em responder prontamente e de forma transparente.
+''';
 
 }

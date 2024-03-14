@@ -74,6 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     return Container(
       color: Colors.white,
+      child: const Center(child: CircularProgressIndicator()),
     );
 
 

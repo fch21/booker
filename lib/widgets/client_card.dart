@@ -45,42 +45,45 @@ class _ClientCardState extends State<ClientCard> {
 
     return GestureDetector(
       onTap: widget.onTap,
-      child: Card(
-        elevation: 4,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8,8,8,8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "Nome: ${widget.client.name}",
-                        style: textStyleSmallBold,
-                        overflow: TextOverflow.ellipsis,
+      child: Opacity(
+        opacity: clientIsBlocked ? 0.6 : 1.0,
+        child: Card(
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8,8,8,8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Nome: ${widget.client.name}",
+                          style: textStyleSmallBold,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                    if(clientIsBlocked) const Padding(
-                      padding: EdgeInsets.only( left: 8.0),
-                      child: Text('Bloqueado', style: TextStyle(color: Colors.red, fontSize: fontSizeSmall),),
-                    ),
-                  ],
+                      if(clientIsBlocked) const Padding(
+                        padding: EdgeInsets.only( left: 8.0),
+                        child: Text('Bloqueado', style: TextStyle(color: Colors.red, fontSize: fontSizeSmall),),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Text('Email: ${widget.client.email}', style: const TextStyle(fontSize: fontSizeSmall),),
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text('Último agendamento: ${lastAppointmentDetails == null
-                    ? "Carregando..."
-                    : Utils.formatDateTimeToVisualize(lastAppointmentDetails!.from)}',
-                  style: const TextStyle(fontSize: fontSizeSmall),),
-              ),
-            ],
-          ),
-        )
+                Text('Email: ${widget.client.email}', style: const TextStyle(fontSize: fontSizeSmall),),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text('Último agendamento: ${lastAppointmentDetails == null
+                      ? "Carregando..."
+                      : Utils.formatDateTimeToVisualize(lastAppointmentDetails!.from)}',
+                    style: const TextStyle(fontSize: fontSizeSmall),),
+                ),
+              ],
+            ),
+          )
+        ),
       ),
     );
   }

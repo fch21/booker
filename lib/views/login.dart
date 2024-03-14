@@ -39,33 +39,11 @@ class LoginState extends State<Login> {
 
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
-      //_dialogContext = context;
-      // _salvarAnuncio();
 
-      //setState(() {
-      //  _errorMessage = "";
-      //});
-      AppUser user = AppUser();
-      user.email = email;
-      user.password = password;
-
-      await _logUser(user);
+      await UserSign.logUserWithEmailAndPassword(context: context, email: email, password: password);
     }
     setState(() {
       _isLoading = false;
-    });
-    return;
-  }
-
-  Future<void> _logUser(AppUser user) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    await auth.signInWithEmailAndPassword(email: user.email, password: user.password).then((firebaseUser) {
-      UserSign.checkCurrentUser(context);
-    }).catchError((error) {
-      Utils.showSnackBar(context, AppLocalizations.of(context)!.login_error_message);
-      //setState(() {
-      //  _errorMessage = AppLocalizations.of(context)!.login_error_message;
-      //});
     });
     return;
   }
@@ -212,7 +190,9 @@ class LoginState extends State<Login> {
                                   ),
                                   onTap: () {
                                     Navigator.pushNamed(context, RouteGenerator.RESET_PASSWORD).then((value){
-                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.login_forgot_password_go_to_email)));
+                                      if(value is bool && value){
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.login_forgot_password_go_to_email)));
+                                      }
                                     });
                                   },
                                 ),

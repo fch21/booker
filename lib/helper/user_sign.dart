@@ -9,6 +9,7 @@ import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -59,6 +60,16 @@ class UserSign {
     return result;
   }
 
+  static Future<void> logUserWithEmailAndPassword({required BuildContext context, required String email, required String password}) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    await auth.signInWithEmailAndPassword(email: email, password: password).then((firebaseUser) {
+      UserSign.checkCurrentUser(context);
+    }).catchError((error) {
+      Utils.showSnackBar(context, AppLocalizations.of(context)!.login_error_message);
+    });
+    return;
+  }
+
   static Future<bool> createUserWithEmailAndPassword(BuildContext context, AppUser user) async {
 
     bool result = false;
@@ -82,7 +93,6 @@ class UserSign {
 
     return result;
   }
-
 
   static void sendVerificationCode({
     required BuildContext context,
@@ -331,12 +341,119 @@ class UserSign {
     return userCredential.additionalUserInfo?.isNewUser;
   }
 
+  static Future<bool> showTermsDialog(BuildContext context) async {
+
+    bool confirm = false;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+
+        StreamController<bool> checkedStreamController = StreamController.broadcast();
+        bool checked = false;
+
+        return AlertDialog(
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          title: const Text("Assinar termos"),
+          content: Row(
+            children: [
+              StreamBuilder<bool>(
+                stream: checkedStreamController.stream,
+                builder: (context, snapshot) {
+                  return Checkbox(
+                    value: checked,
+                    onChanged: (value) {
+                      if(value != null){
+                        checked = value;
+                        checkedStreamController.add(true);
+                      }
+                    },
+                  );
+                }
+              ),
+              Expanded(
+                child: Material(
+                  color: Colors.transparent,
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          style: const TextStyle(color: Colors.black),
+                          text: AppLocalizations.of(context)!.register_terms_part_1,
+                        ),
+                        TextSpan(
+                          text: AppLocalizations.of(context)!.register_terms_of_use,
+                          style: const TextStyle(color: Colors.blue),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              String title = AppLocalizations.of(context)!.register_terms_of_use;
+                              Map args = {"appBarTitle" : "", "title" : title, "content" : Strings.TERMS_OF_USE};
+                              Navigator.pushNamed(context, RouteGenerator.LONG_TEXT, arguments: args);
+                            },
+                        ),
+                        TextSpan(
+                          style: const TextStyle(color: Colors.black),
+                          text: AppLocalizations.of(context)!.register_terms_part_2,
+                        ),
+                        TextSpan(
+                          text: AppLocalizations.of(context)!.register_privacy_policy,
+                          style: const TextStyle(color: Colors.blue),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              String title = AppLocalizations.of(context)!.register_privacy_policy;
+                              Map args = {"appBarTitle" : "", "title" : title, "content" : Strings.PRIVACY_POLICY};
+                              Navigator.pushNamed(context, RouteGenerator.LONG_TEXT, arguments: args);
+                            },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            StreamBuilder<bool>(
+              stream: checkedStreamController.stream,
+              builder: (context, snapshot) {
+                return TextButton(
+                  child: const Text("Confirmar"),
+                  onPressed: checked ? (){
+                    confirm = true;
+                    Navigator.of(context).pop();
+                  } : null,
+                );
+              }
+            ),
+          ],
+        );
+      },
+    );
+
+    return confirm;
+  }
+
   static Future<void> onSignedUser(BuildContext context, UserCredential firebaseUser) async {
     bool? isNewUser = checkIfIsNewUser(firebaseUser);
 
     bool resultFirebase = true;
+
     if (isNewUser ?? false) {
-      resultFirebase = await addUserInFirestore(context, firebaseUser);
+      bool signed = await showTermsDialog(context);
+      if(signed){
+        resultFirebase = await addUserInFirestore(context, firebaseUser);
+      }
+      else{
+        resultFirebase = false;
+        await firebaseUser.user!.delete();
+      }
     }
 
     if (resultFirebase) await checkCurrentUser(context, isNewUser: isNewUser);
@@ -467,7 +584,7 @@ class UserSign {
   static Future<UserCredential> signInWithGoogle() async {
 
     final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: "1060470892593-46d486l7p1knpkeglnu2ccqqvl9igjbi.apps.googleusercontent.com"
+      clientId: Strings.GOOGLE_SIGN_CLIENT_ID
     );
 
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();

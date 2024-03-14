@@ -113,7 +113,7 @@ class _RegisterState extends State<Register> {
               Stack(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                     child: Container(
                       decoration: const BoxDecoration(color: Colors.white),
                       child: Center(
@@ -352,7 +352,7 @@ class _RegisterState extends State<Register> {
                       child: Container(
                         color: Colors.white,
                         child: LoadingData(),
-                      )
+                      ),
                     )
                 ],
               )

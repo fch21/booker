@@ -315,6 +315,9 @@ class _CalendarState extends State<Calendar> {
    */
 
   List<TimeRegion> _getAvailableSchedulesSpecialRegions(){
+
+    List<TimeRegion> timeRegions = [];
+
     List<AvailableSchedule> availableSchedulesList = AvailableSchedule.convertMapToSchedules(currentAppUser!.availabilityMap);
 
     List<TimeRegion> availableSchedulesConverted = [];
@@ -328,8 +331,15 @@ class _CalendarState extends State<Calendar> {
       }
     }
 
-    print("availableSchedulesConverted = ${availableSchedulesConverted.length}");
-    return availableSchedulesConverted;
+    //print("availableSchedulesConverted = ${availableSchedulesConverted.length}");
+
+    availableSchedulesConverted.removeWhere((element) => currentAppUser!.isWithinBlockedPeriods(element.startTime));
+
+    List<TimeRegion> blockedPeriodsTimeRegions = currentAppUser!.getBlockedPeriodsTimeRegionsList();
+
+    timeRegions = [...availableSchedulesConverted, ...blockedPeriodsTimeRegions];
+
+    return timeRegions;
   }
 
   String getTimePeriodString(){
@@ -452,6 +462,10 @@ class _CalendarState extends State<Calendar> {
         //await _getAppointments(initialDate);
       //}
     //});
+    //_controller.addPropertyChangedListener((property) {
+    //  print("property = ${property}");
+    //  print("_controller.displayDate = ${_controller.displayDate}");
+    //});
     super.initState();
 
   }
@@ -503,6 +517,11 @@ class _CalendarState extends State<Calendar> {
                       _getAppointments(startDate);
                     }
                   },
+                  onSelectionChanged: (CalendarSelectionDetails details){
+                    print("onSelectionChanged >>>>>>");
+                    print("details.date = ${details.date}");
+                    print("details.resource = ${details.resource}");
+                  },
                   onTap: (CalendarTapDetails details) {
                     if (details.targetElement == CalendarElement.appointment) {
                       final AppointmentDetails appointmentDetails = details.appointments!.first;
@@ -513,7 +532,7 @@ class _CalendarState extends State<Calendar> {
                       Navigator.pushNamed(context, RouteGenerator.APPOINTMENT_DETAILS_PAGE, arguments: appointmentDetails);
                     }
                   },
-                  headerHeight: 30,
+                  headerHeight: 50,
                   headerStyle: const CalendarHeaderStyle(
                     textAlign: TextAlign.center,
                     textStyle: TextStyle(
@@ -526,12 +545,19 @@ class _CalendarState extends State<Calendar> {
                         backgroundColor: standartTheme.primaryColor,
                     )
                   ),
+                  timeSlotViewSettings: const TimeSlotViewSettings(
+                    timeIntervalHeight: 60,
+                  ),
                   selectionDecoration: BoxDecoration(
                     color: Colors.transparent,
                     border: Border.all(color: standartTheme.primaryColor, width: 2),
                     borderRadius: const BorderRadius.all(Radius.circular(4)),
                     shape: BoxShape.rectangle,
                   ),
+                  showNavigationArrow: true,
+                  showDatePickerButton: true,
+                  showTodayButton: true,
+                  //showWeekNumber: true,
                 );
               }
             ),

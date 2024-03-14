@@ -60,8 +60,8 @@ class _ClientPageState extends State<ClientPage> {
           actionsAlignment: MainAxisAlignment.spaceBetween,
           title: Text(isBlocked ? "Desbloquear cliente" : "Bloquear cliente"),
           content: Text(isBlocked 
-              ? "Tem certeza que você quer desbloquear esse cliente?\n\nEle agora poderá agendar serviços com você e ver seus horários de disponibilidade."
-              : "Tem certeza que você quer bloquear esse cliente?\n\nEle não poderá mais agendar serviços com você nem ver seus horários de disponibilidade."
+              ? "Ele poderá agendar serviços e ver seus horários de disponibilidade."
+              : "Ele não poderá agendar serviços nem ver seus horários de disponibilidade."
           ),
           actions: <Widget>[
             TextButton(

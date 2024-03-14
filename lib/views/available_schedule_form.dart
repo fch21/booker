@@ -53,18 +53,18 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmar exclusão'),
-          content: Text('Tem certeza que deseja excluir esse horário de disponibilidade? Os agendamentos já realizados não serão cancelados, mas os clientes não poderão mais agendar nesse horário.'),
+          title: const Text('Confirmar exclusão'),
+          content: const Text('Os clientes não poderão mais agendar nesse horário.'),
           actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: <Widget>[
             TextButton(
-              child: Text('Voltar'),
+              child: const Text('Voltar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Excluir'),
+              child: const Text('Excluir'),
               onPressed: () {
                 widget.onDelete();
                 Navigator.of(context).pop();

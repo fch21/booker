@@ -10,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import 'appointment_details.dart';
 import 'period.dart';
@@ -25,7 +26,7 @@ class AppUser {
   bool tutorialDone = false;
   bool wantNotifications = true;
   String language = "";
-  String defaultPaymentMethodId = "";
+  //String defaultPaymentMethodId = "";
   String urlProfileUserImage = "";
   String urlProfileBgImage = "";
   Color color = Colors.white;
@@ -52,7 +53,7 @@ class AppUser {
     copy.tutorialDone = tutorialDone;
     copy.wantNotifications = wantNotifications;
     copy.language = language;
-    copy.defaultPaymentMethodId = defaultPaymentMethodId;
+    //copy.defaultPaymentMethodId = defaultPaymentMethodId;
     copy.urlProfileUserImage = urlProfileUserImage;
     copy.urlProfileBgImage = urlProfileBgImage;
     copy.color = color;
@@ -439,6 +440,19 @@ class AppUser {
       }
     }
     return isInBlockedPeriod;
+  }
+
+  List<TimeRegion> getBlockedPeriodsTimeRegionsList(){
+    List<TimeRegion> timeRegions = [];
+    for(var blockedPeriod in blockedPeriods){
+      TimeRegion timeRegion = TimeRegion(
+        startTime: blockedPeriod.startDate,
+        endTime: blockedPeriod.endDate,
+        color: Colors.grey.withOpacity(0.4),
+      );
+      timeRegions.add(timeRegion);
+    }
+    return timeRegions;
   }
 
   @override

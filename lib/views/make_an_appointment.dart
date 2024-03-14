@@ -88,7 +88,6 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     }
 
      */
-
     String dayDateTimeString = Utils.dateFormatForOrdering.format(simplifiedDateTime);
     //querySnapshotForOneTimeAppointments
     queryListToBeDone.add(FirebaseFirestore.instance
@@ -112,14 +111,12 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       docsForOneTimeAppointments.addAll(queryResult.docs);
     }
 
-
     //List<DocumentSnapshot> allDocs = [...docsForPeriodicalAppointments, ...docsForOneTimeAppointments];
 
     List<AppointmentDetails> appointments = [];
     //for (var doc in allDocs) {
     for (var doc in docsForOneTimeAppointments) {
       AppointmentDetails appointmentDetails = AppointmentDetails.fromDocumentSnapshotPublic(doc);
-      //print("appointmentDetails>>>>>>>");
       //print("appointmentDetails.from = ${appointmentDetails.from}");
       //print("appointmentDetails.to = ${appointmentDetails.to}");
       if(!appointmentDetails.isCanceled){
@@ -213,7 +210,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
 
     // Get intervals for the specific day
     var dayIntervals = widget.appUser.availabilityMap[weekDay];
-    //print("dayIntervals = $dayIntervals");
+    print("dayIntervals = $dayIntervals");
     List<TimeOfDay> availableTimes = [];
 
     List<AppointmentDetails> appointments = await _getAppointmentsMade(currentDateTime);
@@ -222,7 +219,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
 
       List<TimeInterval> activeTimeIntervals = [];
 
-      for (var interval in (dayIntervals['intervals'] as List<Map<String, dynamic>>)){
+      for (var interval in (dayIntervals['intervals'] as List<dynamic>)){
         if(interval['isSelected'] as bool){
           activeTimeIntervals.add(interval['timeInterval'] as TimeInterval);
         }

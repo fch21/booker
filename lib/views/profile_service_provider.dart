@@ -33,7 +33,6 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
   //late List<DayAvailability> _days;
   List<ServiceProvided> _servicesProvided = [];
   List<AvailableSchedule> _availableSchedules = [];
-  late AppUser _appUser;
   late TabController _tabController;
 
   Future<void> _getServicesProvided() async {
@@ -59,7 +58,7 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
     }
      */
 
-    List<AvailableSchedule> availableSchedulesList = AvailableSchedule.convertMapToSchedules(_appUser.availabilityMap);
+    List<AvailableSchedule> availableSchedulesList = AvailableSchedule.convertMapToSchedules(currentAppUser!.availabilityMap);
 
     setState(() {
       _availableSchedules = availableSchedulesList;
@@ -69,10 +68,10 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
   _updateAvailabilityMap() async {
     //print(">>>>> _updateAvailabilityMap");
     setState(() {
-      _appUser.availabilityMap = AvailableSchedule.convertSchedulesToMap(_availableSchedules);
+      currentAppUser!.availabilityMap = AvailableSchedule.convertSchedulesToMap(_availableSchedules);
     });
-    await _appUser.updateAppUserInFirestore(context);
-    //print("_appUser.availabilityMap) = ${_appUser.availabilityMap}");
+    await currentAppUser!.updateAppUserInFirestore(context);
+    print("currentAppUser!.availabilityMap) = ${currentAppUser!.availabilityMap}");
   }
 
   /*
@@ -117,8 +116,7 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
 
   @override
   void initState() {
-    _appUser = currentAppUser!;
-    appUserColor = _appUser.getUserColorResolved();
+    appUserColor = currentAppUser!.getUserColorResolved();
     _tabController = TabController(length: 2, vsync: this);
     //_getWeekDaysAvailability();
     _getServicesProvided();
@@ -160,12 +158,12 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
                       child: Column(
                         children: [
                           ProfileHeader(
-                            appUser: _appUser,
+                            appUser: currentAppUser!,
                             allowEdit: true,
                             useHero: false,
                             onReload: (){
                               setState(() {
-                                appUserColor = _appUser.getUserColorResolved();
+                                appUserColor = currentAppUser!.getUserColorResolved();
                                 //_getWeekDaysAvailability();
                               });
                             },
@@ -224,7 +222,7 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
                     title: TabBar(
                       controller: _tabController,
                       labelColor: Colors.black,
-                      indicatorColor: _appUser.getUserColorResolved(),
+                      indicatorColor: currentAppUser!.getUserColorResolved(),
                       tabs: [
                         Tab(text: AppLocalizations.of(context)!.profile_time_availability),
                         Tab(text: AppLocalizations.of(context)!.profile_services_provided),

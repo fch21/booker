@@ -29,7 +29,7 @@ class LongText extends StatelessWidget {
               padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
               child: Text(title, style: textStyleMediumBold),
             ),
-            Text(content, textAlign: TextAlign.justify)
+            Text(content, textAlign: TextAlign.start)
           ],
         ),
       ),
