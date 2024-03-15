@@ -8,11 +8,13 @@ class ClientCard extends StatefulWidget {
 
   AppUser client;
   VoidCallback onTap;
+  bool compact;
 
   ClientCard({
     Key? key,
     required this.client,
     required this.onTap,
+    this.compact = false
   }) : super(key: key);
 
   @override
@@ -46,6 +48,9 @@ class _ClientCardState extends State<ClientCard> {
         opacity: clientIsBlocked ? 0.6 : 1.0,
         child: Card(
           elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(8,8,8,8),
             child: Column(
@@ -70,13 +75,14 @@ class _ClientCardState extends State<ClientCard> {
                   ),
                 ),
                 Text('Email: ${widget.client.email}', style: const TextStyle(fontSize: fontSizeSmall),),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text('Último agendamento: ${lastAppointmentDetails == null
-                      ? "Carregando..."
-                      : Utils.formatDateTimeToVisualize(lastAppointmentDetails!.from)}',
-                    style: const TextStyle(fontSize: fontSizeSmall),),
-                ),
+                if(!widget.compact)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text('Último agendamento: ${lastAppointmentDetails == null
+                        ? "Carregando..."
+                        : Utils.formatDateTimeToVisualize(lastAppointmentDetails!.from)}',
+                      style: const TextStyle(fontSize: fontSizeSmall),),
+                  ),
               ],
             ),
           )

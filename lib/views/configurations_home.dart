@@ -26,6 +26,13 @@ class _ConfigurationsHomeState extends State<ConfigurationsHome> {
           title: Text(AppLocalizations.of(context)!.configurations_appbar),
         ),
         body: Container(
+          decoration: const BoxDecoration(
+              border: Border(
+                  left: BorderSide(
+                      color: Colors.grey
+                  )
+              )
+          ),
           padding: const EdgeInsets.only(top: 16),
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 0),

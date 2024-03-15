@@ -72,6 +72,20 @@ class _CalendarState extends State<Calendar> {
   }
 
   List<Period> queryHistory = [];
+
+  void updateAppointmentsList({List<AppointmentDetails>? newAppointments, bool forceUpdate = false}){
+    List<AppointmentDetails>? appointments = newAppointments ?? _appointmentsList;
+    for(var appointment in appointments){
+      //if((!_appointmentsList.any((element) => element.id == appointment.id)) || appointment.periodicalWeekDay != null){
+      if((!_appointmentsList.any((element) => element.id == appointment.id))){
+        _appointmentsList.add(appointment);
+      }
+      else if(forceUpdate){
+        _appointmentsList.removeWhere((element) => element.id == appointment.id);
+        if(!appointment.isCanceled) _appointmentsList.add(appointment);
+      }
+    }
+  }
   
   Future<void> _getAppointments(DateTime initialDateTime) async {
     if(_controller.view == CalendarView.schedule) initialDateTime = initialDateTime.subtract(const Duration(days: 30));
@@ -182,12 +196,7 @@ class _CalendarState extends State<Calendar> {
 
     //print("number of appointments = ${appointments.length}");
 
-    for(var appointment in appointments){
-      //if((!_appointmentsList.any((element) => element.id == appointment.id)) || appointment.periodicalWeekDay != null){
-      if((!_appointmentsList.any((element) => element.id == appointment.id))){
-        _appointmentsList.add(appointment);
-      }
-    }
+    updateAppointmentsList(newAppointments: appointments);
     //print("_appointmentsList = ${_appointmentsList.length}");
     //for(var appointment in _appointmentsList){
     //  print("appointment = ${appointment.from}");
@@ -361,6 +370,13 @@ class _CalendarState extends State<Calendar> {
 
   Widget getCalendarConfigurationWidget(){
     return Container(
+      decoration: const BoxDecoration(
+          border: Border(
+              left: BorderSide(
+                  color: Colors.grey
+              )
+          )
+      ),
       padding: const EdgeInsets.only(top: 16),
       child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -514,11 +530,6 @@ class _CalendarState extends State<Calendar> {
                       _getAppointments(startDate);
                     }
                   },
-                  onSelectionChanged: (CalendarSelectionDetails details){
-                    print("onSelectionChanged >>>>>>");
-                    print("details.date = ${details.date}");
-                    print("details.resource = ${details.resource}");
-                  },
                   onTap: (CalendarTapDetails details) {
                     if (details.targetElement == CalendarElement.appointment) {
                       final AppointmentDetails appointmentDetails = details.appointments!.first;
@@ -526,7 +537,13 @@ class _CalendarState extends State<Calendar> {
                       //print("appointmentDetails.serviceName = ${appointmentDetails.serviceName}");
                       //print("appointmentDetails.from = ${appointmentDetails.from}");
                       //print("appointmentDetails.to = ${appointmentDetails.to}");
-                      Navigator.pushNamed(context, RouteGenerator.APPOINTMENT_DETAILS_PAGE, arguments: appointmentDetails);
+                      Navigator.pushNamed(context, RouteGenerator.APPOINTMENT_DETAILS_PAGE, arguments: appointmentDetails).then((edited) {
+                        print("edited = $edited");
+                        if(edited is bool && edited){
+                          updateAppointmentsList(forceUpdate: true);
+                          setState(() {});
+                        }
+                      });
                     }
                   },
                   headerHeight: 50,

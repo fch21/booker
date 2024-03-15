@@ -43,6 +43,8 @@ class _MyClientsState extends State<MyClients> {
   @override
   Widget build(BuildContext context) {
 
+    bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -50,6 +52,7 @@ class _MyClientsState extends State<MyClients> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: greaterWidthLayout ? MediaQuery.of(context).size.width/4 : 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -69,7 +72,7 @@ class _MyClientsState extends State<MyClients> {
                   : Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: ListView.builder(
-                        padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 32.0), // Adicionado o padding lateral
+                        padding: const EdgeInsets.only(bottom: 32.0), // Adicionado o padding lateral
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: clients.length,

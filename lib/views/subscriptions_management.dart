@@ -551,35 +551,47 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                       : Text('Ativa - Renova em ${Utils.formatDateTimeToVisualize(_subscription!.currentPeriodEnd, onlyDate: true)}'),
                 ),
                 SubscriptionDetailCard(
-                  title: const Text('Detalhes da Assinatura'),
+                  title: const Padding(
+                    padding: EdgeInsets.only(top: 8, bottom: 4),
+                    child: Text('Detalhes da Assinatura'),
+                  ),
                   // Detalhes da assinatura atual ou disponível
-                  content: Column(
-                    children: [
-                      ListTile(
-                        title: Text('Plano Premium (${Subscription.getSubscriptionPriceString()}/mês): Acesso ilimitado a todos os recursos'),
-                        leading: const Icon(Icons.star),
-                      ),
-                      const ListTile(
-                        title: Text('Acesso ao calendário com todos os agendamentos'),
-                        leading: Icon(Icons.calendar_month),
-                      ),
-                      const ListTile(
-                        title: Text('Possibilidade de cancelar todos os agendamentos em um périodo'),
-                        leading: Icon(Icons.cancel),
-                      ),
-                      const ListTile(
-                        title: Text('Envio de mensagens personalizadas aos seus clientes'),
-                        leading: Icon(Icons.message),
-                      ),
+                  content: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: Text('Plano Premium (${Subscription.getSubscriptionPriceString()}/mês): Acesso ilimitado a todos os recursos'),
+                          leading: const Icon(Icons.star),
+                        ),
+                        const ListTile(
+                          title: Text('Acesso ao calendário com todos os agendamentos'),
+                          leading: Icon(Icons.calendar_month),
+                        ),
+                        const ListTile(
+                          title: Text('Possibilidade de cancelar todos os agendamentos em um périodo'),
+                          leading: Icon(Icons.cancel),
+                        ),
+                        const ListTile(
+                          title: Text('Envio de mensagens personalizadas aos seus clientes'),
+                          leading: Icon(Icons.message),
+                        ),
 
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 if(_paymentMethod != null)
                   SubscriptionDetailCard(
-                      title: const Text('Método de Pagamento'),
+                      title: const Padding(
+                        padding: EdgeInsets.only(top: 8, bottom: 4),
+                        child: Text('Método de Pagamento'),
+                      ),
                       // Detalhes do método de pagamento
-                      content: PaymentMethodPreview(paymentMethod: _paymentMethod!,)//'Cartão de Crédito **** **** **** 1234',
+                      content: Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: PaymentMethodPreview(paymentMethod: _paymentMethod!,),
+                      )//'Cartão de Crédito **** **** **** 1234',
                   ),
               ],
             ),

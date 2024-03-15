@@ -20,6 +20,9 @@ class AppointmentDetailsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: ListTile(
         title: Text("${appointmentDetails.serviceName} - ${isClient ? appointmentDetails.serviceProviderName : appointmentDetails.userName}", style: textStyleSmallNormal,),
         subtitle: Padding(

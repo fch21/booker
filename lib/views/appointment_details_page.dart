@@ -23,6 +23,8 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
   bool isServiceProvider = currentAppUser!.isServiceProvider;
   bool isPastAppointment = false;
 
+  bool appointmentWasEdited = false;
+
   Future<void> getClientInfo() async {
 
     AppUser appUser;
@@ -66,104 +68,117 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detalhes do Agendamento'),
-      ),
-      body: Opacity(
-        opacity: isPastAppointment ? 0.5 : 1.0,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: _appUser != null
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: Text(widget.appointmentDetails.serviceName, style: textStyleMediumBold,),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: RichText(
-                        text: TextSpan(
-                          // Default style for text
-                          style: textStyleSmallNormal,
-                          children: <TextSpan>[
-                            const TextSpan(text: 'Status: '),
-                            // Applying a different color to a part of the text
-                            TextSpan(
-                              text: widget.appointmentDetails.isCanceled ? 'Cancelado' : 'Confirmado',
-                              style: TextStyle(color: widget.appointmentDetails.isCanceled ? Colors.red : Colors.green),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pop(appointmentWasEdited);
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Detalhes do Agendamento'),
+        ),
+        body: Opacity(
+          opacity: isPastAppointment ? 0.5 : 1.0,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: _appUser != null
+                ? SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: Text(widget.appointmentDetails.serviceName, style: textStyleMediumBold,),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: RichText(
+                            text: TextSpan(
+                              // Default style for text
+                              style: textStyleSmallNormal,
+                              children: <TextSpan>[
+                                const TextSpan(text: 'Status: '),
+                                // Applying a different color to a part of the text
+                                TextSpan(
+                                  text: widget.appointmentDetails.isCanceled ? 'Cancelado' : 'Confirmado',
+                                  style: TextStyle(color: widget.appointmentDetails.isCanceled ? Colors.red : Colors.green),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: //widget.appointmentDetails.periodicalWeekDay == null ?
-                          Text('Data: ${DateFormat('dd/MM/yyyy').format(widget.appointmentDetails.from)}', style: textStyleSmallNormal)
-                          //: Text('Data: ${DateFormat('dd/MM/yyyy').format(widget.appointmentDetails.from)} (${Utils.getFullWeekDayUpperCaseString(widget.appointmentDetails.from)}s)', style: textStyleSmallNormal,),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: //widget.appointmentDetails.periodicalWeekDay == null ?
+                              Text('Data: ${DateFormat('dd/MM/yyyy').format(widget.appointmentDetails.from)}', style: textStyleSmallNormal)
+                              //: Text('Data: ${DateFormat('dd/MM/yyyy').format(widget.appointmentDetails.from)} (${Utils.getFullWeekDayUpperCaseString(widget.appointmentDetails.from)}s)', style: textStyleSmallNormal,),
 
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text('Horário de início: ${DateFormat('HH:mm').format(widget.appointmentDetails.from)}', style: textStyleSmallNormal),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0, bottom: 32),
-                      child: Text('Horário de término: ${DateFormat('HH:mm').format(widget.appointmentDetails.to)}', style: textStyleSmallNormal),
-                    ),
-                    const Divider(
-                      thickness: 1,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(isServiceProvider ? "Informações do cliente" : "Informações do prestador de serviço", style: textStyleMediumBold,),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: Text("Nome: ${_appUser!.name}", style: textStyleSmallNormal,),
-                    ),
-                    if(_appUser!.email.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: SelectableText("email: ${_appUser!.email}", style: textStyleSmallNormal,),
-                      ),
-                    if(isServiceProvider && !widget.appointmentDetails.isCanceled && !isPastAppointment)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 48.0),
-                        child: Center(
-                          child: TextButton(
-                            onPressed: () async {
-                              await widget.appointmentDetails.initServiceProvided(context);
-                              Map args = {"user" : currentAppUser!, "serviceProvided" : widget.appointmentDetails.serviceProvided, "appointmentToChange" : widget.appointmentDetails};
-                              Navigator.pushNamed(context, RouteGenerator.MAKE_AN_APPOINTMENT, arguments: args).then((value){
-                                setState(() {});
-                              });
-                            },
-                            child: Text('Editar Agendamento', style: TextStyle(color: standartTheme.primaryColor, fontSize: fontSizeVerySmall),),
-                          ),
                         ),
-                      ),
-                    if(!widget.appointmentDetails.isCanceled && !isPastAppointment)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 64.0),
-                        child: Center(
-                          child: TextButton(
-                            onPressed: () async {
-                              bool confirmed = await AppointmentDetails.cancelAppointmentConfirmation(context, appointmentsList: [widget.appointmentDetails], isServiceProvider: isServiceProvider);
-                              if(mounted && confirmed) Navigator.of(context).pop();
-                            },
-                            child: const Text('Cancelar Agendamento', style: TextStyle(color: Colors.red, fontSize: fontSizeVerySmall),),
-                          ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text('Horário de início: ${DateFormat('HH:mm').format(widget.appointmentDetails.from)}', style: textStyleSmallNormal),
                         ),
-                      ),
-                  ],
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0, bottom: 32),
+                          child: Text('Horário de término: ${DateFormat('HH:mm').format(widget.appointmentDetails.to)}', style: textStyleSmallNormal),
+                        ),
+                        const Divider(
+                          thickness: 1,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(isServiceProvider ? "Informações do cliente" : "Informações do prestador de serviço", style: textStyleMediumBold,),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: Text("Nome: ${_appUser!.name}", style: textStyleSmallNormal,),
+                        ),
+                        if(_appUser!.email.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: SelectableText("email: ${_appUser!.email}", style: textStyleSmallNormal,),
+                          ),
+                        if(isServiceProvider && !widget.appointmentDetails.isCanceled && !isPastAppointment)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 48.0),
+                            child: Center(
+                              child: TextButton(
+                                onPressed: () async {
+                                  await widget.appointmentDetails.initServiceProvided(context);
+                                  if(mounted) {
+                                    Map args = {"user" : currentAppUser!, "serviceProvided" : widget.appointmentDetails.serviceProvided, "appointmentToChange" : widget.appointmentDetails};
+                                    Navigator.pushNamed(context, RouteGenerator.MAKE_AN_APPOINTMENT, arguments: args).then((value){
+                                      if(value is bool && value){
+                                        appointmentWasEdited = true;
+                                        setState(() {});
+                                      }
+                                    });
+                                  }
+                                },
+                                child: Text('Editar Agendamento', style: TextStyle(color: standartTheme.primaryColor, fontSize: fontSizeVerySmall),),
+                              ),
+                            ),
+                          ),
+                        if(!widget.appointmentDetails.isCanceled && !isPastAppointment)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 64.0, bottom: 32),
+                            child: Center(
+                              child: TextButton(
+                                onPressed: () async {
+                                  bool confirmed = await AppointmentDetails.cancelAppointmentConfirmation(context, appointmentsList: [widget.appointmentDetails], isServiceProvider: isServiceProvider);
+                                  if(confirmed && mounted) Navigator.of(context).pop(true);
+                                },
+                                child: const Text('Cancelar Agendamento', style: TextStyle(color: Colors.red, fontSize: fontSizeVerySmall),),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                 )
-              : Center(
-                  child: LoadingData(),
-                )
+                : Center(
+                    child: LoadingData(),
+                  )
+          ),
         ),
       ),
     );

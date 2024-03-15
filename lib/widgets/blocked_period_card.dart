@@ -29,6 +29,9 @@ class BlockedPeriodCard extends StatelessWidget {
 
     return Card(
       elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: ListTile(
         leading: const Icon(Icons.block, color: Colors.grey), // Ícone indicativo de bloqueio
         title: multipleDates

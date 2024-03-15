@@ -14,6 +14,9 @@ class SubscriptionDetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
         title: title,

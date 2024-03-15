@@ -88,6 +88,8 @@ class _ClientPageState extends State<ClientPage> {
   @override
   Widget build(BuildContext context) {
 
+    bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
+
     DateTime currentDateTime = DateTime.now();
     bool clientIsBlocked = currentAppUser!.blockedClientsIds.contains(widget.client.id);
 
@@ -95,6 +97,7 @@ class _ClientPageState extends State<ClientPage> {
       appBar: AppBar(
         title: const Text('Informações do cliente'),
       ),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
@@ -145,45 +148,39 @@ class _ClientPageState extends State<ClientPage> {
                         child: LoadingData(),
                       ),
                     if(clientAppointmentsAreLoaded)
-                      Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Container(
-                            constraints: const BoxConstraints(maxHeight: 300), // Define o tamanho máximo para 300
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: clientAppointments.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                AppointmentDetails appointmentDetails = clientAppointments[index];
-                                //print("appointmentDetails.from = ${appointmentDetails.from}");
-                                return Opacity(
-                                  opacity: (appointmentDetails.isCanceled || appointmentDetails.to.isBefore(currentDateTime)) ? 0.6 : 1.0,
-                                  child: AppointmentDetailsCard(
-                                    appointmentDetails: appointmentDetails,
-                                    isClient: !currentAppUser!.isServiceProvider,
-                                    onTap: (){
-                                      Navigator.pushNamed(context, RouteGenerator.APPOINTMENT_DETAILS_PAGE, arguments: appointmentDetails).then((value){
-                                        _getClientAppointments();
-                                      });
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                          )
-
+                      Container(
+                        constraints: const BoxConstraints(maxHeight: 300), // Define o tamanho máximo para 300
+                        child: ListView.builder(
+                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: greaterWidthLayout ? MediaQuery.of(context).size.width/4 : 16),
+                          shrinkWrap: true,
+                          itemCount: clientAppointments.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            AppointmentDetails appointmentDetails = clientAppointments[index];
+                            //print("appointmentDetails.from = ${appointmentDetails.from}");
+                            return Opacity(
+                              opacity: (appointmentDetails.isCanceled || appointmentDetails.to.isBefore(currentDateTime)) ? 0.6 : 1.0,
+                              child: AppointmentDetailsCard(
+                                appointmentDetails: appointmentDetails,
+                                isClient: !currentAppUser!.isServiceProvider,
+                                onTap: (){
+                                  Navigator.pushNamed(context, RouteGenerator.APPOINTMENT_DETAILS_PAGE, arguments: appointmentDetails).then((value){
+                                    _getClientAppointments();
+                                  });
+                                },
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 8.0),
-                      child: Divider(
-                        thickness: 1,
-                        height: 1,
-                      ),
+                    const Divider(
+                      thickness: 1,
+                      height: 1,
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 32.0),
+                padding: const EdgeInsets.only(top: 64.0),
                 child: Center(
                   child: TextButton(
                     onPressed: () async {

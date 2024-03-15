@@ -409,7 +409,7 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(4.0),
+                      borderRadius: BorderRadius.circular(6),
                     ),
                     child: Row(
                       children: [
@@ -425,7 +425,7 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                             height: 30,
                             decoration: BoxDecoration(
                               color: _selectedColor,
-                              borderRadius: BorderRadius.circular(4.0),  // Bordas arredondadas
+                              borderRadius: BorderRadius.circular(6),  // Bordas arredondadas
                             ),
                           ),
                         ),

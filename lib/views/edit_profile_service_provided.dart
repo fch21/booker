@@ -154,8 +154,12 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                   },
                 ),
               ),
+              const Padding(
+                padding: EdgeInsets.only(top: 16.0),
+                child: Text('Cor tema do seu perfil vista pelos clientes:', style: textStyleVerySmallNormal,),
+              ),
               Padding(
-                padding: const EdgeInsets.only(top: 12.0),
+                padding: const EdgeInsets.only(top: 8.0),
                 child: InkWell(
                   onTap: () async {
                     Color? color = await showDialog(
@@ -164,11 +168,10 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                         return ColorPickerDialog(initialColor: _selectedColor);
                       },
                     );
-                    print("cor = $color");
+                    //print("cor = $color");
                     if (color != null) {
                       Color resolvedColor = Utils.getNotTooLightColor(color);
                       if(resolvedColor != color && mounted) Utils.showSnackBar(context, "A cor escolhida era muito clara. Ela foi ajustada para uma melhor visualização.");
-                      print("cor = $color");
                       setState(() {
                         _selectedColor = resolvedColor;
                         currentAppUser!.color = _selectedColor;
@@ -179,7 +182,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(4.0),
+                      borderRadius: BorderRadius.circular(6),
                     ),
                     child: Row(
                       children: [
@@ -195,7 +198,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                             height: 30,
                             decoration: BoxDecoration(
                               color: _selectedColor,
-                              borderRadius: BorderRadius.circular(4.0),  // Bordas arredondadas
+                              borderRadius: BorderRadius.circular(6),  // Bordas arredondadas
                             ),
                           ),
                         ),

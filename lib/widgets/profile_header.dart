@@ -18,12 +18,12 @@ class ProfileHeader extends StatefulWidget {
   AppUser appUser;
   bool allowEdit;
   bool useHero;
-  VoidCallback? onReload;
+  //VoidCallback? onReload;
 
   ProfileHeader({
     Key? key,
     required this.appUser,
-    this.onReload,
+    //this.onReload,
     this.allowEdit = false,
     this.useHero = true,
   }) : super(key: key);
@@ -91,7 +91,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     // Usar FileReader para Flutter Web
     final reader = html.FileReader();
     final completer = Completer<List<int>>();
-    print("usedImage=$usedImage");
+    //print("usedImage=$usedImage");
     reader.readAsArrayBuffer(usedImage as html.File);
     reader.onLoadEnd.listen((event) {
       completer.complete(reader.result as List<int>);
@@ -105,7 +105,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
   }
 
   _getImageUrl(TaskSnapshot snapshot, {required bool isProfileImage}) async {
-    print("_getImageUrl");
+    //print("_getImageUrl");
     String url = await snapshot.ref.getDownloadURL();
     print(url);
     _updateFirestoreUrlImage(url, isProfileImage: isProfileImage);
@@ -223,9 +223,10 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                   ),
                 ),
               ),
+              /*
               if(widget.allowEdit)
                 Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
+                  padding: const EdgeInsets.only(top: 0.0),
                   child: TextButton(
                       onPressed: () async {
                         await Navigator.pushNamed(context, RouteGenerator.EDIT_PROFILE_SERVICE_PROVIDER, arguments: widget.appUser)
@@ -237,6 +238,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                       child: Text("Editar", style: TextStyle(color: appUserColor),)
                   ),
                 )
+               */
             ],
           ),
           Positioned(

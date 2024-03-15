@@ -60,7 +60,7 @@ class RouteGenerator {
   static const String SERVICE_FORM = "/service_form";
   static const String AVAILABLE_SCHEDULE_FORM = "/available_schedule_form";
   static const String APPOINTMENT_DETAILS_PAGE = "/appointment_details_page";
-  static const String EDIT_APPOINTMENT_DETAILS_PAGE = "/edit_appointment_details_page";
+  //static const String EDIT_APPOINTMENT_DETAILS_PAGE = "/edit_appointment_details_page";
   static const String CLIENT_PAGE = "/client_page";
   static const String MY_APPOINTMENTS = "/my_appointments";
   static const String MY_CLIENTS = "/my_clients";

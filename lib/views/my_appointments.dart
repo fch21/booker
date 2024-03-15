@@ -121,7 +121,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
                 : Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: ListView.builder(
-                      padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 32.0), // Adicionado o padding lateral
+                      padding: const EdgeInsets.only(bottom: 32.0), // Adicionado o padding lateral
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: appointments.length, //+ periodicAppointments.length,

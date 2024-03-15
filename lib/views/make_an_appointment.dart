@@ -387,6 +387,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
 
   Future<void> _showAppointmentMadeDialog() async {
     await showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -398,7 +399,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
               child: Text("Continuar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(true);
               },
             ),
           ],
@@ -450,8 +451,8 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(//widget.serviceProvided.hasPeriodicAppointments
-                        //? "Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
-                        "Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
+                        //? "Marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
+                        "Marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
@@ -495,6 +496,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                     if(selectedClient != null)
                       ClientCard(
                         client: selectedClient!,
+                        compact: true,
                         onTap: (){},
                       ),
                   ],
@@ -504,10 +506,10 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           )
           : widget.appointmentToChange == null
             ? Text(//widget.serviceProvided.hasPeriodicAppointments
-                  //? "Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
-                  "Você deseja marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
+                  //? "Marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
+                  "Marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
               )
-            : Text("Você confirma a alteração do agendamento selecionado para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
+            : Text("Alterar o agendamento selecionado para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
         actions: <Widget>[
           TextButton(
             child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
@@ -536,7 +538,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                   await _showAppointmentMadeDialog();
                 }
                 else{
-                  Utils.showSnackBar(context, "Você precisa adicionar o nome do cliente ou escolher um cliente existente");
+                  Utils.showSnackBar(context, "Adicione o nome do cliente ou escolha um cliente existente");
                 }
               }
               else{
@@ -565,7 +567,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           return AlertDialog(
             actionsAlignment: MainAxisAlignment.end,
             title: const Text("Selecione um Horário"),
-            content: const Text("Você precisa selecionar um horário antes de marcar."),
+            content: const Text("É preciso selecionar um horário antes de marcar."),
             actions: <Widget>[
               TextButton(
                 child: Text("Ok", style: TextStyle(color: widget.appUser.getUserColorResolved()),),

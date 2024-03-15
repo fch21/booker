@@ -10,7 +10,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ConfigurationsProfileServiceProvider extends StatefulWidget {
 
-  ConfigurationsProfileServiceProvider();
+  VoidCallback? onReload;
+
+  ConfigurationsProfileServiceProvider({
+    this.onReload
+  });
 
   @override
   _ConfigurationsProfileServiceProviderState createState() => _ConfigurationsProfileServiceProviderState();
@@ -29,20 +33,29 @@ class _ConfigurationsProfileServiceProviderState extends State<ConfigurationsPro
           title: Text(AppLocalizations.of(context)!.configurations_appbar),
         ),
         body: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                color: Colors.grey
+              )
+            )
+          ),
           padding: const EdgeInsets.only(top: 16),
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 0),
             children: <Widget>[
               ClickableItem(
-                text: AppLocalizations.of(context)!.explore,
-                iconData: Icons.search,
-                onTap: () {
-                  Navigator.pushNamed(context, RouteGenerator.HOME, arguments: currentAppUser);
+                text: 'Editar Perfil',
+                iconData: Icons.edit,
+                onTap: () async {
+                  await Navigator.pushNamed(context, RouteGenerator.EDIT_PROFILE_SERVICE_PROVIDER, arguments: currentAppUser!).then((value){
+                    if(widget.onReload != null) widget.onReload!();
+                  });
                 },
               ),
               ClickableItem(
                 //text: AppLocalizations.of(context)!.configurations_payments,
-                text: "Assinatura",
+                text: 'Assinatura',
                 //iconData: Icons.payments_rounded,
                 iconData: Icons.diamond_outlined,
                 onTap: () {
@@ -50,12 +63,19 @@ class _ConfigurationsProfileServiceProviderState extends State<ConfigurationsPro
                 },
               ),
               ClickableItem(
-                text: "Copiar link do perfil",
+                text: "Copiar link do Perfil",
                 iconData: Icons.link,
                 onTap: () {
                   String linkToTheUserProfile = currentAppUser!.getLinkToTheUserProfile();
                   Clipboard.setData(ClipboardData(text: linkToTheUserProfile));
                   Utils.showSnackBar(context, 'Texto copiado para a área de transferência!');
+                },
+              ),
+              ClickableItem(
+                text: AppLocalizations.of(context)!.explore,
+                iconData: Icons.search,
+                onTap: () {
+                  Navigator.pushNamed(context, RouteGenerator.HOME, arguments: currentAppUser);
                 },
               ),
               ClickableItem(
@@ -67,7 +87,7 @@ class _ConfigurationsProfileServiceProviderState extends State<ConfigurationsPro
               ),
 
               Padding(
-                padding: const EdgeInsets.only(top: 16.0),
+                padding: const EdgeInsets.only(top: 32.0),
                 child: TextButton(
                     style: ButtonStyle(
                       alignment: Alignment.center,

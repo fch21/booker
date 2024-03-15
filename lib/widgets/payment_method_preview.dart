@@ -74,7 +74,10 @@ class PaymentMethodPreview extends StatelessWidget {
         if(onLongPressed != null) onLongPressed!(paymentMethod.id);
       },
       child: Card(
-        elevation: 3,
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(6),
+        ),
         child: ListTile(
           leading: brandIconPath != null
               ? Image.asset(brandIconPath, height: 48, width: 48,)

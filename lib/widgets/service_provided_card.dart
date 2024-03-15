@@ -16,9 +16,12 @@ class ServiceProvidedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: ListTile(
-        title: Text(serviceProvided.name, style: textStyleSmallNormal,),
+        title: Text(serviceProvided.name, style: textStyleSmallBold,),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: Column(
@@ -26,7 +29,7 @@ class ServiceProvidedCard extends StatelessWidget {
             children: [
               Text(serviceProvided.description, style: textStyleSmallNormal,),
               const SizedBox(height: 4),
-              Text('Duração: ${serviceProvided.duration.inMinutes} minutos', style: textStyleSmallNormal,),
+              Text('Duração: ${serviceProvided.duration.inMinutes} min      ${serviceProvided.price != 0.0 ? 'Preço: R\$${serviceProvided.price.toStringAsFixed(2)}' : ''}', style: textStyleSmallNormal,),
             ],
           ),
         ),

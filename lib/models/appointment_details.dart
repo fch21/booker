@@ -384,20 +384,22 @@ class AppointmentDetails {
 
         return AlertDialog(
           title: const Text('Mensagem de Cancelamento'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(useCancelAllMessage ? 'Adicione a mensagem que você deseja enviar para os clientes:' : 'Adicione a mensagem que você deseja enviar para o cliente:'),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: InputCustom(
-                  label: "",
-                  maxLines: 4,
-                  maxLength: 500,
-                  controller: textEditingController,
-                ),
-              )
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(useCancelAllMessage ? 'Adicione a mensagem que você deseja enviar para os clientes:' : 'Adicione a mensagem que você deseja enviar para o cliente:'),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: InputCustom(
+                    label: "",
+                    maxLines: 4,
+                    maxLength: 500,
+                    controller: textEditingController,
+                  ),
+                )
+              ],
+            ),
           ),
           actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: <Widget>[
