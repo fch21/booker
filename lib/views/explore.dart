@@ -244,7 +244,7 @@ class _ExploreState extends State<Explore> {
                           + (element[Strings.USER_NAME]  ?? "").toString()
                           + (element[Strings.USER_DESCRIPTION]  ?? "").toString();
 
-                      stringToSearch.toLowerCase();
+                      stringToSearch = stringToSearch.toLowerCase();
 
                       if (stringToSearch.contains(_controllerSearch.text.trim().toLowerCase())){
                         filterList.add(element);
