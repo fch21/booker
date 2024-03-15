@@ -42,12 +42,11 @@ class _TimeSlotWidgetState extends State<TimeSlotWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print("build");
     return ElevatedButton(
       style: ButtonStyle(backgroundColor: MaterialStateProperty.all(widget.color)),
       onPressed: _changeTimeInterval,
       child: Text(
-        "${interval?.startTime?.format(context) ?? "Início"} - ${interval?.endTime?.format(context) ?? "Término"}",
+        "${interval?.startTime.format(context) ?? "Início"} - ${interval?.endTime.format(context) ?? "Término"}",
         style: TextStyle(color: Utils.getContrastingColor(widget.color)),
       ),
     );

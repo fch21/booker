@@ -51,17 +51,17 @@ class _DayAvailabilityState extends State<DayAvailability> {
       builder: (BuildContext context) {
         return AlertDialog(
           actionsAlignment: MainAxisAlignment.spaceEvenly,
-          title: Text("Remover Horário?"),
-          content: Text("Você deseja realmente remover esse horário?"),
+          title: const Text("Remover Horário?"),
+          content: const Text("Você deseja realmente remover esse horário?"),
           actions: <Widget>[
             TextButton(
-              child: Text("Não"),
+              child: const Text("Não"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text("Sim"),
+              child: const Text("Sim"),
               onPressed: () {
                 setState(() {
                   intervals.removeAt(index);
@@ -86,7 +86,7 @@ class _DayAvailabilityState extends State<DayAvailability> {
   @override
   Widget build(BuildContext context) {
     print("widget.initialIntervals = ${widget.initialIntervals}");
-    print("intervals = ${intervals}");
+    print("intervals = $intervals");
 
     return Card(
       child: Column(

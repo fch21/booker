@@ -1,4 +1,3 @@
-import 'package:booker/main.dart';
 import 'package:flutter/material.dart';
 
 class TimePickerScroll extends StatefulWidget {

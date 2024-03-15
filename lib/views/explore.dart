@@ -258,7 +258,7 @@ class _ExploreState extends State<Explore> {
 
                   if (users.isEmpty) {
                     return Padding(
-                      padding: EdgeInsets.only(top: 64),
+                      padding: const EdgeInsets.only(top: 64),
                       child: Text(_controllerSearch.text != "" ? "Sem resultados para essa pesquisa" : "Digite sua busca no campo de pesquisa"),
                     );
                   }

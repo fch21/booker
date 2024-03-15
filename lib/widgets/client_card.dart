@@ -1,11 +1,8 @@
-import 'package:booker/helper/route_generator.dart';
-import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class ClientCard extends StatefulWidget {
 

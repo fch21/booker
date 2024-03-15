@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/stripe_functions.dart';
-import 'package:booker/helper/user_sign.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/coupon.dart';
@@ -13,9 +12,7 @@ import 'package:booker/widgets/button_custom.dart';
 import 'package:booker/widgets/input_custom.dart';
 import 'package:booker/widgets/loading_data.dart';
 import 'package:booker/widgets/payment_method_preview.dart';
-import 'package:booker/widgets/payment_method_preview_list.dart';
 import 'package:booker/widgets/subscription_details_card.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -33,6 +30,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
   PaymentMethod? _paymentMethod;
   bool paymentMethodLoaded = false;
 
+  /*
   Future<void> _showNotAvailableDialog() async {
     await showDialog(
       context: context,
@@ -60,18 +58,19 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
     );
     return;
   }
+   */
 
   Future<void> _subscriptionCanceledDialog() async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Assinatura Cancelada'),
-          content: Text('Seu cancelamento foi realizado com sucesso. Você continuará a ter acesso aos benefícios premium até o final do seu período de faturamento atual.'),
+          title: const Text('Assinatura Cancelada'),
+          content: const Text('Seu cancelamento foi realizado com sucesso. Você continuará a ter acesso aos benefícios premium até o final do seu período de faturamento atual.'),
           actionsAlignment: MainAxisAlignment.end,
           actions: <Widget>[
             TextButton(
-              child: Text('Entendi'),
+              child: const Text('Entendi'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -130,12 +129,12 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Assinatura Reativada'),
-          content: Text('Sua assinatura foi reativada com sucesso. Você continuará a ter acesso aos benefícios premium e a assinatura continuará a ser renovada normalmente.'),
+          title: const Text('Assinatura Reativada'),
+          content: const Text('Sua assinatura foi reativada com sucesso. Você continuará a ter acesso aos benefícios premium e a assinatura continuará a ser renovada normalmente.'),
           actionsAlignment: MainAxisAlignment.end,
           actions: <Widget>[
             TextButton(
-              child: Text('Entendi'),
+              child: const Text('Entendi'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -513,7 +512,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
             ),
           ),
           Padding(
-              padding: EdgeInsets.fromLTRB(8, 4, 8, 0),
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
               child: Wrap(
                   children: [
                     const Text(
@@ -552,13 +551,13 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                       : Text('Ativa - Renova em ${Utils.formatDateTimeToVisualize(_subscription!.currentPeriodEnd, onlyDate: true)}'),
                 ),
                 SubscriptionDetailCard(
-                  title: Text('Detalhes da Assinatura'),
+                  title: const Text('Detalhes da Assinatura'),
                   // Detalhes da assinatura atual ou disponível
                   content: Column(
                     children: [
                       ListTile(
                         title: Text('Plano Premium (${Subscription.getSubscriptionPriceString()}/mês): Acesso ilimitado a todos os recursos'),
-                        leading: Icon(Icons.star),
+                        leading: const Icon(Icons.star),
                       ),
                       const ListTile(
                         title: Text('Acesso ao calendário com todos os agendamentos'),
@@ -578,7 +577,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                 ),
                 if(_paymentMethod != null)
                   SubscriptionDetailCard(
-                      title: Text('Método de Pagamento'),
+                      title: const Text('Método de Pagamento'),
                       // Detalhes do método de pagamento
                       content: PaymentMethodPreview(paymentMethod: _paymentMethod!,)//'Cartão de Crédito **** **** **** 1234',
                   ),
@@ -640,7 +639,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
-        title: Text('Assinatura'),
+        title: const Text('Assinatura'),
       ),
       body: subscriptionLoaded && paymentMethodLoaded
           ? SingleChildScrollView(

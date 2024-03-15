@@ -1,24 +1,17 @@
 import 'package:booker/helper/route_generator.dart';
-import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
-import 'package:booker/models/app_user.dart';
 import 'package:booker/models/available_schedule.dart';
 import 'package:booker/models/service_provided.dart';
 import 'package:booker/models/time_interval.dart';
 import 'package:booker/views/configurations_profile_service_provider.dart';
 import 'package:booker/widgets/available_time_card.dart';
 import 'package:booker/widgets/button_custom.dart';
-import 'package:booker/widgets/custom_divider.dart';
-import 'package:booker/widgets/day_availability.dart';
 import 'package:booker/widgets/profile_header.dart';
 import 'package:booker/widgets/service_provided_card.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
-
-import '../widgets/clickable_item.dart';
 
 class ProfileServiceProvider extends StatefulWidget {
 

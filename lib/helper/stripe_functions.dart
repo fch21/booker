@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:booker/helper/http_functions.dart';
 import 'package:booker/helper/strings.dart';
-import 'package:booker/helper/user_firebase.dart';
-import 'package:booker/models/app_user.dart';
 import 'package:booker/models/coupon.dart';
 import 'package:booker/models/payment_method.dart';
 import 'package:booker/models/subscription.dart';

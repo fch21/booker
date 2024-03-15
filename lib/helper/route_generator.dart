@@ -1,6 +1,4 @@
-
 import 'package:booker/home.dart';
-import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
 import 'package:booker/models/available_schedule.dart';
@@ -24,7 +22,6 @@ import 'package:booker/views/my_appointments.dart';
 import 'package:booker/views/my_clients.dart';
 import 'package:booker/views/presentation.dart';
 import 'package:booker/views/profile_service_provider.dart';
-import 'package:booker/views/edit_profile_client.dart';
 import 'package:booker/views/register.dart';
 import 'package:booker/views/reset_password.dart';
 import 'package:booker/views/service_provided_form.dart';

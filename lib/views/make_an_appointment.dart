@@ -6,7 +6,6 @@ import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
-import 'package:booker/models/not_used/appointment_details_change.dart';
 import 'package:booker/models/service_provided.dart';
 import 'package:booker/models/time_interval.dart';
 import 'package:booker/views/my_clients.dart';
@@ -197,7 +196,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
 
     currentAvailableTimes.clear();
     //to prevent making appointment in BlockedPeriods
-    print("widget.appUser.name = ${widget.appUser.name}");
+    //print("widget.appUser.name = ${widget.appUser.name}");
     if(widget.appUser.isWithinBlockedPeriods(dateTime)) return;
 
     setState(() {
@@ -210,7 +209,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
 
     // Get intervals for the specific day
     var dayIntervals = widget.appUser.availabilityMap[weekDay];
-    print("dayIntervals = $dayIntervals");
+    //print("dayIntervals = $dayIntervals");
     List<TimeOfDay> availableTimes = [];
 
     List<AppointmentDetails> appointments = await _getAppointmentsMade(currentDateTime);
@@ -274,6 +273,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     return;
   }
 
+  /*
   Future<int?> _showChangeOptionsDialog() async {
     return await showDialog <int>(
       context: context,
@@ -308,9 +308,10 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       },
     );
   }
+   */
 
   Future<bool> _makeAppointment(AppUser client) async {
-    print("_makeAppointment >>>");
+    //print("_makeAppointment >>>");
     if(selectedTimeOfDay != null && selectedDateTime != null){
 
       DateTime startingDateTime = selectedDateTime!.copyWith(hour: selectedTimeOfDay!.hour, minute: selectedTimeOfDay!.minute, second: 0, millisecond: 0, microsecond: 0);
@@ -390,7 +391,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       builder: (BuildContext context) {
         return AlertDialog(
           actionsAlignment: MainAxisAlignment.end,
-          title: Text("Confirmado"),
+          title: const Text("Confirmado"),
           content: Text(widget.manuallyAddAppointment ? "Agendamento manualmente marcado com sucesso!" : "Agendamento marcado com sucesso!"),
           actions: <Widget>[
             TextButton(
@@ -414,12 +415,12 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       TextEditingController controllerClientName = TextEditingController(text: "");
       AppUser? selectedClient;
 
-      int weekday = Utils.getWeekDay(selectedDateTime!);
+      //int weekday = Utils.getWeekDay(selectedDateTime!);
       //print("widget.serviceProvided.hasPeriodicAppointments = ${widget.serviceProvided.hasPeriodicAppointments}");
       Widget unLoggedUserDialog = AlertDialog(
         actionsAlignment: MainAxisAlignment.spaceBetween,
-        title: Text("Faça o login"),
-        content: Text("Para marcar um horário você precisa fazer o login"),
+        title: const Text("Faça o login"),
+        content: const Text("Para marcar um horário você precisa fazer o login"),
         actions: <Widget>[
           TextButton(
             child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
@@ -438,64 +439,66 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       );
       Widget loggedUserDialog = AlertDialog(
         actionsAlignment: MainAxisAlignment.spaceBetween,
-        title: Text("Marcar Horário"),
+        title: const Text("Marcar Horário"),
         content: widget.manuallyAddAppointment
           ? StreamBuilder<bool>(
             stream: updateDialogStreamController.stream,
             builder: (context, snapshot) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(//widget.serviceProvided.hasPeriodicAppointments
-                      //? "Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
-                      "Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 24.0, bottom: 16.0),
-                    child: Text(
-                        selectedClient != null
-                        ? "Cliente selecionado:"
-                        : "Adicione o nome do cliente ou escolha um cliente já existente:"
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(//widget.serviceProvided.hasPeriodicAppointments
+                        //? "Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
+                        "Você deseja marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
                     ),
-                  ),
-                  if(selectedClient == null)
-                    InputCustom(
-                      controller: controllerClientName,
-                      label: "Nome do cliente"
-                    ),
-
-                  if(selectedClient == null)
                     Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: Center(
-                        child: GestureDetector(
-                          child: const Text(
-                            "Escolher um cliente existente",
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (_) => MyClients(
-                                  onTapUser: (client){
-                                    selectedClient = client;
-                                    updateDialogStreamController.add(true);
-                                    Navigator.of(context).pop();
-                                  },
-                                )
-                              )
-                            );
-                          },
-                        ),
+                      padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
+                      child: Text(
+                          selectedClient != null
+                          ? "Cliente selecionado:"
+                          : "Adicione o nome do cliente ou escolha um cliente já existente:"
                       ),
                     ),
+                    if(selectedClient == null)
+                      InputCustom(
+                        controller: controllerClientName,
+                        label: "Nome do cliente"
+                      ),
 
-                  if(selectedClient != null)
-                    ClientCard(
-                      client: selectedClient!,
-                      onTap: (){},
-                    ),
-                ],
+                    if(selectedClient == null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Center(
+                          child: GestureDetector(
+                            child: const Text(
+                              "Escolher um cliente existente",
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (_) => MyClients(
+                                    onTapUser: (client){
+                                      selectedClient = client;
+                                      updateDialogStreamController.add(true);
+                                      Navigator.of(context).pop();
+                                    },
+                                  )
+                                )
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+
+                    if(selectedClient != null)
+                      ClientCard(
+                        client: selectedClient!,
+                        onTap: (){},
+                      ),
+                  ],
+                ),
               );
             }
           )
@@ -524,10 +527,10 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                     client = AppUser();
                     client.name = controllerClientName.text;
                   }
-                  print("client.id = ${client.id}");
-                  print("client.name = ${client.name}");
-                  print("currentAppUser!.id = ${currentAppUser!.id}");
-                  print("currentAppUser!.name = ${currentAppUser!.name}");
+                  //print("client.id = ${client.id}");
+                  //print("client.name = ${client.name}");
+                  //print("currentAppUser!.id = ${currentAppUser!.id}");
+                  //print("currentAppUser!.name = ${currentAppUser!.name}");
                   await _makeAppointment(client);
                   if(mounted) Navigator.of(context).pop();
                   await _showAppointmentMadeDialog();
@@ -561,8 +564,8 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
         builder: (BuildContext context) {
           return AlertDialog(
             actionsAlignment: MainAxisAlignment.end,
-            title: Text("Selecione um Horário"),
-            content: Text("Você precisa selecionar um horário antes de marcar."),
+            title: const Text("Selecione um Horário"),
+            content: const Text("Você precisa selecionar um horário antes de marcar."),
             actions: <Widget>[
               TextButton(
                 child: Text("Ok", style: TextStyle(color: widget.appUser.getUserColorResolved()),),
@@ -590,7 +593,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Marcar um horário"),
+        title: const Text("Marcar um horário"),
         elevation: 0,
         backgroundColor: widget.appUser.getUserColorResolved(),
         foregroundColor: Utils.getContrastingColor(widget.appUser.getUserColorResolved()),

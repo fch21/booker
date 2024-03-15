@@ -6,7 +6,6 @@ import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
-import 'package:booker/widgets/app_user_item.dart';
 import 'package:booker/widgets/loading_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -188,7 +187,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                               onPressed: (){
                                 _getImage(Strings.GALLERY, isProfileImage: false);
                               },
-                              child: Text(AppLocalizations.of(context)!.profile_config_change_picture, style: TextStyle(color: Colors.white),),
+                              child: Text(AppLocalizations.of(context)!.profile_config_change_picture, style: const TextStyle(color: Colors.white),),
                             ),
                           ),
                       ],

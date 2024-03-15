@@ -1,17 +1,13 @@
-import 'dart:developer';
-
 import 'package:booker/helper/necessary_subscription_levels.dart';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/user_firebase.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
-import 'package:booker/models/not_used/appointment_details_change.dart';
 import 'package:booker/models/service_provided.dart';
 import 'package:booker/widgets/input_custom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -232,7 +228,7 @@ class AppointmentDetails {
           serviceProvided = ServiceProvided.fromDocumentSnapshot(documentSnapshot);
         }
         else{
-          Utils.showSnackBar(context, "${AppLocalizations.of(context)!.invalid_data}");
+          Utils.showSnackBar(context, AppLocalizations.of(context)!.invalid_data);
         }
       }
       catch(e){
@@ -327,19 +323,19 @@ class AppointmentDetails {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmar Cancelamento'),
-          content: Text(useCancelAllMessage ? 'Tem certeza que deseja cancelar todos os agendamentos marcados ${extraTextForCancelAll}?' : 'Tem certeza que deseja cancelar este agendamento?'),
+          title: const Text('Confirmar Cancelamento'),
+          content: Text(useCancelAllMessage ? 'Tem certeza que deseja cancelar todos os agendamentos marcados $extraTextForCancelAll?' : 'Tem certeza que deseja cancelar este agendamento?'),
           actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: <Widget>[
             TextButton(
-              child: Text('Voltar'),
+              child: const Text('Voltar'),
               onPressed: () {
                 confirmed = false;
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Confirmar'),
+              child: const Text('Confirmar'),
               onPressed: () async {
                 confirmed = true;
                 showCancelAppointmentAddMessageDialog = true;
@@ -354,7 +350,7 @@ class AppointmentDetails {
     print("useCancelAllMessage && confirmed = ${useCancelAllMessage && confirmed}");
     if(useCancelAllMessage && confirmed){
       bool canAccess = await Utils.showSubscriptionNeededDialogIfNecessary(context: context, subscriptionNeeded: NecessarySubscriptionLevels.CANCEL_ALL_APPOINTMENTS);
-      print("canAccess = ${canAccess}");
+      print("canAccess = $canAccess");
       if(!canAccess) return false;
     }
 
@@ -387,7 +383,7 @@ class AppointmentDetails {
         TextEditingController textEditingController = TextEditingController();
 
         return AlertDialog(
-          title: Text('Mensagem de Cancelamento'),
+          title: const Text('Mensagem de Cancelamento'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -406,13 +402,13 @@ class AppointmentDetails {
           actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: <Widget>[
             TextButton(
-              child: Text('Deixar em branco'),
+              child: const Text('Deixar em branco'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Enviar'),
+              child: const Text('Enviar'),
               onPressed: () async {
                 bool canAccess = await Utils.showSubscriptionNeededDialogIfNecessary(context: context, subscriptionNeeded: NecessarySubscriptionLevels.SEND_CANCELATION_MESSAGE);
                 if(canAccess){

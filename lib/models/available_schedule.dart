@@ -3,8 +3,6 @@ import 'package:booker/models/time_interval.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import 'appointment_details.dart';
-
 class AvailableSchedule {
   TimeInterval timeInterval;
   List<bool> selectedDays;

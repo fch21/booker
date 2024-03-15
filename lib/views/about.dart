@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
@@ -99,7 +97,7 @@ class _AboutState extends State<About> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(bottom: 64.0, top: 16.0),
+              padding: const EdgeInsets.only(bottom: 64.0, top: 16.0),
               child: Center(
                 child: GestureDetector(
                   onTap: (){

@@ -14,8 +14,8 @@ class HttpFunctions {
 
        if(uri != null){
          final reqBody = json.encode(requestMap);
-         print('uri = ${uri}');
-         print('reqBody = ${reqBody}');
+         print('uri = $uri');
+         print('reqBody = $reqBody');
          //print('reqBidTokenody = ${idToken}');
          final response = await http.post(uri,
              headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $idToken', },
@@ -32,7 +32,7 @@ class HttpFunctions {
            print('getResponseMap error in json decode: $e');
          }
 
-         print('responseBody = $responseBody');
+         //print('responseBody = $responseBody');
 
          return responseBody;
        }

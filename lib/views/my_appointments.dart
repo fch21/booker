@@ -1,18 +1,9 @@
 import 'package:booker/helper/route_generator.dart';
-import 'package:booker/helper/strings.dart';
-import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
-import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
-import 'package:booker/models/service_provided.dart';
 import 'package:booker/widgets/appointment_details_card.dart';
-import 'package:booker/widgets/button_custom.dart';
 import 'package:booker/widgets/loading_data.dart';
-import 'package:booker/widgets/profile_header.dart';
-import 'package:booker/widgets/service_provided_card.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyAppointments extends StatefulWidget {
 

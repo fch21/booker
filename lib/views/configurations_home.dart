@@ -2,7 +2,6 @@ import 'package:booker/helper/user_sign.dart';
 import 'package:booker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:booker/helper/route_generator.dart';
-import 'package:booker/models/app_user.dart';
 import 'package:booker/widgets/clickable_item.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

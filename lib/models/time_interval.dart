@@ -62,11 +62,11 @@ class TimeInterval{
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: Text("Erro na seleção de horário"),
-                  content: Text("O horário de início precisa ser antes do horário de término."),
+                  title: const Text("Erro na seleção de horário"),
+                  content: const Text("O horário de início precisa ser antes do horário de término."),
                   actions: <Widget>[
                     TextButton(
-                      child: Text("OK"),
+                      child: const Text("OK"),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },

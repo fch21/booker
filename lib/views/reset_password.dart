@@ -107,9 +107,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                   controller: _controllerEmail,
                                   label: AppLocalizations.of(context)!.login_email,
                                   textInputType: TextInputType.emailAddress,
-                                  onSaved: (email) {
-                                    //_anuncio.titulo = titulo;
-                                  },
+                                  //onSaved: (email) {//_anuncio.titulo = titulo;},
                                   validator: (value) {
                                     if(value == "" || value == null ){
                                       return AppLocalizations.of(context)!.required_field;

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:booker/widgets/loading_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
@@ -424,11 +423,11 @@ class UserSign {
               stream: checkedStreamController.stream,
               builder: (context, snapshot) {
                 return TextButton(
-                  child: const Text("Confirmar"),
                   onPressed: checked ? (){
                     confirm = true;
                     Navigator.of(context).pop();
                   } : null,
+                  child: const Text("Confirmar"),
                 );
               }
             ),
@@ -489,11 +488,11 @@ class UserSign {
               },
             ),
             TextButton(
-              child: Text("Confirmar"),
+              child: const Text("Confirmar"),
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
-                Navigator.of(context).pop();
-                Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.SPLASH_SCREEN, (_) => false);
+                if(context.mounted) Navigator.of(context).pop();
+                if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.SPLASH_SCREEN, (_) => false);
               },
             ),
           ],

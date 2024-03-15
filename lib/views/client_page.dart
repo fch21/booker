@@ -1,16 +1,12 @@
 import 'package:booker/helper/necessary_subscription_levels.dart';
 import 'package:booker/helper/route_generator.dart';
-import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
 import 'package:booker/widgets/appointment_details_card.dart';
-import 'package:booker/widgets/input_custom.dart';
 import 'package:booker/widgets/loading_data.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class ClientPage extends StatefulWidget {
   final AppUser client;
@@ -193,7 +189,7 @@ class _ClientPageState extends State<ClientPage> {
                     onPressed: () async {
                       _changeClientBlockedStatusDialog(clientIsBlocked);
                     },
-                    child: Text(clientIsBlocked ? 'Desbloquear cliente' : 'Bloquear cliente', style: TextStyle(color: Colors.red, fontSize: fontSizeVerySmall),),
+                    child: Text(clientIsBlocked ? 'Desbloquear cliente' : 'Bloquear cliente', style: const TextStyle(color: Colors.red, fontSize: fontSizeVerySmall),),
                   ),
                 ),
               ),

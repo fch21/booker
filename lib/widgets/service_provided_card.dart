@@ -1,6 +1,4 @@
-import 'package:booker/helper/route_generator.dart';
 import 'package:booker/main.dart';
-import 'package:booker/models/app_user.dart';
 import 'package:booker/models/service_provided.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +25,7 @@ class ServiceProvidedCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(serviceProvided.description, style: textStyleSmallNormal,),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text('Duração: ${serviceProvided.duration.inMinutes} minutos', style: textStyleSmallNormal,),
             ],
           ),

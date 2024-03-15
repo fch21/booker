@@ -11,6 +11,6 @@ class PaymentMethod {
     print("PaymentMethod.fromStripeJson = $map");
     id = map['id'] ?? '';
     cardBrand = map["card"]["brand"] ?? '';
-    cardLastFour = map["card"]["last4"].toString() ?? '';
+    cardLastFour = (map["card"]["last4"]  ?? '').toString();
   }
 }

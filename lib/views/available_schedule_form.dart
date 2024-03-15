@@ -7,7 +7,6 @@ import 'package:booker/widgets/custom_divider.dart';
 import 'package:booker/widgets/time_picker_scroll.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:intl/intl.dart';
 
 class AvailableScheduleForm extends StatefulWidget {
 
@@ -141,7 +140,7 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
                           time: _availableSchedule.timeInterval.startTime,
                           fontSize: fontSizeLarge,
                           onTimeChanged: (timeOfDay){
-                            print("onTimeChanged = $timeOfDay");
+                            //print("onTimeChanged = $timeOfDay");
                             _availableSchedule.timeInterval.startTime = timeOfDay;
                           }
                         ),

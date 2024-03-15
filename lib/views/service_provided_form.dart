@@ -5,8 +5,6 @@ import 'package:booker/widgets/input_custom.dart';
 import 'package:booker/widgets/button_custom.dart';
 import 'package:booker/widgets/color_picker_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ServiceProvidedForm extends StatefulWidget {
@@ -63,22 +61,22 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmar exclusão'),
-          content: Text('Tem certeza que deseja excluir esse serviço? Os agendamentos já realizados não serão cancelados, mas os clientes não poderão mais selecionar esse serviço.'),
+          title: const Text('Confirmar exclusão'),
+          content: const Text('Tem certeza que deseja excluir esse serviço? Os agendamentos já realizados não serão cancelados, mas os clientes não poderão mais selecionar esse serviço.'),
           actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: <Widget>[
             TextButton(
-              child: Text('Voltar'),
+              child: const Text('Voltar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Excluir'),
+              child: const Text('Excluir'),
               onPressed: () async {
                 await _serviceProvided.deleteServiceProvidedInFirestore(context);
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
+                if(mounted) Navigator.of(context).pop();
+                if(mounted) Navigator.of(context).pop();
               },
             ),
           ],
@@ -125,6 +123,7 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                 controller: _nameController,
                 onSaved: (name){
                   _serviceProvided.name = name ?? "";
+                  return;
                 },
                 validator: (value) {
                   if(value == "" || value == null ){
@@ -142,6 +141,7 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                   controller: _descriptionController,
                   onSaved: (description){
                     _serviceProvided.description = description ?? "";
+                    return;
                   },
                   validator: (value) {
                     return null;
@@ -157,6 +157,7 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                   inputFormatters: [DecimalTextInputFormatter()],
                   onSaved: (price){
                     _serviceProvided.price = double.tryParse(price?.replaceAll(',','.') ?? "") ?? 0.0;
+                    return;
                   },
                   validator: (value) {
                     if(value == "" || value == null ){
@@ -177,6 +178,7 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                   inputFormatters: [IntegerTextInputFormatter()],
                   onSaved: (durationInMinutes){
                     _serviceProvided.duration = Duration(minutes: (int.tryParse(durationInMinutes ?? "0") ?? 0));
+                    return;
                   },
                   validator: (value) {
                     if(value == "" || value == null ){
@@ -201,6 +203,7 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                   inputFormatters: [IntegerTextInputFormatter()],
                   onSaved: (durationInMinutes){
                     _serviceProvided.schedulingIntervalInMinutes = int.tryParse(durationInMinutes ?? "10") ?? 10;
+                    return;
                   },
                   validator: (value) {
                     if(value == "" || value == null ){
@@ -225,6 +228,7 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                   inputFormatters: [IntegerTextInputFormatter()],
                   onSaved: (durationInMinutes){
                     _serviceProvided.minSchedulingDelayInMinutes = int.tryParse(durationInMinutes ?? "30") ?? 30;
+                    return;
                   },
                   validator: (value) {
                     if(value == "" || value == null ){
@@ -249,6 +253,7 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                   inputFormatters: [IntegerTextInputFormatter()],
                   onSaved: (value){
                     _serviceProvided.maxSchedulingDelayInDays = int.tryParse(value ?? "30") ?? 30;
+                    return;
                   },
                   validator: (value) {
                     if(value == "" || value == null ){
@@ -411,7 +416,7 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                         Expanded(
                           flex: 2,
                           child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text('Escolher Cor', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.65)),),
                           ),
                         ),

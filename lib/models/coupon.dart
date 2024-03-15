@@ -1,14 +1,3 @@
-import 'package:booker/helper/strings.dart';
-import 'package:booker/helper/user_firebase.dart';
-import 'package:booker/helper/utils.dart';
-import 'package:booker/main.dart';
-import 'package:booker/models/app_user.dart';
-import 'package:booker/models/subscription.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-
 class Coupon {
   String id = '';
   int percentOff = 0; // Percentual de desconto

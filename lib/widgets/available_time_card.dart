@@ -35,7 +35,7 @@ class _AvailableScheduleCardState extends State<AvailableScheduleCard> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmar'),
+          title: const Text('Confirmar'),
           content: Text(currentValue
             ?'Tem certeza que deseja desativar esse horário de disponibilidade? Os agendamentos já realizados não serão cancelados, mas os clientes não poderão mais agendar nesse horário.'
             :'Tem certeza que deseja ativar esse horário de disponibilidade? Os clientes agora poderão agendar nesse horário.'
@@ -43,14 +43,14 @@ class _AvailableScheduleCardState extends State<AvailableScheduleCard> {
           actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: <Widget>[
             TextButton(
-              child: Text('Voltar'),
+              child: const Text('Voltar'),
               onPressed: () {
                 confirmed = false;
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Confirmar'),
+              child: const Text('Confirmar'),
               onPressed: () {
                 confirmed = true;
                 Navigator.of(context).pop();

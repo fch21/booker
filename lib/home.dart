@@ -1,9 +1,8 @@
 import 'package:booker/views/configurations_home.dart';
 import 'package:booker/views/explore.dart';
-import 'package:flutter/material.dart' hide MenuItem;
+import 'package:flutter/material.dart';
 import 'package:booker/main.dart';
 import 'package:booker/helper/Strings.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 
 class Home extends StatefulWidget {

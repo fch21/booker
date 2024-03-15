@@ -1,15 +1,10 @@
 import 'package:booker/helper/route_generator.dart';
-import 'package:booker/helper/text_input_formatters.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
-import 'package:booker/models/service_provided.dart';
 import 'package:booker/widgets/custom_divider.dart';
 import 'package:booker/widgets/input_custom.dart';
 import 'package:booker/widgets/button_custom.dart';
-import 'package:booker/widgets/color_picker_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditProfileClient extends StatefulWidget {
@@ -22,7 +17,7 @@ class EditProfileClient extends StatefulWidget {
 
 class _EditProfileClientState extends State<EditProfileClient> {
   final TextEditingController _nameController = TextEditingController(text: currentAppUser!.name);
-  final TextEditingController _emailController = TextEditingController(text: currentAppUser!.email);
+  //final TextEditingController _emailController = TextEditingController(text: currentAppUser!.email);
   final TextEditingController _phoneController = TextEditingController(text: currentAppUser!.phone);
 
   final _formKey = GlobalKey<FormState>();
@@ -65,13 +60,13 @@ class _EditProfileClientState extends State<EditProfileClient> {
         bool userNameIsAvailable = false;
 
         return AlertDialog(
-          title: Text('Criar nome de usuário:'),
+          title: const Text('Criar nome de usuário:'),
           content: Form(
             key: userNameFormKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('O nome de usuário é o nome uníco que será usado pelos clientes para encontrar você'),
+                const Text('O nome de usuário é o nome uníco que será usado pelos clientes para encontrar você'),
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: InputCustom(
@@ -79,6 +74,7 @@ class _EditProfileClientState extends State<EditProfileClient> {
                     controller: userNameController,
                     onSaved: (userName){
                       currentAppUser!.userName = userName ?? "";
+                      return;
                     },
                     validator: (value) {
                       print("value = $value");
@@ -145,7 +141,7 @@ class _EditProfileClientState extends State<EditProfileClient> {
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.edit)),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -156,6 +152,7 @@ class _EditProfileClientState extends State<EditProfileClient> {
                 controller: _nameController,
                 onSaved: (name){
                   currentAppUser!.name = name ?? "";
+                  return;
                 },
                 validator: (value) {
                   if(value == "" || value == null ){
@@ -201,7 +198,7 @@ class _EditProfileClientState extends State<EditProfileClient> {
                   child: ButtonCustom(
                     onPressed: () async {
                       await currentAppUser!.addPhoneNumberToUser(context);
-                      print("setting state after addPhoneNumberToUser>>>>>");
+                      //print("setting state after addPhoneNumberToUser>>>>>");
                       setState(() {
                         _phoneController.text = currentAppUser!.phone;
                       });

@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
               if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDER);
             }
             else{
-              Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
+              if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
             }
           });
 

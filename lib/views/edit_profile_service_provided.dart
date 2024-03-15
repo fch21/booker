@@ -1,19 +1,15 @@
-import 'package:booker/helper/text_input_formatters.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
-import 'package:booker/models/service_provided.dart';
 import 'package:booker/widgets/input_custom.dart';
 import 'package:booker/widgets/button_custom.dart';
 import 'package:booker/widgets/color_picker_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditProfileServiceProvider extends StatefulWidget {
 
-  EditProfileServiceProvider();
+  EditProfileServiceProvider({super.key});
 
   @override
   _EditProfileServiceProviderState createState() => _EditProfileServiceProviderState();
@@ -26,7 +22,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
   final TextEditingController _phoneController = TextEditingController(text: currentAppUser!.phone);
   Color _selectedColor = Colors.blue;
 
-  bool _isLoading = false;
+  //bool _isLoading = false;
   bool _userNameIsAvailable = false;
 
   final _formKey = GlobalKey<FormState>();
@@ -34,9 +30,9 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
   _validateFields() async {
     bool userNameChanged = _userNameController.text != currentAppUser!.userName;
     if(userNameChanged){
-      setState(() {
-        _isLoading = true;
-      });
+      //setState(() {
+      //  _isLoading = true;
+      //});
       bool userNameIsAvailable = await AppUser.checkIfUserNameIsAvailable(_userNameController.text);
       print("userNameIsAvailable = $userNameIsAvailable");
 
@@ -56,9 +52,9 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
 
     if(userNameChanged){
       if(mounted){
-        setState(() {
-          _isLoading = false;
-        });
+        //setState(() {
+        //  _isLoading = false;
+        //});
       }
     }
 
@@ -97,6 +93,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                 controller: _nameController,
                 onSaved: (name){
                   currentAppUser!.name = name ?? "";
+                  return;
                 },
                 validator: (value) {
                   if(value == "" || value == null ){
@@ -114,6 +111,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                   controller: _userNameController,
                   onSaved: (name){
                     currentAppUser!.userName = name ?? "";
+                    return;
                   },
                   validator: (value) {
                     if(value == "" || value == null ){
@@ -135,6 +133,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                   maxLines: 2,
                   onSaved: (description){
                     currentAppUser!.description = description ?? "";
+                    return;
                   },
                   validator: (value) {
                     return null;
@@ -177,7 +176,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                     }
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(4.0),
@@ -187,7 +186,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                         Expanded(
                           flex: 2,
                           child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text('Escolher Cor', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.65)),),
                           ),
                         ),

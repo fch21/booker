@@ -1,10 +1,8 @@
-import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/period.dart';
 import 'package:booker/widgets/blocked_period_card.dart';
 import 'package:booker/widgets/button_custom.dart';
-import 'package:booker/widgets/loading_data.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -95,11 +93,11 @@ class _CalendarBlockedPeriodsState extends State<CalendarBlockedPeriods> {
           actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: <Widget>[
             TextButton(
-              child: Text('Cancelar'),
+              child: const Text('Cancelar'),
               onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              child: Text('Confirmar'),
+              child: const Text('Confirmar'),
               onPressed: (){
                 if(startDate != null) {
                   if(startDate!.isBefore(DateTime.now())){

@@ -3,17 +3,14 @@ import 'dart:async';
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/necessary_subscription_levels.dart';
-import 'package:booker/helper/user_firebase.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
-import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
 import 'package:booker/models/available_schedule.dart';
 import 'package:booker/models/period.dart';
 import 'package:booker/widgets/clickable_item.dart';
 import 'package:booker/widgets/custom_divider.dart';
 import 'package:booker/widgets/loading_data.dart';
-import 'package:booker/widgets/menu_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
@@ -22,7 +19,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Calendar extends StatefulWidget {
-  Calendar({Key? key}) : super(key: key);
+  const Calendar({Key? key}) : super(key: key);
 
   @override
   State<Calendar> createState() => _CalendarState();
@@ -427,12 +424,12 @@ class _CalendarState extends State<Calendar> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Nenhum agendamento'),
+                          title: const Text('Nenhum agendamento'),
                           content: Text('Não existem agendamentos para cancelar ${getTimePeriodString()}'),
                           actionsAlignment: MainAxisAlignment.end,
                           actions: <Widget>[
                             TextButton(
-                              child: Text('Ok'),
+                              child: const Text('Ok'),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },

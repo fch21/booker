@@ -1,12 +1,9 @@
 import 'dart:html' as html;
 
 import 'package:booker/helper/user_sign.dart';
-import 'package:booker/helper/utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/main.dart';
-import 'package:booker/models/app_user.dart';
 import 'package:booker/widgets/button_custom.dart';
 import 'package:booker/widgets/input_custom.dart';
 import 'package:booker/widgets/loading_data.dart';
@@ -152,7 +149,7 @@ class LoginState extends State<Login> {
                                         controller: _controllerEmail,
                                         label: AppLocalizations.of(context)!.login_email,
                                         textInputType: TextInputType.emailAddress,
-                                        onSaved: (email) {},
+                                        //onSaved: (email) {},
                                         validator: (value) {
                                           if(value == "" || value == null ){
                                             return AppLocalizations.of(context)!.required_field;
@@ -167,7 +164,7 @@ class LoginState extends State<Login> {
                                     label: AppLocalizations.of(context)!.login_password,
                                     password: true,
                                     textInputType: TextInputType.text,
-                                    onSaved: (password) {},
+                                    //onSaved: (password) {},
                                     validator: (value) {
                                       if(value == "" || value == null ){
                                         return AppLocalizations.of(context)!.required_field;
