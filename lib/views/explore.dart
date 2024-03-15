@@ -246,7 +246,7 @@ class _ExploreState extends State<Explore> {
 
                       stringToSearch.toLowerCase();
 
-                      if (stringToSearch.contains(_controllerSearch.text.toLowerCase())){
+                      if (stringToSearch.contains(_controllerSearch.text.trim().toLowerCase())){
                         filterList.add(element);
                       }
                     }

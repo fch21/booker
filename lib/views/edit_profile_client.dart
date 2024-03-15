@@ -151,7 +151,7 @@ class _EditProfileClientState extends State<EditProfileClient> {
                 label: 'Nome',
                 controller: _nameController,
                 onSaved: (name){
-                  currentAppUser!.name = name ?? "";
+                  currentAppUser!.name = name?.trim() ?? "";
                   return;
                 },
                 validator: (value) {

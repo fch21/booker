@@ -44,9 +44,9 @@ class ServiceProvided {
     print("color = $color");
     Map<String, dynamic> map = {
       Strings.SERVICE_ID: id,
-      Strings.SERVICE_NAME: name,
+      Strings.SERVICE_NAME: name.trim(),
       Strings.SERVICE_USER_ID: userId,
-      Strings.SERVICE_DESCRIPTION: description,
+      Strings.SERVICE_DESCRIPTION: description.trim(),
       Strings.SERVICE_PRICE: price,
       Strings.SERVICE_DURATION: duration.inMinutes,
       Strings.SERVICE_COLOR: color.value,

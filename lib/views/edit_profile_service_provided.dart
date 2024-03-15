@@ -92,7 +92,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                 label: 'Nome',
                 controller: _nameController,
                 onSaved: (name){
-                  currentAppUser!.name = name ?? "";
+                  currentAppUser!.name = name?.trim() ?? "";
                   return;
                 },
                 validator: (value) {
@@ -110,7 +110,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                   label: 'Nome de usuário',
                   controller: _userNameController,
                   onSaved: (name){
-                    currentAppUser!.userName = name ?? "";
+                    currentAppUser!.userName = name?.trim() ?? "";
                     return;
                   },
                   validator: (value) {
@@ -132,7 +132,7 @@ class _EditProfileServiceProviderState extends State<EditProfileServiceProvider>
                   maxLength: 120,
                   maxLines: 2,
                   onSaved: (description){
-                    currentAppUser!.description = description ?? "";
+                    currentAppUser!.description = description?.trim() ?? "";
                     return;
                   },
                   validator: (value) {

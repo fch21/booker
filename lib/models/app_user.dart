@@ -110,9 +110,9 @@ class AppUser {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       Strings.USER_ID: id,
-      Strings.USER_NAME: name,
-      Strings.USER_USERNAME: userName,
-      Strings.USER_DESCRIPTION: description,
+      Strings.USER_NAME: name.trim(),
+      Strings.USER_USERNAME: userName.trim(),
+      Strings.USER_DESCRIPTION: description.trim(),
       Strings.USER_EMAIL: email,
       Strings.USER_PHONE: phone,
       Strings.USER_TUTORIAL_DONE: tutorialDone,
@@ -418,7 +418,7 @@ class AppUser {
         .collection(Strings.COLLECTION_USERS)
         ///change to COLLECTION_USERS_PUBLIC after setting cloud functions
         //.collection(Strings.COLLECTION_USERS_PUBLIC)
-        .where(Strings.USER_USERNAME, isEqualTo: userName)
+        .where(Strings.USER_USERNAME, isEqualTo: userName.trim())
         .get();
 
     if(querySnapshot.docs.isEmpty) userNameIsAvailable = true;

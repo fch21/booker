@@ -44,8 +44,8 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
       await _serviceProvided.updateServiceProvidedInFirestore(context);
       if(widget.serviceProvided != null){
         //to update instantly in the previous page
-        widget.serviceProvided!.name = _serviceProvided.name;
-        widget.serviceProvided!.description = _serviceProvided.description;
+        widget.serviceProvided!.name = _serviceProvided.name.trim();
+        widget.serviceProvided!.description = _serviceProvided.description.trim();
         widget.serviceProvided!.price = _serviceProvided.price;
         widget.serviceProvided!.duration = _serviceProvided.duration;
         widget.serviceProvided!.color = _serviceProvided.color;
