@@ -233,7 +233,12 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                                 ),
                               ),
                               if(isVerifyingCode)
-                                Container(color: Colors.white, child: LoadingData()),
+                                Positioned.fill(
+                                  child: Container(color: Colors.white, child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: LoadingData(),
+                                  )),
+                                ),
                             ],
                           ),
                         if(promotionCodeIsValid == true)
