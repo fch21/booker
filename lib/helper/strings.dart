@@ -14,9 +14,9 @@ class Strings {
 
   //Stripe
   //test
-  static const String STRIPE_PUBLISHABLE_KEY = "pk_test_51OmofUAnghrwvGGzW6bDqfKqZr9ztV0KcyZ5kpP5yqw5Y1dpA4y4uCgtKpIQTul9io9YtCIqobKYlzgXENYZxXat00TiOHKMaa";
+  //static const String STRIPE_PUBLISHABLE_KEY = "pk_test_51OmofUAnghrwvGGzW6bDqfKqZr9ztV0KcyZ5kpP5yqw5Y1dpA4y4uCgtKpIQTul9io9YtCIqobKYlzgXENYZxXat00TiOHKMaa";
   //live
-  //static const String STRIPE_PUBLISHABLE_KEY = "pk_live_51OmofUAnghrwvGGz1lBeZQnetZC0BcxeOJUHKMk17BsgZX1GDviRYFG9cvVwIICAN4XQZ8hGjAXfSbuRG0B3t7YO00bHtPXe5p";
+  static const String STRIPE_PUBLISHABLE_KEY = "pk_live_51OmofUAnghrwvGGz1lBeZQnetZC0BcxeOJUHKMk17BsgZX1GDviRYFG9cvVwIICAN4XQZ8hGjAXfSbuRG0B3t7YO00bHtPXe5p";
 
   //google
   static const String GOOGLE_SIGN_CLIENT_ID = "1060470892593-46d486l7p1knpkeglnu2ccqqvl9igjbi.apps.googleusercontent.com";

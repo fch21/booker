@@ -202,77 +202,79 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
               builder: (context, snapshot) {
                 return Form(
                   key: codeFormKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 8.0),
-                        child: Text('Adicione o seu código de desconto abaixo para ativar a sua assinatura Premium.\n\nApós a aplicação do código, você terá acesso imediato a todos os recursos exclusivos.'),
-                      ),
-                      if(promotionCodeIsValid != true)
-                        Stack(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 16.0),
-                              child: InputCustom(
-                                controller: codeController,
-                                label: "Código",
-                                onChanged: (value){
-                                  promotionCodeIsValid = null;
-                                  codeFormKey.currentState?.validate();
-                                },
-                                validator: (value) {
-                                  if(value == "" || value == null){
-                                    return AppLocalizations.of(context)!.required_field;
-                                  }
-                                  if(promotionCodeIsValid != null && !promotionCodeIsValid!) return "Código inválido";
-                                  return null;
-                                },
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 8.0),
+                          child: Text('Adicione o seu código de desconto abaixo para ativar a sua assinatura Premium.\n\nApós a aplicação do código, você terá acesso imediato a todos os recursos exclusivos.'),
+                        ),
+                        if(promotionCodeIsValid != true)
+                          Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(4,16,4,8),
+                                child: InputCustom(
+                                  controller: codeController,
+                                  label: "Código",
+                                  onChanged: (value){
+                                    promotionCodeIsValid = null;
+                                    codeFormKey.currentState?.validate();
+                                  },
+                                  validator: (value) {
+                                    if(value == "" || value == null){
+                                      return AppLocalizations.of(context)!.required_field;
+                                    }
+                                    if(promotionCodeIsValid != null && !promotionCodeIsValid!) return "Código inválido";
+                                    return null;
+                                  },
+                                ),
                               ),
-                            ),
-                            if(isVerifyingCode)
-                              Container(color: Colors.white, child: LoadingData()),
-                          ],
-                        ),
-                      if(promotionCodeIsValid == true)
-                        const Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 8.0),
-                              child: Text('Código validado com sucesso!', style: TextStyle(color: Colors.green, fontSize: fontSizeMedium),),
-                            )
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 24.0),
-                        child: ButtonCustom(
-                          text: (promotionCodeIsValid ?? false)? 'Continuar' : 'Verificar',
-                          onPressed: () async {
-                            if (!(promotionCodeIsValid ?? false)) {
-                              if(codeController.text.isNotEmpty && promotionCodeIsValid == null){
-                                promotionCode = codeController.text;
-                                isVerifyingCode = true;
-                                isVerifyingCodeStreamController.add(true);
-                                coupon = await StripeFunctions.getCouponFromPromotionCode(promotionCode: promotionCode);
-                                //codeIsValid = await DiscountCode.verifyDiscountCode(context: context, code: codeController.text);
-                                promotionCodeIsValid = coupon != null;
-                                codeFormKey.currentState?.validate();
-                                isVerifyingCode = false;
-                                isVerifyingCodeStreamController.add(true);
+                              if(isVerifyingCode)
+                                Container(color: Colors.white, child: LoadingData()),
+                            ],
+                          ),
+                        if(promotionCodeIsValid == true)
+                          const Center(
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 8.0),
+                                child: Text('Código validado com sucesso!', style: TextStyle(color: Colors.green, fontSize: fontSizeMedium),),
+                              )
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 24.0),
+                          child: ButtonCustom(
+                            text: (promotionCodeIsValid ?? false)? 'Continuar' : 'Verificar',
+                            onPressed: () async {
+                              if (!(promotionCodeIsValid ?? false)) {
+                                if(codeController.text.isNotEmpty && promotionCodeIsValid == null){
+                                  promotionCode = codeController.text;
+                                  isVerifyingCode = true;
+                                  isVerifyingCodeStreamController.add(true);
+                                  coupon = await StripeFunctions.getCouponFromPromotionCode(promotionCode: promotionCode);
+                                  //codeIsValid = await DiscountCode.verifyDiscountCode(context: context, code: codeController.text);
+                                  promotionCodeIsValid = coupon != null;
+                                  codeFormKey.currentState?.validate();
+                                  isVerifyingCode = false;
+                                  isVerifyingCodeStreamController.add(true);
+                                }
+                                else{
+                                  codeFormKey.currentState?.validate();
+                                }
                               }
                               else{
-                                codeFormKey.currentState?.validate();
+                                //code is valid
+                                Navigator.of(context).pop();
+                                _showSubscriptionDialog(coupon: coupon, promotionCode: promotionCode);
+                                //Navigator.of(context).pop();//pop subscription_management
                               }
-                            }
-                            else{
-                              //code is valid
-                              Navigator.of(context).pop();
-                              _showSubscriptionDialog(coupon: coupon, promotionCode: promotionCode);
-                              //Navigator.of(context).pop();//pop subscription_management
-                            }
-                          },
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               }
