@@ -29,7 +29,10 @@ class ServiceProvidedCard extends StatelessWidget {
             children: [
               Text(serviceProvided.description, style: textStyleSmallNormal,),
               const SizedBox(height: 4),
-              Text('Duração: ${serviceProvided.duration.inMinutes} min      ${serviceProvided.price != 0.0 ? 'Preço: R\$${serviceProvided.price.toStringAsFixed(2)}' : ''}', style: textStyleSmallNormal,),
+              Text(
+                'Duração: ${serviceProvided.duration.inMinutes} min      ${serviceProvided.price != 0.0 ? 'Preço: R\$${serviceProvided.price.toStringAsFixed(2).replaceAll('.', ',')}' : ''}',
+                style: textStyleSmallNormal,
+              ),
             ],
           ),
         ),

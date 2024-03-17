@@ -24,7 +24,6 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
   String htmlContent = "";
   String? clientSecret;
 
-  bool loading = true;
   bool hideIframe = false;
 
   String getHtmlWithClientSecret(String clientSecret){
@@ -46,6 +45,7 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
         font-family: "Roboto", sans-serif;
         font-size: 16px;
         color: #333;
+        padding: 20% 10% 0 10%;
       }
   
       .container {
@@ -61,13 +61,37 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
         background-color: #003399;
         border: none;
         color: #ffffff;
-        padding: 10px 0px;
         font-size: 16px;
         cursor: pointer;
         border-radius: 18px;
         margin-top: 18px;
+        height: 28px;
         width: 100%;
         transition: background-color 0.2s;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      #submit.loading {
+        pointer-events: none; /* Desativa eventos de clique enquanto carrega */
+      }
+      
+      #submit.loading::after {
+        content: "";
+        border: 3px solid #fff; /* Cor da borda externa */
+        border-top: 3px solid #003399; /* Cor da borda do topo */
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        position: absolute;
+        animation: spin 2s linear infinite; /* Animação de giro */
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
   
       #submit:hover {
@@ -111,9 +135,26 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
     paymentElement.mount('#payment-element');
     
     const form = document.getElementById('payment-form');
+    const submitButton = document.getElementById('submit');
+    
+    let isCardComplete = false;
+    
+    // Adicionar um event listener para cada elemento que você quer verificar
+    paymentElement.on('change', function(event) {
+      // Verificar se todos os campos estão preenchidos corretamente
+      isCardComplete = event.complete;
+    });
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
+      
+       if (!isCardComplete) {
+        return;
+       }
+      
+      submitButton.classList.add('loading');
+      submitButton.disabled = true;
+      submitButton.textContent = ''; // Remove o texto do botão enquanto carrega
     
       window.parent.postMessage({ type: 'setup_intent_processing' }, '*');
       const {error, setupIntent} = await stripe.confirmSetup({
@@ -140,9 +181,17 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
         if (setupIntent.status === 'succeeded') {
           // Envie uma mensagem para o Flutter informando que a configuração foi concluída com sucesso
           window.parent.postMessage({ type: 'setup_intent_success' }, '*');
-        } 
+        } else {
+          // Para outros estados, você pode querer tratar ou informar adequadamente
+          window.parent.postMessage({ type: 'other' }, '*');
+        }
         
       }
+      
+      // Reset the button after the operation is complete
+      submitButton.classList.remove('loading');
+      submitButton.disabled = false;
+      submitButton.textContent = '${AppLocalizations.of(context)!.add_credit_card_add}'; // Reinsere o texto original do botão
     });
   </script>
   
@@ -157,25 +206,18 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
 
       if (eventType == 'setup_intent_processing') {
         print('Stripe setup intent processing');
-        setState(() {
-          loading = true;
-        });
       }
       else if (eventType == 'setup_intent_error') {
         print('Stripe setup intent ERROR');
-        setState(() {
-          loading = false;
-        });
       }
       else if (eventType == 'setup_intent_success') {
         print('Stripe setup intent succeeded');
-        setState(() {
-          hideIframe = true;
-        });
+        if(mounted) {
+          setState(() {
+            hideIframe = true;
+          });
+        }
         await _openDialogPaymentMethodCreated();
-        setState(() {
-          loading = false;
-        });
         if(mounted) Navigator.of(context).pop();
       }
     }
@@ -223,7 +265,7 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
     if(secrets != null && secrets.containsKey("clientSecret")){
       setState(() {
         clientSecret = secrets["clientSecret"];
-        loading = false;
+        //loading = false;
       });
     }
   });
@@ -254,17 +296,14 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               child: clientSecret != null
-                  ? Padding(
-                    padding: const EdgeInsets.fromLTRB(24,48,24,0),
-                    child: Center(
-                      child: hideIframe
-                          ? Container()
-                          : const HtmlElementView(viewType: 'create-payment-method')
-                    ),
+                  ? Center(
+                    child: hideIframe
+                        ? Container()
+                        : const HtmlElementView(viewType: 'create-payment-method')
                   )
                   : Container()
             ),
-            if(loading)
+            if(false)
               Container(
                 color: Colors.white,
                 child: Center(

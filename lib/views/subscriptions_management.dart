@@ -207,10 +207,6 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 8.0),
-                          child: Text('Adicione o seu código de desconto abaixo para ativar a sua assinatura Premium.\n\nApós a aplicação do código, você terá acesso imediato a todos os recursos exclusivos.'),
-                        ),
                         if(promotionCodeIsValid != true)
                           Stack(
                             children: [
@@ -234,10 +230,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                               ),
                               if(isVerifyingCode)
                                 Positioned.fill(
-                                  child: Container(color: Colors.white, child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: LoadingData(),
-                                  )),
+                                  child: Container(color: Colors.white, child: Center(child: LoadingData())),
                                 ),
                             ],
                           ),
@@ -245,7 +238,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                           const Center(
                               child: Padding(
                                 padding: EdgeInsets.only(top: 8.0),
-                                child: Text('Código validado com sucesso!', style: TextStyle(color: Colors.green, fontSize: fontSizeMedium),),
+                                child: Text('Código validado com sucesso!', style: TextStyle(color: Colors.green, fontSize: fontSizeSmall),),
                               )
                           ),
                         Padding(
@@ -300,19 +293,16 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
 
         return AlertDialog(
           insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: MediaQuery.of(context).size.height/10),
+          title: const Text(
+            'Eleve Sua Experiência com o Premium',
+            style: textStyleMediumBold,
+            textAlign: TextAlign.center,
+          ),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 12.0, bottom: 16.0),
-                  child: Text(
-                    'Eleve Sua Experiência com o Premium',
-                    style: textStyleMediumBold,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
                 const ListTile(
                   contentPadding: EdgeInsets.all(0),
                   title: Text('Eficiência completa com o calendário avançado'),
@@ -387,7 +377,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                                             Navigator.pop(context);
                                             Navigator.pushNamed(context, RouteGenerator.ADD_PAYMENT_METHOD_WITH_STRIPE_ELEMENTS).then((value) async {
                                               await _getPaymentMethod();
-                                              _showSubscriptionDialog();
+                                              _showSubscriptionDialog(coupon: coupon, promotionCode: promotionCode);
                                             });
                                           },
                                         ),
@@ -421,28 +411,28 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                                   padding: const EdgeInsets.fromLTRB(24,24,16,0),
                                   child: ButtonCustom(
                                     text: (_paymentMethod != null) ? 'Assinar' : 'Adicionar forma de pagamento' ,
-                                    onPressed: (_paymentMethod != null)
-                                        ? () async {
-                                      isLoadingStreamController.add(true);
-                                      bool success = await StripeFunctions.createSubscriptionForCustomer(promotionCode: promotionCode);
+                                    onPressed: _paymentMethod != null
+                                      ? () async {
+                                          isLoadingStreamController.add(true);
+                                          bool success = await StripeFunctions.createSubscriptionForCustomer(promotionCode: promotionCode);
 
-                                      if(success) {
-                                        _getSubscription();
-                                        if(mounted) Navigator.pop(context);
-                                      }
-                                      else{
-                                        isLoadingStreamController.add(false);
-                                        if(mounted) Utils.showSnackBar(context, "Erro ao fazer assinatura.");
-                                      }
-                                    }
-                                        : () {
-                                      Navigator.pop(context);
-                                      Navigator.pushNamed(context, RouteGenerator.ADD_PAYMENT_METHOD_WITH_STRIPE_ELEMENTS).then((value) async {
-                                        await _getPaymentMethod();
-                                        _showSubscriptionDialog();
-                                      });
-                                      //_showNotAvailableDialog();
-                                    },
+                                          if(success) {
+                                            _getSubscription();
+                                            if(mounted) Navigator.pop(context);
+                                          }
+                                          else{
+                                            isLoadingStreamController.add(false);
+                                            if(mounted) Utils.showSnackBar(context, "Erro ao fazer assinatura.");
+                                          }
+                                        }
+                                      : () {
+                                        Navigator.pop(context);
+                                        Navigator.pushNamed(context, RouteGenerator.ADD_PAYMENT_METHOD_WITH_STRIPE_ELEMENTS).then((value) async {
+                                          await _getPaymentMethod();
+                                          _showSubscriptionDialog(coupon: coupon, promotionCode: promotionCode);
+                                        });
+                                        //_showNotAvailableDialog();
+                                      },
                                   ),
                                 ),
                               ],
@@ -486,7 +476,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
             ),
           ),
           const ListTile(
-            title: Text('Acesso ao calendário com todos os agendamentos'),
+            title: Text('Acesso a todas as funcionalidades do calendário'),
             leading: Icon(Icons.calendar_month),
           ),
           const ListTile(
@@ -654,6 +644,8 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
   @override
   Widget build(BuildContext context) {
 
+    bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -662,7 +654,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
       ),
       body: subscriptionLoaded && paymentMethodLoaded
           ? SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            padding: EdgeInsets.symmetric(horizontal: greaterWidthLayout ? MediaQuery.of(context).size.width/4 : 16, vertical: 20),
             child: getContent()
           )
           : LoadingData(),
