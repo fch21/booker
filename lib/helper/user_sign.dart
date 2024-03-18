@@ -61,11 +61,12 @@ class UserSign {
 
   static Future<void> logUserWithEmailAndPassword({required BuildContext context, required String email, required String password}) async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    await auth.signInWithEmailAndPassword(email: email, password: password).then((firebaseUser) {
-      UserSign.checkCurrentUser(context);
-    }).catchError((error) {
+    try{
+      await auth.signInWithEmailAndPassword(email: email, password: password);
+      await UserSign.checkCurrentUser(context);
+    }catch(error) {
       Utils.showSnackBar(context, AppLocalizations.of(context)!.login_error_message);
-    });
+    }
     return;
   }
 
@@ -578,6 +579,8 @@ class UserSign {
       }
 
     }
+
+    return;
   }
 
   static Future<UserCredential> signInWithGoogle() async {

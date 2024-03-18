@@ -35,10 +35,10 @@ class _SplashScreenState extends State<SplashScreen> {
           Future.delayed(splashAnimationDuration + splashDuration, () async {
             await UserSign.getCurrentAppUser();
             if(currentAppUser?.isServiceProvider ?? false){
-              if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDER);
+              if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.PROFILE_SERVICE_PROVIDER, (Route<dynamic> route) => false,);
             }
             else{
-              if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
+              if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.HOME, (Route<dynamic> route) => false);
             }
           });
 

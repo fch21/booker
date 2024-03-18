@@ -192,7 +192,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
   }
 
   Future<List<TimeOfDay>> getAvailableTimesList(DateTime dateTime) async {
-
+    //print("getAvailableTimesList >>>>>>>");
     List<TimeOfDay> availableTimes = [];
 
     String weekDay = Utils.getWeekDayString(dateTime);
@@ -203,7 +203,6 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     //print("dayIntervals = $dayIntervals");
 
     List<AppointmentDetails> appointments = await _getAppointmentsMade(currentDateTime);
-
     if (dayIntervals != null && dayIntervals['isSelected'] && dayIntervals['intervals'] is List) {
 
       List<TimeInterval> activeTimeIntervals = [];
@@ -213,7 +212,6 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           activeTimeIntervals.add(interval['timeInterval'] as TimeInterval);
         }
       }
-
       for (var interval in activeTimeIntervals) {
         TimeOfDay intervalStartTime = interval.startTime;
         TimeOfDay intervalEndTime = interval.endTime;
@@ -232,15 +230,14 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           //print("nextAvailableTime = ${nextAvailableTime}");
           //print("nextAvailableTime.isAfter(appointmentStartDateTime) = ${nextAvailableTime.isAfter(appointmentStartDateTime)}");
           if (nextAvailableTime.isAfter(appointmentStartDateTime)) {
-            //to show start options only in the times that have a minute ending in 10
-            int extraMinutesToRound = (10 - nextAvailableTime.minute % 10) % 10;
-            if(extraMinutesToRound != 0) nextAvailableTime = nextAvailableTime.copyWith(minute: nextAvailableTime.minute + extraMinutesToRound);
+            nextAvailableTime = Utils.roundDateTime(nextAvailableTime);
             appointmentStartDateTime = nextAvailableTime;
             appointmentEndDateTime = appointmentStartDateTime.add(Duration(minutes: serviceDurationInMinutes));
             continue;//restart the loop
           }
 
           if (appointmentStartDateTime.isAfter(DateTime.now()) && widget.serviceProvided.isWithinValidSchedulingInterval(appointmentStartDateTime)) {
+            appointmentStartDateTime = Utils.roundDateTime(appointmentStartDateTime);
             availableTimes.add(TimeOfDay(hour: appointmentStartDateTime.hour, minute: appointmentStartDateTime.minute));
           }
           //print("loop availableTimes = $availableTimes");

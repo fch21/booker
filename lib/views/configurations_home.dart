@@ -57,12 +57,13 @@ class _ConfigurationsHomeState extends State<ConfigurationsHome> {
                       text: AppLocalizations.of(context)!.configurations_my_profile,
                       iconData: Icons.person,
                       onTap: () {
-                        if(currentAppUser!.isServiceProvider){
-                          Navigator.pushNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDER);
-                        }
-                        else{
+                        //this screen should not be shown to service providers
+                        //if(currentAppUser!.isServiceProvider){
+                        //  Navigator.pushNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDER);
+                        //}
+                        //else{
                           Navigator.pushNamed(context, RouteGenerator.EDIT_PROFILE_CLIENT);
-                        }
+                        //}
                       },
                     ),
                     ClickableItem(

@@ -1,5 +1,7 @@
+import 'package:booker/helper/necessary_subscription_levels.dart';
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/models/appointment_details.dart';
@@ -144,15 +146,18 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                             child: Center(
                               child: TextButton(
                                 onPressed: () async {
-                                  await widget.appointmentDetails.initServiceProvided(context);
-                                  if(mounted) {
-                                    Map args = {"user" : currentAppUser!, "serviceProvided" : widget.appointmentDetails.serviceProvided, "appointmentToChange" : widget.appointmentDetails};
-                                    Navigator.pushNamed(context, RouteGenerator.MAKE_AN_APPOINTMENT, arguments: args).then((value){
-                                      if(value is bool && value){
-                                        appointmentWasEdited = true;
-                                        setState(() {});
-                                      }
-                                    });
+                                  bool canAccess = await Utils.showSubscriptionNeededDialogIfNecessary(context: context, subscriptionNeeded: NecessarySubscriptionLevels.EDIT_APPOINTMENT);
+                                  if(canAccess){
+                                    await widget.appointmentDetails.initServiceProvided(context);
+                                    if(mounted) {
+                                      Map args = {"user" : currentAppUser!, "serviceProvided" : widget.appointmentDetails.serviceProvided, "appointmentToChange" : widget.appointmentDetails};
+                                      Navigator.pushNamed(context, RouteGenerator.MAKE_AN_APPOINTMENT, arguments: args).then((value){
+                                        if(value is bool && value){
+                                          appointmentWasEdited = true;
+                                          setState(() {});
+                                        }
+                                      });
+                                    }
                                   }
                                 },
                                 child: Text('Editar Agendamento', style: TextStyle(color: standartTheme.primaryColor, fontSize: fontSizeVerySmall),),

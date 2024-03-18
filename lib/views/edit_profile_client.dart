@@ -112,7 +112,7 @@ class _EditProfileClientState extends State<EditProfileClient> {
                   currentAppUser!.updateAppUserInFirestore(context);
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();// to pop the Profile Customer screen
-                  Navigator.pushNamed(context, RouteGenerator.PROFILE_SERVICE_PROVIDER);
+                  Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.PROFILE_SERVICE_PROVIDER, (Route<dynamic> route) => false,);
                 }
               },
             ),
@@ -138,10 +138,13 @@ class _EditProfileClientState extends State<EditProfileClient> {
 
   @override
   Widget build(BuildContext context) {
+
+    bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.edit)),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.symmetric(vertical: 16, horizontal: greaterWidthLayout ? MediaQuery.of(context).size.width/4 : 16),
         child: Form(
           key: _formKey,
           child: Column(

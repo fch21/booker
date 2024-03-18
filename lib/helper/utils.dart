@@ -228,6 +228,14 @@ class Utils {
     return dateTimeSimplified;
   }
 
+  static DateTime roundDateTime(DateTime dateTime){
+    DateTime roundedDateTime = dateTime;
+    //to show start options only in the times that have a minute ending in 10
+    int extraMinutesToRound = (10 - roundedDateTime.minute % 10) % 10;
+    if(extraMinutesToRound != 0) roundedDateTime = roundedDateTime.copyWith(minute: roundedDateTime.minute + extraMinutesToRound);
+    return roundedDateTime;
+  }
+
   static int getWeekDay(DateTime date) {
     // Dart 'weekday' dá 1 para Segunda-feira, 2 para Terça-feira e assim por diante.
     // Por isso vamos realizar o resto da divisao por 7 para fazer com que domingo (7) seja 0, segunda (1) seja 1...

@@ -1,3 +1,4 @@
+import 'package:booker/helper/necessary_subscription_levels.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/period.dart';
@@ -143,16 +144,19 @@ class _CalendarBlockedPeriodsState extends State<CalendarBlockedPeriods> {
     ) ?? false;
 
     if (confirm) {
-      setState(() {
-        if(initialBlockedPeriod != null){
-          currentAppUser!.blockedPeriods.remove(initialBlockedPeriod);
-        }
-        currentAppUser!.blockedPeriods.add(Period(
-          startDate: startDate,
-          endDate: endDate!.add(const Duration(hours: 23, minutes: 59, seconds: 59)),// we must add one day to include the endDate day in the period
-        ));
-      });
-      await currentAppUser!.updateAppUserInFirestore(context);
+      bool canAccess = await Utils.showSubscriptionNeededDialogIfNecessary(context: context, subscriptionNeeded: NecessarySubscriptionLevels.BLOCK_CALENDAR_PERIOD);
+      if(canAccess){
+        setState(() {
+          if(initialBlockedPeriod != null){
+            currentAppUser!.blockedPeriods.remove(initialBlockedPeriod);
+          }
+          currentAppUser!.blockedPeriods.add(Period(
+            startDate: startDate,
+            endDate: endDate!.add(const Duration(hours: 23, minutes: 59, seconds: 59)),// we must add one day to include the endDate day in the period
+          ));
+        });
+        await currentAppUser!.updateAppUserInFirestore(context);
+      }
     }
   }
 

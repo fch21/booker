@@ -54,9 +54,8 @@ class LoginState extends State<Login> {
               content: Text(AppLocalizations.of(context)!.login_instagram_browser_message, style: textStyleMediumNormal,),
               actions: <Widget>[
                 TextButton(
-                  child: Text(
-                    AppLocalizations.of(context)!.ok,
-                    style: const TextStyle(color: Colors.green, fontSize: fontSizeMedium),
+                  child: const Text(
+                    "Entendi",
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -84,7 +83,9 @@ class LoginState extends State<Login> {
 
   @override
   void initState() {
-    _checkIfIsInstagramBrowser();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _checkIfIsInstagramBrowser();
+    });
     /*
     UserSign.checkCurrentUser(context).then((value){
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
