@@ -292,7 +292,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
       builder: (BuildContext context) {
 
         return AlertDialog(
-          insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: MediaQuery.of(context).size.height/10),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           title: const Text(
             'Eleve Sua Experiência com o Premium',
             style: textStyleMediumBold,
@@ -303,21 +303,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                const ListTile(
-                  contentPadding: EdgeInsets.all(0),
-                  title: Text('Eficiência completa com o calendário avançado'),
-                  leading: Icon(Icons.calendar_month),
-                ),
-                const ListTile(
-                  contentPadding: EdgeInsets.all(0),
-                  title: Text('Facilidade de cancelamentos por périodo'),
-                  leading: Icon(Icons.cancel),
-                ),
-                const ListTile(
-                  contentPadding: EdgeInsets.all(0),
-                  title: Text('Comunicação personalizada com seus clientes'),
-                  leading: Icon(Icons.message),
-                ),
+                ...dialogPremiumContentList,
                 const ListTile(
                   contentPadding: EdgeInsets.all(0),
                   title: Text('E muito mais...'),
@@ -460,6 +446,57 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
     return;
   }
 
+  List<Widget> standardPremiumContentList = [
+    const ListTile(
+      title: Text('Bloqueie períodos específicos da agenda.'),
+      leading: Icon(Icons.event_busy),
+    ),
+    const ListTile(
+      title: Text('Cancele agendamentos por périodo.'),
+      leading: Icon(Icons.cancel),
+    ),
+    const ListTile(
+      title: Text('Envie mensagens personalizadas aos clientes.'),
+      leading: Icon(Icons.message),
+    ),
+    const ListTile(
+      title: Text('Bloqueie clientes indesejados.'),
+      leading: Icon(Icons.person_off),
+    ),
+    const ListTile(
+      title: Text('Edite agendamentos a qualquer momento.'),
+      leading: Icon(Icons.edit_calendar),
+    ),
+  ];
+
+  List<Widget> dialogPremiumContentList = [
+    const ListTile(
+      contentPadding: EdgeInsets.all(0),
+      title: Text('Bloqueie seus dias off.'),
+      leading: Icon(Icons.event_busy),
+    ),
+    const ListTile(
+      contentPadding: EdgeInsets.all(0),
+      title: Text('Cancelamentos por périodo.'),
+      leading: Icon(Icons.cancel),
+    ),
+    const ListTile(
+      contentPadding: EdgeInsets.all(0),
+      title: Text('Comunicação personalizada com clientes.'),
+      leading: Icon(Icons.message),
+    ),
+    const ListTile(
+      contentPadding: EdgeInsets.all(0),
+      title: Text('Controle quem pode agendar.'),
+      leading: Icon(Icons.person_off),
+    ),
+    const ListTile(
+      contentPadding: EdgeInsets.all(0),
+      title: Text('Edite agendamentos a qualquer momento.'),
+      leading: Icon(Icons.edit_calendar),
+    ),
+  ];
+
   Widget getContent(){
     Widget content;
 
@@ -475,23 +512,11 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
               textAlign: TextAlign.center,
             ),
           ),
-          const ListTile(
-            title: Text('Acesso a todas as funcionalidades do calendário'),
-            leading: Icon(Icons.calendar_month),
-          ),
-          const ListTile(
-            title: Text('Possibilidade de cancelar todos os agendamentos em um périodo'),
-            leading: Icon(Icons.cancel),
-          ),
-          const ListTile(
-            title: Text('Envio de mensagens personalizadas aos seus clientes'),
-            leading: Icon(Icons.message),
-          ),
+          ...standardPremiumContentList,
           const ListTile(
             title: Text('Acesso a todos os recursos'),
             leading: Icon(Icons.star),
           ),
-          // Adicione mais benefícios aqui
           Padding(
             padding: const EdgeInsets.only(top: 16.0, left: 16, right: 16),
             child: ButtonCustom(
@@ -561,19 +586,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                           title: Text('Plano Premium (${Subscription.getSubscriptionPriceString()}/mês): Acesso ilimitado a todos os recursos'),
                           leading: const Icon(Icons.star),
                         ),
-                        const ListTile(
-                          title: Text('Acesso ao calendário com todos os agendamentos'),
-                          leading: Icon(Icons.calendar_month),
-                        ),
-                        const ListTile(
-                          title: Text('Possibilidade de cancelar todos os agendamentos em um périodo'),
-                          leading: Icon(Icons.cancel),
-                        ),
-                        const ListTile(
-                          title: Text('Envio de mensagens personalizadas aos seus clientes'),
-                          leading: Icon(Icons.message),
-                        ),
-
+                        ...standardPremiumContentList,
                       ],
                     ),
                   ),

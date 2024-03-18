@@ -33,7 +33,7 @@ class BlockedPeriodCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: ListTile(
-        leading: const Icon(Icons.block, color: Colors.grey), // Ícone indicativo de bloqueio
+        leading: const Icon(Icons.event_busy, color: Colors.grey), // Ícone indicativo de bloqueio
         title: multipleDates
           ? Padding(
               padding: const EdgeInsets.all(16.0),

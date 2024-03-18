@@ -420,7 +420,7 @@ class _CalendarState extends State<Calendar> {
             const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0), child: CustomDivider()),
             ClickableItem(
               text: AppLocalizations.of(context)!.menu_calendar_block_periods,
-              iconData: Icons.block,
+              iconData: Icons.event_busy,
               onTap: () {
                 if(mounted) Navigator.pushNamed(context, RouteGenerator.CALENDAR_BLOCKED_PERIOD);
               },
