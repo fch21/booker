@@ -80,8 +80,9 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     FirebaseStorage storage = FirebaseStorage.instance;
     Reference ref = storage.ref();
     Reference file = ref
-        .child(Strings.COLLECTION_USERS_PUBLIC)
-        .child("${_appUser.id}-${isProfileImage ? Strings.USER_URL_PROFILE_USER_IMAGE : Strings.USER_URL_PROFILE_BG_IMAGE}");
+        .child(Strings.COLLECTION_USERS)
+        .child(_appUser.id)
+        .child(isProfileImage ? Strings.USER_URL_PROFILE_USER_IMAGE : Strings.USER_URL_PROFILE_BG_IMAGE);
 
     print("file=$file");
 

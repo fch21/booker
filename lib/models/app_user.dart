@@ -374,6 +374,7 @@ class AppUser {
     return user;
   }
 
+  /*
   static Future<AppUser?> getUserFromUserName(String userName) async {
     //print("getUserFromUserName>>>>>>>>>");
     //print("userName = ${userName}");
@@ -396,6 +397,8 @@ class AppUser {
     }
     return user;
   }
+
+   */
 
   static List<AppUser> getAppUsersFromDocumentSnapshots(List<DocumentSnapshot> documentSnapshots){
 

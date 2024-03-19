@@ -241,7 +241,7 @@ class AppointmentDetails {
   }
 
   Future<bool> updateAppointmentDetailsInFirestore(BuildContext context, {AppUser? client}) async {
-    print("updateServiceProvidedInFirestore>>>");
+    print("updateAppointmentDetailsInFirestore>>>");
 
     //To not upload to firestore copies of appointments tha are not the index 0 appointment
     //AppointmentDetails originalAppointment = getOriginalPeriodicAppointment();
@@ -258,6 +258,7 @@ class AppointmentDetails {
       if(userId.isEmpty) userId = client?.id ?? UserFirebase.getCurrentUser()?.uid ?? "";
       if((userId.isNotEmpty || (client?.id.isEmpty ?? false)) && serviceId.isNotEmpty && serviceProviderUserId.isNotEmpty){
         //print("toMap() = ${toMap()}");
+        //print("toMapPublic() = ${toMapPublic()}");
         await db.collection(Strings.COLLECTION_APPOINTMENTS_DETAILS).doc(id).set(toMap());
         await db.collection(Strings.COLLECTION_APPOINTMENTS_DETAILS_PUBLIC).doc(id).set(toMapPublic());
         result = true;

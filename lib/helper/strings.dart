@@ -169,10 +169,10 @@ class Strings {
   //Firestore
   static const String COLLECTION_USERS = "users";
   static const String COLLECTION_SUBSCRIPTIONS = "subscriptions";
-  static const String COLLECTION_DISCOUNT_CODES = "discount_codes";
-  static const String COLLECTION_SALES_REPS = "sales_reps";
+  //static const String COLLECTION_DISCOUNT_CODES = "discount_codes";
+  //static const String COLLECTION_SALES_REPS = "sales_reps";
   static const String COLLECTION_CLIENTS = "clients";
-  static const String COLLECTION_USERS_PUBLIC = "users_public";
+  //static const String COLLECTION_USERS_PUBLIC = "users_public";
   static const String COLLECTION_SERVICES_PROVIDED = "services_provided";
   static const String COLLECTION_APPOINTMENTS_DETAILS = "appointments_details";
   static const String COLLECTION_APPOINTMENTS_DETAILS_PUBLIC = "appointments_details_public";

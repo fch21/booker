@@ -1,3 +1,4 @@
+/*
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
 
@@ -41,3 +42,6 @@ class AppointmentDetailsChange {
     return 'AppointmentDetailsChange(index:$index newFrom: $newFrom, newTo: $newTo)';
   }
 }
+
+ */
+

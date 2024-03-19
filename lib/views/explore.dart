@@ -212,7 +212,6 @@ class _ExploreState extends State<Explore> {
           ),
           StreamBuilder(
             stream: FirebaseFirestore.instance
-                ///.collection(Strings.COLLECTION_USERS_PUBLIC)
                 .collection(Strings.COLLECTION_USERS)
                 .where(Strings.USER_IS_SERVICE_PROVIDER, isEqualTo: true)
                 .snapshots(),
@@ -234,27 +233,26 @@ class _ExploreState extends State<Explore> {
                     );
                   }
 
-                  List<DocumentSnapshot> users = querySnapshot.docs.toList();
+                  List<AppUser> filterList = [];
 
-                  List<DocumentSnapshot> filterList = [];
-
-                  for (var element in users) {
+                  for (var doc in querySnapshot.docs) {
                     if (_controllerSearch.text != ""){
-                      String stringToSearch = (element[Strings.USER_USERNAME] ?? "").toString()
-                          + (element[Strings.USER_NAME]  ?? "").toString()
-                          + (element[Strings.USER_DESCRIPTION]  ?? "").toString();
+
+                      AppUser user = AppUser.fromDocumentSnapshot(doc);
+
+                      String stringToSearch = user.userName + user.name + user.description;
 
                       stringToSearch = stringToSearch.toLowerCase();
 
                       if (stringToSearch.contains(_controllerSearch.text.trim().toLowerCase())){
-                        filterList.add(element);
+                        filterList.add(user);
                       }
                     }
                     //else{ // will show all users if the _controllerSearch is empty
                     //  filterList.add(element);
                     // }
                   }
-                  users = filterList;
+                  List<AppUser> users = filterList;
 
                   if (users.isEmpty) {
                     return Padding(
@@ -266,11 +264,8 @@ class _ExploreState extends State<Explore> {
                       child: ListView.builder(
                         itemCount: users.length,
                         itemBuilder: (_, index) {
-                          DocumentSnapshot documentSnapshot = users[index];
-                          AppUser user = AppUser.fromDocumentSnapshotPublic(documentSnapshot);
-
+                          AppUser user =  users[index];
                           //return EventItemLoading();
-
                           return AppUserItem(
                               appUser: user,
                               onTapItem: () async {

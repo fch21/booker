@@ -34,10 +34,23 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
     String id = isServiceProvider ? widget.appointmentDetails.userId : widget.appointmentDetails.serviceProviderUserId;
 
     if(id.isNotEmpty){
-      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+
+      DocumentSnapshot documentSnapshot;
+
+      if(isServiceProvider){
+        documentSnapshot = await FirebaseFirestore.instance
+            .collection(Strings.COLLECTION_USERS)
+            .doc(currentAppUser!.id)
+            .collection(Strings.COLLECTION_CLIENTS)
+            .doc(id)
+            .get();
+      }
+      else{
+        documentSnapshot = await FirebaseFirestore.instance
           .collection(Strings.COLLECTION_USERS)
           .doc(id)
           .get();
+      }
 
       appUser = AppUser.fromDocumentSnapshot(documentSnapshot);
     }
@@ -138,7 +151,12 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                         if(_appUser!.email.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
-                            child: SelectableText("email: ${_appUser!.email}", style: textStyleSmallNormal,),
+                            child: SelectableText("Email: ${_appUser!.email}", style: textStyleSmallNormal,),
+                          ),
+                        if(_appUser!.phone.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: SelectableText("Telefone: ${_appUser!.phone}", style: textStyleSmallNormal,),
                           ),
                         if(isServiceProvider && !widget.appointmentDetails.isCanceled && !isPastAppointment)
                           Padding(
