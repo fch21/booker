@@ -419,8 +419,7 @@ class AppUser {
     print("userName = $userName");
     QuerySnapshot querySnapshot =  await FirebaseFirestore.instance
         .collection(Strings.COLLECTION_USERS)
-        ///change to COLLECTION_USERS_PUBLIC after setting cloud functions
-        //.collection(Strings.COLLECTION_USERS_PUBLIC)
+        .where(Strings.USER_IS_SERVICE_PROVIDER, isEqualTo: true)
         .where(Strings.USER_USERNAME, isEqualTo: userName.trim())
         .get();
 
