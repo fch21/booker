@@ -151,12 +151,18 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                         if(_appUser!.email.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
-                            child: SelectableText("Email: ${_appUser!.email}", style: textStyleSmallNormal,),
+                            child: GestureDetector(
+                              onTap: ()=> Utils.sendEmailTo(context, email: _appUser!.email),
+                              child: Text("Email: ${_appUser!.email}", style: textStyleSmallNormal,),
+                            )
                           ),
                         if(_appUser!.phone.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
-                            child: SelectableText("Telefone: ${_appUser!.phone}", style: textStyleSmallNormal,),
+                            child: GestureDetector(
+                              onTap: ()=> Utils.sendMessageToWhatsApp(context, phoneNumber: _appUser!.phone),
+                              child: Text("Telefone: ${_appUser!.phone}", style: textStyleSmallNormal,),
+                            ),
                           ),
                         if(isServiceProvider && !widget.appointmentDetails.isCanceled && !isPastAppointment)
                           Padding(

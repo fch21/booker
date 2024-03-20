@@ -203,6 +203,15 @@ class _RegisterState extends State<Register> {
                                           if(value == "" || value == null ){
                                             return AppLocalizations.of(context)!.required_field;
                                           }
+                                          // Expressão regular para validar a senha.
+                                          // Esta expressão verifica a presença de letras maiúsculas, minúsculas, números e caracteres especiais.
+                                          var regex = RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+
+                                          // Verifica se a senha atende aos critérios da expressão regular.
+                                          if (!regex.hasMatch(value)) {
+                                            // Retorna uma mensagem de erro se a senha não atender aos critérios.
+                                            return 'Deve ter pelo menos:\n-8 caracteres\n-Letras maiúsculas\n-Letras minúsculas\n-Números\n-Caracteres especiais';
+                                          }
                                           else{
                                             return null;
                                           }

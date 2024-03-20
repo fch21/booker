@@ -463,7 +463,7 @@ class UserSign {
 
   static Future<void> getCurrentAppUser() async {
     User? firebaseUser = UserFirebase.getCurrentUser();
-    if (firebaseUser != null){
+    if (firebaseUser != null && firebaseUser.emailVerified){
       AppUser user = await UserFirebase.getCurrentUserData();
       currentAppUser = user;
     }

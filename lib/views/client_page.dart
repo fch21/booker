@@ -118,10 +118,8 @@ class _ClientPageState extends State<ClientPage> {
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child:GestureDetector(
-                        onTap: (){
-                          Utils.sendEmailTo(context, email: widget.client.email);
-                        },
-                        child: Text("email: ${widget.client.email}", style: textStyleSmallNormal,),
+                        onTap: ()=> Utils.sendEmailTo(context, email: widget.client.email),
+                        child: Text("Email: ${widget.client.email}", style: textStyleSmallNormal,),
                       ),
                     ),
                     Padding(

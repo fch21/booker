@@ -342,7 +342,7 @@
     "register_email": "E-mail",
     "register_password": "Password",
     "register_confirm_password": "Confirm password",
-    "register_different_passwords": "[different password and confirmation]",
+    "register_different_passwords": "Different password and confirmation",
     "register_terms_part_1": "I have read and accept the ",
     "register_terms_of_use": "Terms of Use",
     "register_terms_part_2": " and ",

@@ -121,6 +121,7 @@ class _WaitingEmailVerificationState extends State<WaitingEmailVerification> {
                   child: Text(
                     AppLocalizations.of(context)!.waiting_email_verification,
                     style: textStyleSmallNormal,
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 Padding(
