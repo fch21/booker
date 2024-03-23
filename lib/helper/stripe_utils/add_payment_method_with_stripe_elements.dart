@@ -1,14 +1,13 @@
 import 'package:booker/helper/strings.dart';
-import 'package:booker/helper/stripe_functions.dart';
+import 'package:booker/helper/stripe_utils/stripe_functions.dart';
 import 'package:booker/main.dart';
+import 'package:booker/widgets/loading_data.dart';
 import 'package:flutter/material.dart';
 import 'dart:html';
 import 'dart:ui' as ui;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddPaymentMethodWithStripeElements extends StatefulWidget {
-
-
 
   const AddPaymentMethodWithStripeElements({
     Key? key,
@@ -301,7 +300,7 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
                         ? Container()
                         : const HtmlElementView(viewType: 'create-payment-method')
                   )
-                  : Container()
+                  : Center(child: LoadingData(),)
             ),
             if(false)
               Container(

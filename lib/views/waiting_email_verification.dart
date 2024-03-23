@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:booker/helper/user_firebase.dart';
+import 'package:booker/helper/user_sign.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:booker/helper/route_generator.dart';
@@ -63,7 +64,8 @@ class _WaitingEmailVerificationState extends State<WaitingEmailVerification> {
         AppUser user = await UserFirebase.getCurrentUserData();
         currentAppUser = user;
         //if(mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PRESENTATION, arguments: widget.currentUser);
-        if (mounted) Navigator.of(context).pushNamedAndRemoveUntil(RouteGenerator.HOME, (Route<dynamic> route) => false, arguments: widget.currentUser,);
+        //if (mounted) Navigator.of(context).pushNamedAndRemoveUntil(RouteGenerator.INITIAL_EXPLORE_PAGE, (Route<dynamic> route) => false, arguments: widget.currentUser,);
+        await UserSign.checkCurrentUser(context);
       }
     });
   }
@@ -98,6 +100,9 @@ class _WaitingEmailVerificationState extends State<WaitingEmailVerification> {
 
   @override
   Widget build(BuildContext context) {
+
+    bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(),
@@ -106,56 +111,47 @@ class _WaitingEmailVerificationState extends State<WaitingEmailVerification> {
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.only(bottom: 32),
-                    child: Center(
+            child: SizedBox(
+              width: greaterWidthLayout ? MediaQuery.of(context).size.width * 0.5 : null,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Padding(
+                      padding: const EdgeInsets.only(bottom: 32),
                       child: Center(
-                        child: Image.asset("assets/booker_logo.png", fit: BoxFit.fitWidth,),
-                      ),
-                    )),
+                        child: SizedBox(
+                          width: greaterWidthLayout ? MediaQuery.of(context).size.width * 0.4 : null,
+                          child: Image.asset("assets/booker_logo.png", fit: BoxFit.fitWidth,),
+                        ),
+                      )),
 
-                Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.waiting_email_verification,
-                    style: textStyleSmallNormal,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Padding(
-                    padding: const EdgeInsets.only(bottom: 48),
-                    child: Center(
-                      child: Text(
-                        _userFirebase?.email ?? "" ,
-                        style: textStyleSmallNormal,
-                      ),
-                    )),
-                Padding(
-                    padding: const EdgeInsets.only(top: 16, bottom: 20),
-                    child: ButtonCustom(
-                      text: _canResendEmail
-                          ? AppLocalizations.of(context)!.resend_verification_email
-                          : AppLocalizations.of(context)!.resend_verification_email_in + (_timeToResendEmail - _secondsSinceLastEmail).toString(),
-                      onPressed: _canResendEmail
-                        ? _resendVerificationEmail
-                        : null,
-                    )),
-                /*
-                Padding(
-                  padding: EdgeInsets.only(top: 16),
-                  child: Text(
-                    _errorMessage,
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontSize: fontSizeSmall,
+                  Center(
+                    child: Text(
+                      AppLocalizations.of(context)!.waiting_email_verification,
+                      style: textStyleSmallNormal,
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                )
-
-                 */
-              ],
+                  Padding(
+                      padding: const EdgeInsets.only(bottom: 48),
+                      child: Center(
+                        child: Text(
+                          _userFirebase?.email ?? "" ,
+                          style: textStyleSmallNormal,
+                        ),
+                      )),
+                  Padding(
+                      padding: const EdgeInsets.only(top: 16, bottom: 20),
+                      child: ButtonCustom(
+                        text: _canResendEmail
+                            ? AppLocalizations.of(context)!.resend_verification_email
+                            : AppLocalizations.of(context)!.resend_verification_email_in + (_timeToResendEmail - _secondsSinceLastEmail).toString(),
+                        onPressed: _canResendEmail
+                          ? _resendVerificationEmail
+                          : null,
+                      )),
+                ],
+              ),
             ),
           ),
         ),

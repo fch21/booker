@@ -38,7 +38,8 @@ class _SplashScreenState extends State<SplashScreen> {
               if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.PROFILE_SERVICE_PROVIDER, (Route<dynamic> route) => false,);
             }
             else{
-              if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.HOME, (Route<dynamic> route) => false);
+              //if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.INITIAL_EXPLORE_PAGE, (Route<dynamic> route) => false);
+              if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.PRESENTATION_WEB_PAGE, (Route<dynamic> route) => false);
             }
           });
 
@@ -60,13 +61,12 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      precacheImage(const AssetImage("assets/presentation_page_left_corner.png"), context);
+      precacheImage(const AssetImage("assets/presentation_page_right_corner.png"), context);
+      precacheImage(const AssetImage("assets/booker_icon.png"), context);
       _showSplash();
     });
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      precacheImage(const AssetImage("assets/booker_icon.png"), context);
-    });
-
   }
 
   @override

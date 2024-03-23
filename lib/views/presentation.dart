@@ -33,7 +33,7 @@ class _PresentationState extends State<Presentation> {
   }
 
   void onDonePress() {
-    Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.HOME, (_) => false, arguments: currentAppUser!);
+    Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.INITIAL_EXPLORE_PAGE, (_) => false, arguments: currentAppUser!);
   }
 
   PageViewModel getPage({required String text, required String imagePath}){

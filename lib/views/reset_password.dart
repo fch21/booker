@@ -74,6 +74,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.reset_password_appbar),
+        centerTitle: true
       ),
       body: Container(
         decoration: const BoxDecoration(color: Colors.white),

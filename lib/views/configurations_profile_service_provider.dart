@@ -75,7 +75,7 @@ class _ConfigurationsProfileServiceProviderState extends State<ConfigurationsPro
                 text: AppLocalizations.of(context)!.explore,
                 iconData: Icons.search,
                 onTap: () {
-                  Navigator.pushNamed(context, RouteGenerator.HOME, arguments: currentAppUser);
+                  Navigator.pushNamed(context, RouteGenerator.INITIAL_EXPLORE_PAGE, arguments: currentAppUser);
                 },
               ),
               ClickableItem(

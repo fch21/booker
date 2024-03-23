@@ -490,8 +490,8 @@ class _CalendarState extends State<Calendar> {
       key: _sliderDrawerKey,
       appBar: SliderAppBar(
           appBarColor: standartTheme.primaryColor,
-          appBarPadding: EdgeInsets.zero,
-          appBarHeight: kToolbarHeight,
+          appBarPadding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          appBarHeight: kToolbarHeight + MediaQuery.of(context).padding.top,
           drawerIconColor: Colors.white,
           trailing: IconButton(
             icon: const Icon(Icons.arrow_back),

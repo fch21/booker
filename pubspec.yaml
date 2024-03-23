@@ -52,6 +52,8 @@ dependencies:
   intl_phone_field: ^3.2.0
   pin_code_fields: ^8.0.1
   font_awesome_flutter: ^10.7.0
+  image_picker: ^1.0.7
+  flutter_inappwebview: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +81,7 @@ flutter:
   assets:
     - assets/booker_icon.png
     - assets/booker_logo.png
+    - assets/booker_icon_white_bg.png
     - assets/facebook_logo.png
     - assets/google_logo.png
     - assets/instagram_logo.png
@@ -87,6 +90,15 @@ flutter:
     - assets/amex_logo.png
     - assets/mastercard_logo.png
     - assets/visa_logo.png
+    - assets/presentation_page_left_corner.png
+    - assets/presentation_page_right_corner.png
+    - assets/presentation_page_appointment_example_1.png
+    - assets/presentation_page_calendar_example_1.jpg
+    - assets/presentation_page_calendar_example_2.png
+    - assets/presentation_page_user_example_1.jpg
+    - assets/presentation_page_user_example_2.jpg
+    - assets/presentation_page_user_example_3.jpg
+    - assets/presentation_page_user_example_4.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

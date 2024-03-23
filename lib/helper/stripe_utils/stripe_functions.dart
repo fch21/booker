@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:booker/helper/http_functions.dart';
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/stripe_utils/add_payment_method.dart';
 import 'package:booker/models/coupon.dart';
 import 'package:booker/models/payment_method.dart';
 import 'package:booker/models/subscription.dart';
+import 'package:flutter/material.dart';
 //import 'package:js/js_util.dart';
 //import 'package:pay/pay.dart' as pay;
 //import 'package:drinqr/main.dart';
@@ -489,5 +491,9 @@ class StripeFunctions {
     return false;
   }
 
+  static Future<void> addPaymentMethod(BuildContext context) async {
+    await AddPaymentMethod.launch(context);
+    return;
+  }
 }
 

@@ -1,5 +1,9 @@
 import 'dart:async';
 
+import 'package:booker/views/initial_explore_page.dart';
+import 'package:booker/views/login.dart';
+import 'package:booker/views/make_an_appointment.dart';
+import 'package:booker/views/presentation_web_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
@@ -65,7 +69,12 @@ class UserSign {
       await auth.signInWithEmailAndPassword(email: email, password: password);
       await UserSign.checkCurrentUser(context);
     }catch(error) {
-      Utils.showSnackBar(context, AppLocalizations.of(context)!.login_error_message);
+      if(error.toString().contains("firebase_auth/network-request-failed")){
+        Utils.showSnackBar(context, "Erro de conexão, verifique sua rede.");
+      }
+      else{
+        Utils.showSnackBar(context, AppLocalizations.of(context)!.login_error_message);
+      }
     }
     return;
   }
@@ -561,20 +570,35 @@ class UserSign {
           await _firstUserAddPhoneNumberDialog(context);
         }
         //if(isNewUser ?? false){
-        if(false){
-          if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.PRESENTATION, arguments: user);
+        if(user.isServiceProvider){
+          if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.PROFILE_SERVICE_PROVIDER, (Route<dynamic> route) => false,);
         }
         else{
-          if(user.isServiceProvider){
-            if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.PROFILE_SERVICE_PROVIDER, (Route<dynamic> route) => false,);
+          List<String> typesToRetain = [RouteGenerator.INITIAL_EXPLORE_PAGE, RouteGenerator.MAKE_AN_APPOINTMENT, RouteGenerator.PRESENTATION_WEB_PAGE];
+          if(context.mounted) {
+            Navigator.popUntil(context, (route) {
+              // Isso verifica se o widget atual da rota está em typesToRetain
+              final currentRouteName = route.settings.name;
+              print("currentRouteName = $currentRouteName");
+              bool shouldRetain = currentRouteName != null && typesToRetain.contains(currentRouteName);
+
+              return shouldRetain || route.isFirst;
+            });
           }
-          else{
-            //if(context.mounted) Navigator.pushReplacementNamed(context, RouteGenerator.HOME, arguments: user);
-            // the login now is note made on the first screen, so we should just close the login screen to go back to the previous screen
-            if(context.mounted) Navigator.pop(context); }
+
         }
       }
       else{
+        if(context.mounted) {
+          Navigator.popUntil(context, (route) {
+            // Isso verifica se o widget atual da rota está em typesToRetain
+            final currentRouteName = route.settings.name;
+            print("currentRouteName = $currentRouteName");
+            bool shouldRetain = currentRouteName == RouteGenerator.LOGIN;
+
+            return shouldRetain || route.isFirst;
+          });
+        }
         if(context.mounted) Navigator.pushNamed(context, RouteGenerator.WAITING_EMAIL_VERIFICATION, arguments: user);
       }
 

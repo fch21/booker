@@ -1,13 +1,15 @@
 import 'package:booker/helper/strings.dart';
+import 'package:booker/helper/utils.dart';
+import 'package:booker/helper/web_utils/web_utils.dart';
 import 'package:booker/models/app_user.dart';
 import 'package:booker/splash_screen.dart';
+import 'package:booker/views/presentation_web_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'dart:html' as html;
 import 'helper/route_generator.dart';
 
 GlobalKey<AppState> appGlobalKey = GlobalKey();
@@ -24,46 +26,17 @@ void resetInitialServiceProviderId(){
   initialUrlParameters.remove("id");
 }
 
-void getUrlParameters() {
-  final search = html.window.location.search;
-  print("html.window.location.search = ${html.window.location.search}");
-  if (search?.isEmpty ?? true) return;
 
-  final searchParameters = search!.substring(1).split('&');
-  final parameterMap = <String, String>{};
-
-  for (final parameter in searchParameters) {
-    final keyValue = parameter.split('=');
-    if (keyValue.length != 2) continue;
-    final key = Uri.decodeComponent(keyValue[0]);
-    final value = Uri.decodeComponent(keyValue[1]);
-    parameterMap[key] = value;
-  }
-
-  initialUrlParameters = parameterMap;
-  print("initialUrlParameters = $initialUrlParameters");
-  return;
-}
-
-void removeUrlParameters() {
-  Uri? uri = Uri.tryParse(html.window.location.href);
-  print("uri.origin = ${uri?.origin}");
-  print("uri.path = ${uri?.path}");
-  if(uri != null){
-    Uri? newUri = Uri.tryParse(uri.origin);
-
-    // Atualize a URL sem parâmetros e sem adicionar uma entrada no histórico do navegador
-    if(newUri != null) html.window.history.replaceState(null, '', newUri.toString());
-  }
-}
 
 Future<void> main() async {
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
 
-  getUrlParameters();
+  initialUrlParameters = WebUtils.getUrlParameters();
 
-  removeUrlParameters();
+  WebUtils.removeUrlParameters();
 
   runApp(App(key: appGlobalKey,));
 }

@@ -22,6 +22,7 @@ class _ConfigurationsHomeState extends State<ConfigurationsHome> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           elevation: 0,
           title: Text(AppLocalizations.of(context)!.configurations_appbar),
         ),

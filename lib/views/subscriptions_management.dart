@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
-import 'package:booker/helper/stripe_functions.dart';
+import 'package:booker/helper/stripe_utils/stripe_functions.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/coupon.dart';
 import 'package:booker/models/payment_method.dart';
 import 'package:booker/models/subscription.dart';
+import 'package:booker/helper/stripe_utils/add_payment_method.dart';
 import 'package:booker/widgets/button_custom.dart';
 import 'package:booker/widgets/input_custom.dart';
 import 'package:booker/widgets/loading_data.dart';
@@ -361,10 +362,14 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                                           ),
                                           onTap: () {
                                             Navigator.pop(context);
-                                            Navigator.pushNamed(context, RouteGenerator.ADD_PAYMENT_METHOD_WITH_STRIPE_ELEMENTS).then((value) async {
+                                            StripeFunctions.addPaymentMethod(context).then((value) async {
                                               await _getPaymentMethod();
                                               _showSubscriptionDialog(coupon: coupon, promotionCode: promotionCode);
                                             });
+                                            //Navigator.pushNamed(context, RouteGenerator.ADD_PAYMENT_METHOD_WITH_STRIPE_ELEMENTS).then((value) async {
+                                            //  await _getPaymentMethod();
+                                            //  _showSubscriptionDialog(coupon: coupon, promotionCode: promotionCode);
+                                            //});
                                           },
                                         ),
                                       ],
@@ -413,10 +418,14 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                                         }
                                       : () {
                                         Navigator.pop(context);
-                                        Navigator.pushNamed(context, RouteGenerator.ADD_PAYMENT_METHOD_WITH_STRIPE_ELEMENTS).then((value) async {
+                                        StripeFunctions.addPaymentMethod(context).then((value) async {
                                           await _getPaymentMethod();
                                           _showSubscriptionDialog(coupon: coupon, promotionCode: promotionCode);
                                         });
+                                        //Navigator.pushNamed(context, RouteGenerator.ADD_PAYMENT_METHOD_WITH_STRIPE_ELEMENTS).then((value) async {
+                                        //  await _getPaymentMethod();
+                                        //  _showSubscriptionDialog(coupon: coupon, promotionCode: promotionCode);
+                                        //});
                                         //_showNotAvailableDialog();
                                       },
                                   ),

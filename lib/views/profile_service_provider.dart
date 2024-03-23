@@ -133,8 +133,8 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
       body: SliderDrawer(
         appBar: SliderAppBar(
           appBarColor: appUserColor,
-          appBarPadding: EdgeInsets.zero,
-          appBarHeight: kToolbarHeight,
+          appBarPadding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          appBarHeight: kToolbarHeight + MediaQuery.of(context).padding.top,
           drawerIconColor: Utils.getContrastingColor(appUserColor) ?? Colors.white,
           title: Text(AppLocalizations.of(context)!.profile, style: TextStyle(color: Utils.getContrastingColor(appUserColor), fontSize: fontSizeLarge))
         ),

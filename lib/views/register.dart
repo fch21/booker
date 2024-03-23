@@ -63,8 +63,7 @@ class _RegisterState extends State<Register> {
 
   Future<void> _registerUser(AppUser user) async {
     bool result = await UserSign.createUserWithEmailAndPassword(context, user);
-
-    if(result && mounted) await UserSign.checkCurrentUser(context);
+    if(result) await UserSign.checkCurrentUser(context);
 
     return;
   }
@@ -94,6 +93,7 @@ class _RegisterState extends State<Register> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.register_appbar),
+        centerTitle: true
       ),
       body: Container(
         decoration: const BoxDecoration(color: Colors.white),

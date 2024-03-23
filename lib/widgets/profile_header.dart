@@ -11,7 +11,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'dart:html' as html;
+//import 'dart:html' as html;
+import 'package:image_picker/image_picker.dart';
 
 class ProfileHeader extends StatefulWidget {
 
@@ -42,11 +43,14 @@ class _ProfileHeaderState extends State<ProfileHeader> {
   static double profileImageBorder = 6.0;
   static double profileImageOverlayProportion = 0.5;
 
-  html.File? _profileImage;
-  html.File? _bgImage;
+  //html.File? _profileImage;
+  XFile? _profileImage;
+  //html.File? _bgImage;
+  XFile? _bgImage;
   bool _updatingProfileImage = false;
   bool _updatingBgImage = false;
 
+  /*
   _getImage(String source, {required bool isProfileImage}) async {
     //html.File? image = await CommonFunctions.getImage(source);
     html.File? image = await Utils.getImageWeb();
@@ -75,6 +79,22 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     }
   }
 
+   */
+
+  Future<void> _getImage({required bool isProfileImage}) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      if (isProfileImage) {
+        _profileImage = image;
+      } else {
+        _bgImage = image;
+      }
+      _uploadImage(isProfileImage: isProfileImage);
+    }
+  }
+
+  /*
   _uploadImage({required bool isProfileImage}) async {
     print("_uploadImage");
     FirebaseStorage storage = FirebaseStorage.instance;
@@ -105,6 +125,77 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     });
   }
 
+   */
+
+  Future<void> _uploadImage({required bool isProfileImage}) async {
+
+    setState(() {
+      if (isProfileImage) {
+        _updatingProfileImage = true;
+      } else {
+        _updatingBgImage = true;
+      }
+    });
+
+    XFile? usedImage = isProfileImage ? _profileImage : _bgImage;
+    if (usedImage == null) return;
+
+    FirebaseStorage storage = FirebaseStorage.instance;
+    Reference ref = storage.ref();
+    Reference fileRef = ref
+        .child(Strings.COLLECTION_USERS)
+        .child(_appUser.id)
+        .child(isProfileImage ? Strings.USER_URL_PROFILE_USER_IMAGE : Strings.USER_URL_PROFILE_BG_IMAGE);
+
+    Uint8List imageData = await usedImage.readAsBytes();
+
+    double sizeInMb = imageData.lengthInBytes / (1024 * 1024);
+
+    print("sizeInMb = $sizeInMb");
+    if(sizeInMb > 5){
+      Utils.showSnackBar(context, "A imagem deve ter no máximo 5Mb");
+      setState(() {
+        if(isProfileImage) {
+          _updatingProfileImage = false;
+        } else {
+          _updatingBgImage = false;
+        }
+      });
+      return;
+    }
+
+
+    UploadTask task = fileRef.putData(imageData);
+
+    task.then((snapshot) async {
+      final url = await snapshot.ref.getDownloadURL();
+      _updateFirestoreUrlImage(url, isProfileImage: isProfileImage);
+      setState(() {
+        if(isProfileImage) {
+          _appUser.urlProfileUserImage = url;
+          _updatingProfileImage = false;
+        } else {
+          _appUser.urlProfileBgImage = url;
+          _updatingBgImage = false;
+        }
+      });
+    });
+    task.onError((error, stackTrace) {
+      Utils.showSnackBar(context, "Erro ao carregar imagem");
+      setState(() {
+        if(isProfileImage) {
+          _updatingProfileImage = false;
+        } else {
+          _updatingBgImage = false;
+        }
+      });
+      throw "Erro ao carregar imagem: $error";
+    });
+
+    return;
+  }
+
+  /*
   _getImageUrl(TaskSnapshot snapshot, {required bool isProfileImage}) async {
     //print("_getImageUrl");
     String url = await snapshot.ref.getDownloadURL();
@@ -120,6 +211,8 @@ class _ProfileHeaderState extends State<ProfileHeader> {
       }
     });
   }
+
+   */
 
   _updateFirestoreUrlImage(String url, {required bool isProfileImage}) {
     Map<String, dynamic> dataToUpdate = {isProfileImage ? Strings.USER_URL_PROFILE_USER_IMAGE : Strings.USER_URL_PROFILE_BG_IMAGE: url};
@@ -186,7 +279,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                             left: 0,
                             child: TextButton(
                               onPressed: (){
-                                _getImage(Strings.GALLERY, isProfileImage: false);
+                                _getImage(isProfileImage: false);
                               },
                               child: Text(AppLocalizations.of(context)!.profile_config_change_picture, style: const TextStyle(color: Colors.white),),
                             ),
@@ -298,7 +391,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                     bottom: 8,
                     child: TextButton(
                       onPressed: (){
-                        _getImage(Strings.GALLERY, isProfileImage: true);
+                        _getImage(isProfileImage: true);
                       },
                       child: Text(AppLocalizations.of(context)!.profile_config_change_picture, style: const TextStyle(color: Colors.white,),),
                     ),

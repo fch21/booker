@@ -110,8 +110,6 @@ class _EditProfileClientState extends State<EditProfileClient> {
                   userNameFormKey.currentState?.save(); //saves the userName
                   currentAppUser!.isServiceProvider = true;
                   currentAppUser!.updateAppUserInFirestore(context);
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();// to pop the Profile Customer screen
                   Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.PROFILE_SERVICE_PROVIDER, (Route<dynamic> route) => false,);
                 }
               },

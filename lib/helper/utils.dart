@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:booker/helper/route_generator.dart';
+import 'package:booker/helper/web_utils/web_utils.dart';
 import 'package:booker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'dart:html' as html;
+//import 'dart:html' as html;
+
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -66,18 +69,18 @@ class Utils {
   }
 
    */
-  static Future<html.File> getImageWeb() async {
-    final input = html.FileUploadInputElement()..accept = 'image/*';
 
-    final completer = Completer<html.File>();
-    input.onChange.listen((event) {
-      final file = input.files!.first;
-      completer.complete(file);
-    });
 
-    input.click();
-    return completer.future;
-  }
+  //static Future<html.File> getImageWeb() async {
+  //  final input = html.FileUploadInputElement()..accept = 'image/*';
+  //  final completer = Completer<html.File>();
+  //  input.onChange.listen((event) {
+  //    final file = input.files!.first;
+   //   completer.complete(file);
+   // });
+   // input.click();
+   // return completer.future;
+  //}
 
   static Color darkenColor(Color color, double threshold) {
     // Convert the color to HSL
@@ -260,5 +263,85 @@ class Utils {
   static String getFullWeekDayUpperCaseString(DateTime date) {
     return  capitalizeFirstLetter(Strings.FULL_WEEK_DAYS[getWeekDay(date)]);
   }
-  
+
+  //html
+
+  /*
+  static Map<String, String> getUrlParameters() {
+    Map<String, String> parameters = {};
+
+    if(false){
+      final search = html.window.location.search;
+      print("html.window.location.search = ${html.window.location.search}");
+      if (search?.isEmpty ?? true) return parameters;
+
+      final searchParameters = search!.substring(1).split('&');
+      final parameterMap = <String, String>{};
+
+      for (final parameter in searchParameters) {
+        final keyValue = parameter.split('=');
+        if (keyValue.length != 2) continue;
+        final key = Uri.decodeComponent(keyValue[0]);
+        final value = Uri.decodeComponent(keyValue[1]);
+        parameterMap[key] = value;
+      }
+
+      parameters = parameterMap;
+    }
+
+    print("parameters = $parameters");
+    return parameters;
+  }
+
+  static void removeUrlParameters() {
+
+    if(false){
+      Uri? uri = Uri.tryParse(html.window.location.href);
+      print("uri.origin = ${uri?.origin}");
+      print("uri.path = ${uri?.path}");
+      if(uri != null){
+        Uri? newUri = Uri.tryParse(uri.origin);
+        // Atualize a URL sem parâmetros e sem adicionar uma entrada no histórico do navegador
+        if(newUri != null) html.window.history.replaceState(null, '', newUri.toString());
+      }
+    }
+  }
+
+  static Future<bool> checkIfIsInstagramBrowser() async {
+    bool isInstagramBrowser = false;
+    if(false){
+      if (html.window.navigator.userAgent.contains('Instagram')) {
+        isInstagramBrowser = true;
+      }
+    }
+    return isInstagramBrowser;
+  }
+
+   */
+
+  static Future<void> showMessageDialogIfIsInstagramBrowser(BuildContext context) async {
+
+    bool isInstagramBrowser = await WebUtils.checkIfIsInstagramBrowser();
+    if(isInstagramBrowser && context.mounted){
+      await showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+                title: Text(AppLocalizations.of(context)!.login_instagram_browser_message_title, style: textStyleMediumBold,),
+                content: Text(AppLocalizations.of(context)!.login_instagram_browser_message, style: textStyleMediumNormal,),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text(
+                      "Entendi",
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ]);
+          });
+    }
+    return;
+  }
+
 }

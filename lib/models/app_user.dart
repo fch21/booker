@@ -1,5 +1,5 @@
 import 'package:booker/helper/strings.dart';
-import 'package:booker/helper/stripe_functions.dart';
+import 'package:booker/helper/stripe_utils/stripe_functions.dart';
 import 'package:booker/helper/text_input_formatters.dart';
 import 'package:booker/helper/user_sign.dart';
 import 'package:booker/helper/utils.dart';

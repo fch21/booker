@@ -1,6 +1,5 @@
-import 'dart:html' as html;
-
 import 'package:booker/helper/user_sign.dart';
+import 'package:booker/helper/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/main.dart';
@@ -45,46 +44,13 @@ class LoginState extends State<Login> {
     return;
   }
 
-  Future<void> _openDialogInstagramBrowserMessage() async {
-    await showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-              title: Text(AppLocalizations.of(context)!.login_instagram_browser_message_title, style: textStyleMediumBold,),
-              content: Text(AppLocalizations.of(context)!.login_instagram_browser_message, style: textStyleMediumNormal,),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text(
-                    "Entendi",
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ]);
-        });
-    return;
-  }
-
-  Future<void> _checkIfIsInstagramBrowser() async {
-    bool showDialog = false;
-
-    if (html.window.navigator.userAgent.contains('Instagram')) {
-      showDialog = true;
-    }
-
-    if(showDialog){
-      await _openDialogInstagramBrowserMessage();
-    }
-    return;
-  }
 
   bool _imageLoaded = false;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _checkIfIsInstagramBrowser();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      await Utils.showMessageDialogIfIsInstagramBrowser(context);
     });
     /*
     UserSign.checkCurrentUser(context).then((value){
@@ -114,7 +80,7 @@ class LoginState extends State<Login> {
     if(!_imageLoaded) return LoadingData();
 
     return Scaffold(
-      appBar: Navigator.canPop(context) ? AppBar(title: const Text("Login"),) : null,
+      appBar: Navigator.canPop(context) ? AppBar(title: const Text("Login"), centerTitle: true) : null,
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
