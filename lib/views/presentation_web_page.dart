@@ -2,11 +2,13 @@ import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
+import 'package:booker/widgets/example_image_to_scroll.dart';
 import 'package:booker/widgets/feature_item.dart';
 import 'package:booker/widgets/header_section.dart';
 import 'package:booker/widgets/image_with_description_item.dart';
 import 'package:booker/widgets/infinite_automatic_scroll.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -21,20 +23,70 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
 
   bool isLoggedUser = false;
 
-  Widget getExampleImageToScroll(String imagePath){
+  GlobalKey<InfiniteAutomaticScrollState> featuresScrollGlobalKey = GlobalKey<InfiniteAutomaticScrollState>();
+  GlobalKey<InfiniteAutomaticScrollState> userExamplesScrollGlobalKey = GlobalKey<InfiniteAutomaticScrollState>();
 
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+  void _pauseAutomaticScroll(GlobalKey<InfiniteAutomaticScrollState> globalKey){
+    globalKey.currentState?.pause = true;
+    return;
+  }
 
-    bool greaterWidthLayout = screenWidth > screenHeight;
+  void _unpauseAutomaticScroll(GlobalKey<InfiniteAutomaticScrollState> globalKey){
+    globalKey.currentState?.pause = false;
+    return;
+  }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0),
-      child: SizedBox(
-        width: greaterWidthLayout ? screenWidth * 0.2 : screenWidth * 0.5,
-        child: Image.asset(imagePath, fit: BoxFit.fitWidth,),
-      ),
-    );
+  Future<void> showImage(String imagePath,{Object? extraHeroTag}) async {
+
+    await Navigator.push(context, PageRouteBuilder(
+        barrierColor: Colors.black.withOpacity(0.7),
+        opaque: false,
+        barrierDismissible: true,
+        fullscreenDialog: true,
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        pageBuilder: (context, animation1, animation2){
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              flexibleSpace: Container( // Usa um Container para aplicar o gradiente
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter, // Início do gradiente
+                    end: Alignment.bottomCenter, // Fim do gradiente
+                    colors: [
+                      Colors.black.withOpacity(0.4),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            backgroundColor: Colors.transparent,
+            body: Padding(
+              padding: const EdgeInsets.only(bottom: kToolbarHeight),
+              child: PhotoView(
+                minScale: PhotoViewComputedScale.contained,
+                maxScale: PhotoViewComputedScale.contained * 2,
+                backgroundDecoration: const BoxDecoration(color: Colors.transparent),
+                heroAttributes: PhotoViewHeroAttributes(tag: extraHeroTag == null ? imagePath : "$imagePath$extraHeroTag"),
+                imageProvider: AssetImage(imagePath),
+              ),
+            ),
+          );
+        }));
+    return;
+
+  }
+
+  Future<void> _pauseScrollAndShowImage(imagePath, heroKey) async {
+    _pauseAutomaticScroll(userExamplesScrollGlobalKey);
+    await showImage(imagePath, extraHeroTag: heroKey);
+    _unpauseAutomaticScroll(userExamplesScrollGlobalKey);
   }
 
   Widget getActionButtons(){
@@ -95,11 +147,28 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
     );
   }
 
+  FeatureItem getScrollFeatureItem({
+    required IconData icon,
+    required String title,
+    required String description,
+    required String longDescription,
+  }){
+    return FeatureItem(
+      icon: icon,
+      title: title,
+      description: description,
+      longDescription: longDescription,
+      onTap: (){_pauseAutomaticScroll(featuresScrollGlobalKey);},
+      onDismissedDialog: (){_unpauseAutomaticScroll(featuresScrollGlobalKey);},
+
+    );
+  }
+
   @override
   void initState() {
     isLoggedUser = currentAppUser != null;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if(isLoggedUser){
+      if(initialServiceProviderId != null || isLoggedUser){
         Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.INITIAL_EXPLORE_PAGE, (Route<dynamic> route) => false);
       }
       precacheImage(const AssetImage("assets/presentation_page_appointment_example_1.png"), context);
@@ -124,31 +193,37 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
             Padding(
               padding: const EdgeInsets.only(top: 72),
               child: InfiniteAutomaticScroll(
+                key: featuresScrollGlobalKey,
                 items: [
-                  FeatureItem(
+                  getScrollFeatureItem(
                     icon: Icons.calendar_month,
                     title: 'Agenda Simplificada',
                     description: 'Acompanhe todos\nos seus agendamentos.',
+                    longDescription: 'Visualize facilmente todos os seus agendamentos em uma interface clara. Gerencie seu tempo eficientemente, evitando trocas de mensagens desnecessárias e maximizando sua disponibilidade.',
                   ),
-                  FeatureItem(
+                  getScrollFeatureItem(
                     icon: Icons.sync,
                     title: 'Sincronização',
                     description: 'Sincronização\nem Tempo Real.',
+                    longDescription: 'Atualizações instantâneas em sua agenda a cada novo agendamento ou alteração, assegurando que você e seus clientes estejam sempre em sincronia, sem conflitos de horários.',
                   ),
-                  FeatureItem(
+                  getScrollFeatureItem(
                     icon: Icons.schedule,
                     title: 'Agendamento Fácil',
                     description: 'Agende em segundos\ncom apenas alguns cliques.',
+                    longDescription: 'Agende compromissos rapidamente com poucos cliques, aproveitando um processo simplificado que poupa tempo tanto para você quanto para seus clientes.',
                   ),
-                  FeatureItem(
+                  getScrollFeatureItem(
                     icon: Icons.notifications_active,
                     title: 'Lembretes Automáticos',
                     description: 'Nunca esqueça um compromisso\ncom os lembretes automáticos.',
+                    longDescription: 'Evite faltas com lembretes automáticos enviados a você e seus clientes, garantindo que todos estejam preparados e pontuais para os compromissos.',
                   ),
-                  FeatureItem(
+                  getScrollFeatureItem(
                     icon: Icons.group,
                     title: 'Gerenciamento de Clientes',
                     description: 'Administre seus clientes\nem um só lugar.',
+                    longDescription: 'Centralize informações de clientes, desde contato até preferências e histórico de agendamentos, facilitando o acompanhamento e a personalização do serviço oferecido.',
                   ),
                 ],
               ),
@@ -173,6 +248,9 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
               title: "Em Apenas 3 Passos",
               description: "Um processo simplificado que te leva do início ao fim em apenas três passos.\n\nSelecione o serviço, escolha o horário e confirme. Tão fácil quanto parece.",
               imagePath: "assets/presentation_page_appointment_example_1.png",
+              onTapImage: (imagePath){
+                showImage(imagePath);
+              },
               invert: true,
               bgColor: Colors.grey[100],
             ),
@@ -186,6 +264,9 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
               title: "Planeje de Forma Intuitiva",
               description: "Pensado para profissionais que querem estar à frente.\n\nAdaptável ao seu negócio, seja ele qual for.\n\nTudo sincronizado assim que os agendamentos forem realizados.",
               imagePath: "assets/presentation_page_calendar_example_1.jpg",
+              onTapImage: (imagePath){
+                showImage(imagePath);
+              },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 32),
@@ -193,6 +274,9 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
                 title: "Visualize Seus Dias com Clareza",
                 description: "Calendário com visão abrangente da sua agenda e design intuitivo.\n\nIdeal para profissionais autônomos que buscam sempre maximizar seu potencial.",
                 imagePath: "assets/presentation_page_calendar_example_2.png",
+                onTapImage: (imagePath){
+                  showImage(imagePath);
+                },
                 invert: true,
               ),
             ),
@@ -210,11 +294,12 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 32, bottom: 32.0),
                 child: InfiniteAutomaticScroll(
+                  key: userExamplesScrollGlobalKey,
                   items: [
-                    getExampleImageToScroll("assets/presentation_page_user_example_1.jpg"),
-                    getExampleImageToScroll("assets/presentation_page_user_example_2.jpg"),
-                    getExampleImageToScroll("assets/presentation_page_user_example_3.jpg"),
-                    getExampleImageToScroll("assets/presentation_page_user_example_4.jpg"),
+                    ExampleImageToScroll(imagePath: "assets/presentation_page_user_example_1.jpg", onTap: _pauseScrollAndShowImage),
+                    ExampleImageToScroll(imagePath: "assets/presentation_page_user_example_2.jpg", onTap: _pauseScrollAndShowImage),
+                    ExampleImageToScroll(imagePath: "assets/presentation_page_user_example_3.jpg", onTap: _pauseScrollAndShowImage),
+                    ExampleImageToScroll(imagePath: "assets/presentation_page_user_example_4.jpg", onTap: _pauseScrollAndShowImage),
                   ],
                 ),
               ),

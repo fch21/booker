@@ -7,6 +7,7 @@ class ImageWithDescriptionItem extends StatelessWidget {
   final String imagePath;
   bool invert;
   Color? bgColor;
+  void Function(String)? onTapImage;
 
   ImageWithDescriptionItem({
     required this.title,
@@ -14,6 +15,7 @@ class ImageWithDescriptionItem extends StatelessWidget {
     required this.imagePath,
     this.invert = false,
     this.bgColor = Colors.white,
+    this.onTapImage,
   });
 
   @override
@@ -27,7 +29,18 @@ class ImageWithDescriptionItem extends StatelessWidget {
     TextAlign textAlign = invert ? TextAlign.start : TextAlign.end;
     CrossAxisAlignment textCrossAxisAlignment = invert ? CrossAxisAlignment.start : CrossAxisAlignment.end;
 
-    Widget imageWidget = Expanded(flex: 3, child: Image.asset(imagePath, fit: BoxFit.fitWidth,));
+    Widget imageWidget = Expanded(
+        flex: 3,
+        child: GestureDetector(
+          onTap: (){
+            if(onTapImage != null) onTapImage!(imagePath);
+          },
+          child: Hero(
+            tag: imagePath,
+            child: Image.asset(imagePath, fit: BoxFit.fitWidth,)
+          )
+        )
+    );
 
     Widget descriptionWidget = Expanded(
       flex: 2,
@@ -60,9 +73,6 @@ class ImageWithDescriptionItem extends StatelessWidget {
               descriptionWidget,
               if(!invert)
                 imageWidget,
-
-
-
             ],
           ),
         ),

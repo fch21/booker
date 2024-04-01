@@ -138,6 +138,8 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                 padding: const EdgeInsets.only(top: 12),
                 child: InputCustom(
                   label: 'Descrição',
+                  maxLines: 3,
+                  maxLength: 140,
                   controller: _descriptionController,
                   onSaved: (description){
                     _serviceProvided.description = description ?? "";

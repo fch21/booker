@@ -13,7 +13,7 @@ import 'package:booker/views/choice_of_service.dart';
 import 'package:booker/views/client_page.dart';
 import 'package:booker/views/configurations_home.dart';
 import 'package:booker/views/edit_profile_client.dart';
-import 'package:booker/views/edit_profile_service_provided.dart';
+import 'package:booker/views/edit_profile_service_provider.dart';
 import 'package:booker/views/login.dart';
 import 'package:booker/views/long_text.dart';
 import 'package:booker/views/make_an_appointment.dart';

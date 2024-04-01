@@ -23,15 +23,17 @@ class ServiceProvidedCard extends StatelessWidget {
       child: ListTile(
         title: Text(serviceProvided.name, style: textStyleSmallBold,),
         subtitle: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
+          padding: const EdgeInsets.only(top: 12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(serviceProvided.description, style: textStyleSmallNormal,),
-              const SizedBox(height: 4),
-              Text(
-                'Duração: ${serviceProvided.duration.inMinutes} min      ${serviceProvided.price != 0.0 ? 'Preço: R\$${serviceProvided.price.toStringAsFixed(2).replaceAll('.', ',')}' : ''}',
-                style: textStyleSmallNormal,
+              if(serviceProvided.description.isNotEmpty) Text(serviceProvided.description, style: textStyleSmallNormal,),
+              Padding(
+                padding: EdgeInsets.only(top: serviceProvided.description.isNotEmpty ? 16 : 0),
+                child: Text(
+                  'Duração: ${serviceProvided.duration.inMinutes} min      ${serviceProvided.price != 0.0 ? 'Preço: R\$${serviceProvided.price.toStringAsFixed(2).replaceAll('.', ',')}' : ''}',
+                  style: textStyleSmallNormal,
+                ),
               ),
             ],
           ),
