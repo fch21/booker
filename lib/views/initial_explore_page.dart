@@ -1,5 +1,6 @@
 import 'package:booker/views/configurations_home.dart';
 import 'package:booker/views/explore.dart';
+import 'package:booker/widgets/custom_slider_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:booker/main.dart';
 import 'package:booker/helper/Strings.dart';
@@ -38,7 +39,7 @@ class _InitialExplorePageState extends State<InitialExplorePage> with SingleTick
 
     if(!(currentAppUser?.isServiceProvider ?? false)){
       appBar = null;
-      body = SliderDrawer(
+      body = CustomSliderDrawer(
         appBar: SliderAppBar(
           appBarColor: standartTheme.primaryColor,
           appBarPadding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
@@ -51,7 +52,6 @@ class _InitialExplorePageState extends State<InitialExplorePage> with SingleTick
             onPressed: (){Navigator.pop(context);},
           ) : null,
         ),
-        slideDirection: SlideDirection.RIGHT_TO_LEFT,
         slider: ConfigurationsHome(),
         child: Container(
           color: Colors.white,

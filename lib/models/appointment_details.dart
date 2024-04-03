@@ -240,7 +240,7 @@ class AppointmentDetails {
     return;
   }
 
-  Future<bool> updateAppointmentDetailsInFirestore(BuildContext context, {AppUser? client}) async {
+  Future<bool> updateAppointmentDetailsInFirestore(BuildContext context, {AppUser? client, bool ignoreUserId = false}) async {
     print("updateAppointmentDetailsInFirestore>>>");
 
     //To not upload to firestore copies of appointments tha are not the index 0 appointment
@@ -255,8 +255,8 @@ class AppointmentDetails {
         CollectionReference appointmentsDetailsRef = db.collection(Strings.COLLECTION_APPOINTMENTS_DETAILS);
         id = appointmentsDetailsRef.doc().id;
       }
-      if(userId.isEmpty) userId = client?.id ?? UserFirebase.getCurrentUser()?.uid ?? "";
-      if((userId.isNotEmpty || (client?.id.isEmpty ?? false)) && serviceId.isNotEmpty && serviceProviderUserId.isNotEmpty){
+      if(userId.isEmpty && !ignoreUserId) userId = client?.id ?? UserFirebase.getCurrentUser()?.uid ?? "";
+      if((userId.isNotEmpty || (client?.id.isEmpty ?? false) || ignoreUserId) && serviceId.isNotEmpty && serviceProviderUserId.isNotEmpty){
         //print("toMap() = ${toMap()}");
         //print("toMapPublic() = ${toMapPublic()}");
         await db.collection(Strings.COLLECTION_APPOINTMENTS_DETAILS).doc(id).set(toMap());
@@ -365,7 +365,8 @@ class AppointmentDetails {
         appointment.status = Strings.APPOINTMENT_STATUS_CANCELED;
         appointment.canceledBy = isServiceProvider ? Strings.APPOINTMENT_CANCELED_BY_SERVICE_PROVIDER : Strings.APPOINTMENT_CANCELED_BY_CLIENT;
         appointment.cancelMessage = cancelMessage;
-        await appointment.updateAppointmentDetailsInFirestore(context);
+        //use ignoreUserId to not change the appointment userId value automatically in teh update
+        await appointment.updateAppointmentDetailsInFirestore(context, ignoreUserId: true);
       }
     }
 

@@ -10,6 +10,7 @@ import 'package:booker/models/available_schedule.dart';
 import 'package:booker/models/period.dart';
 import 'package:booker/widgets/clickable_item.dart';
 import 'package:booker/widgets/custom_divider.dart';
+import 'package:booker/widgets/custom_slider_drawer.dart';
 import 'package:booker/widgets/loading_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -431,9 +432,18 @@ class _CalendarState extends State<Calendar> {
               iconColor: Colors.red,
               onTap: () async {
                 if(_controller.view != CalendarView.schedule){
-                  if(_appointmentsList.isNotEmpty){
-                    bool canceled = await AppointmentDetails.cancelAppointmentConfirmation(context, appointmentsList: _appointmentsList, isServiceProvider: true, useCancelAllMessage: true, extraTextForCancelAll: getTimePeriodString());
-                    if(canceled && _lastInitialDateTime != null) await _getAppointments(_lastInitialDateTime!);
+                  List<AppointmentDetails> filteredAppointmentsList = _appointmentsList.where((element) =>
+                    !element.from.isBefore(_lastInitialDateTime!)
+                    && !element.to.isAfter(getEndDate(_lastInitialDateTime!))
+                  ).toList();
+                  if(filteredAppointmentsList.isNotEmpty){
+                    //print("filteredAppointmentsList = ${filteredAppointmentsList.length}");
+                    bool canceled = await AppointmentDetails.cancelAppointmentConfirmation(context, appointmentsList: filteredAppointmentsList, isServiceProvider: true, useCancelAllMessage: true, extraTextForCancelAll: getTimePeriodString());
+                    if(canceled && _lastInitialDateTime != null) {
+                      updateAppointmentsList(newAppointments: filteredAppointmentsList, forceUpdate: true);
+                      calendarStreamController.add(true);
+                    }
+
                   }
                   else{
                     await showDialog(
@@ -486,8 +496,8 @@ class _CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
 
-    Widget body = SliderDrawer(
-      key: _sliderDrawerKey,
+    Widget body = CustomSliderDrawer(
+      sliderDrawerKey: _sliderDrawerKey,
       appBar: SliderAppBar(
           appBarColor: standartTheme.primaryColor,
           appBarPadding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
@@ -500,7 +510,6 @@ class _CalendarState extends State<Calendar> {
           ),
           title:  Text(AppLocalizations.of(context)!.calendar, style: const TextStyle(color: Colors.white, fontSize: fontSizeLarge))
       ),
-      slideDirection: SlideDirection.RIGHT_TO_LEFT,
       slider: Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
@@ -541,7 +550,7 @@ class _CalendarState extends State<Calendar> {
                         print("edited = $edited");
                         if(edited is bool && edited){
                           updateAppointmentsList(forceUpdate: true);
-                          setState(() {});
+                          calendarStreamController.add(true);
                         }
                       });
                     }

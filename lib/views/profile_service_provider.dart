@@ -7,6 +7,7 @@ import 'package:booker/models/time_interval.dart';
 import 'package:booker/views/configurations_profile_service_provider.dart';
 import 'package:booker/widgets/available_time_card.dart';
 import 'package:booker/widgets/button_custom.dart';
+import 'package:booker/widgets/custom_slider_drawer.dart';
 import 'package:booker/widgets/profile_header.dart';
 import 'package:booker/widgets/service_provided_card.dart';
 import 'package:flutter/material.dart';
@@ -130,7 +131,7 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SliderDrawer(
+      body: CustomSliderDrawer(
         appBar: SliderAppBar(
           appBarColor: appUserColor,
           appBarPadding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
@@ -138,7 +139,6 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
           drawerIconColor: Utils.getContrastingColor(appUserColor) ?? Colors.white,
           title: Text(AppLocalizations.of(context)!.profile, style: TextStyle(color: Utils.getContrastingColor(appUserColor), fontSize: fontSizeLarge))
         ),
-        slideDirection: SlideDirection.RIGHT_TO_LEFT,
         slider: ConfigurationsProfileServiceProvider(
           onReload: (){
             setState(() {
