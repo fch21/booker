@@ -8,7 +8,12 @@ import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 
 class InitialExplorePage extends StatefulWidget {
 
-  InitialExplorePage({super.key});
+  bool allowPop;
+
+  InitialExplorePage({
+    this.allowPop = true,
+    super.key
+  });
 
   @override
   _InitialExplorePageState createState() => _InitialExplorePageState();
@@ -46,7 +51,7 @@ class _InitialExplorePageState extends State<InitialExplorePage> with SingleTick
           appBarHeight: kToolbarHeight + MediaQuery.of(context).padding.top,
           drawerIconColor: Colors.white,
           title: const Text(Strings.BOOKER, style: TextStyle(color: Colors.white, fontSize: fontSizeLarge)),
-          trailing: Navigator.canPop(context) ? IconButton(
+          trailing: widget.allowPop ? IconButton(
             icon: const Icon(Icons.arrow_back),
             color: Colors.white,
             onPressed: (){Navigator.pop(context);},

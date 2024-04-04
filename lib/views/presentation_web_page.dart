@@ -116,7 +116,7 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
 
                   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
                     if(isLoggedUser){
-                      Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.INITIAL_EXPLORE_PAGE, (Route<dynamic> route) => false);
+                      Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.INITIAL_EXPLORE_PAGE, (Route<dynamic> route) => false, arguments: false);
                     }
                   });
                 },
@@ -169,7 +169,7 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
     isLoggedUser = currentAppUser != null;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if(initialServiceProviderId != null || isLoggedUser){
-        Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.INITIAL_EXPLORE_PAGE, (Route<dynamic> route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.INITIAL_EXPLORE_PAGE, (Route<dynamic> route) => false, arguments: false);
       }
       precacheImage(const AssetImage("assets/presentation_page_appointment_example_1.png"), context);
       precacheImage(const AssetImage("assets/presentation_page_calendar_example_1.jpg"), context);

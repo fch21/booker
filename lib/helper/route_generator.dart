@@ -19,7 +19,6 @@ import 'package:booker/views/long_text.dart';
 import 'package:booker/views/make_an_appointment.dart';
 import 'package:booker/views/my_appointments.dart';
 import 'package:booker/views/my_clients.dart';
-import 'package:booker/views/presentation.dart';
 import 'package:booker/views/presentation_web_page.dart';
 import 'package:booker/views/profile_service_provider.dart';
 import 'package:booker/views/register.dart';
@@ -75,7 +74,7 @@ class RouteGenerator {
     print("Navigating to route => ${settings.name}");
     switch (settings.name) {
       case INITIAL_EXPLORE_PAGE:
-        return MaterialPageRoute(settings: settings, builder: (_) => InitialExplorePage());
+        return MaterialPageRoute(settings: settings, builder: (_) => InitialExplorePage(allowPop: (args ?? true) as bool,));
       case PRESENTATION_WEB_PAGE:
         return MaterialPageRoute(settings: settings, builder: (_) => const PresentationWebPage());
       case SPLASH_SCREEN:
@@ -98,8 +97,8 @@ class RouteGenerator {
         return MaterialPageRoute(settings: settings, builder: (_) => const Register());
       case RESET_PASSWORD:
         return MaterialPageRoute(settings: settings, builder: (_) => const ResetPassword());
-      case PRESENTATION:
-        return MaterialPageRoute(settings: settings, builder: (_) => Presentation());
+      //case PRESENTATION:
+        //return MaterialPageRoute(settings: settings, builder: (_) => Presentation());
       case WAITING_EMAIL_VERIFICATION:
         return MaterialPageRoute(settings: settings, builder: (_) => WaitingEmailVerification(args as AppUser));
       case CONFIGURATIONS_HOME:
