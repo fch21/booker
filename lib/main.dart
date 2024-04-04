@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/helper/web_utils/web_utils.dart';
@@ -99,9 +101,22 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
 
-  redrawApp(){
+  Future<void> redrawApp() async {
+    Completer<void> completer = Completer();
+
+    // Chama setState para marcar o widget para reconstrução.
     setState(() {});
+
+    // Aguarda o fim do ciclo de pintura atual.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Completa a operação assíncrona após a reconstrução do widget.
+      completer.complete();
+    });
+
+    // Espera a conclusão do Completer.
+    return completer.future;
   }
+
 
   @override
   Widget build(BuildContext context) {

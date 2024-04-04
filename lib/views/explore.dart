@@ -12,9 +12,8 @@ import 'package:booker/widgets/loading_data.dart';
 
 
 class Explore extends StatefulWidget {
-  VoidCallback? onEventClick;
 
-  Explore({super.key, this.onEventClick});
+  Explore({super.key});
 
   @override
   _ExploreState createState() => _ExploreState();
@@ -78,15 +77,7 @@ class _ExploreState extends State<Explore> {
   }
   */
 
-  @override
-  void initState() {
-    super.initState();
-    //_loadDropLists();
-    //_addListenerEvents();
-    checkIfHasUserLinkAndLaunch();
-  }
-
-  Future<bool> checkIfHasUserLinkAndLaunch() async {
+  Future<void> checkIfHasUserLinkAndLaunch() async {
     print("checkIfHasEventLinkAndLaunch");
 
     if(initialServiceProviderId != null){
@@ -94,6 +85,9 @@ class _ExploreState extends State<Explore> {
       resetInitialServiceProviderId();
       AppUser? user = await AppUser.getUserFromId(id);
       if(user != null && context.mounted){
+
+        _controllerSearch.text = user.userName;
+
         //Map args = {"user" : user, "show_menu" : true};
         Map args = {"user" : user};
         await Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: args);
@@ -101,35 +95,23 @@ class _ExploreState extends State<Explore> {
         //await Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.CHOICE_OF_SERVICE,(route) => false , arguments: args);
       }
     }
-    //String? eventId = appGlobalKey.currentState?.linkEventId;
-    /*
-    String? eventId = appGlobalKey.currentState?.eventIdUrlParameter;
-
-    print("eventId = $eventId");
-    if(eventId != null){
-      appGlobalKey.currentState?.resetLinkEventId();
-
-      AppUser? event = await getUserFromId(eventId);
-
-      if(event != null){
-        Map args = {"event" : event, "currentUser" : widget.currentUser, "heroTag" : event.id.toString()};
-        if(mounted) Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: args);
-      }
-
-      return true;
-    }
-
-     */
-    return false;
+    return;
   }
 
+  @override
+  void initState() {
+    super.initState();
+    //_loadDropLists();
+    //_addListenerEvents();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      checkIfHasUserLinkAndLaunch();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
 
     bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
-
-    checkIfHasUserLinkAndLaunch();
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: greaterWidthLayout ? MediaQuery.of(context).size.width/4 : 0),
@@ -271,7 +253,6 @@ class _ExploreState extends State<Explore> {
                               onTapItem: () async {
                                 Map args = {"user" : user};
                                 await Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: args);
-                                if(widget.onEventClick != null) widget.onEventClick!();
                               },
                             );
                         },

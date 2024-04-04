@@ -479,7 +479,8 @@ class UserSign {
     else{
       currentAppUser = null;
     }
-    appGlobalKey.currentState?.redrawApp();
+    await appGlobalKey.currentState?.redrawApp();
+    return;
   }
 
   static Future<void> logoutUser(BuildContext context) async {
