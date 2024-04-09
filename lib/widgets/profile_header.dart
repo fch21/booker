@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/strings.dart';
 import 'package:booker/helper/utils.dart';
 import 'package:booker/main.dart';
@@ -243,20 +242,33 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                   child: Container(
                     width: double.infinity,
                     height: bgImageHeight,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: _appUser.urlProfileBgImage != ""
-                            ? NetworkImage(_appUser.urlProfileBgImage)
-                            : const AssetImage("assets/no_image.jpeg") as ImageProvider,
-                      )
-                    ),
+                    color: Colors.grey.shade100,
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
+                        _appUser.urlProfileBgImage == ""
+                            ? Image.asset("assets/no_image.jpeg", fit: BoxFit.cover,)
+                            : Image.network(
+                                _appUser.urlProfileBgImage,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                  return Stack(
+                                    children: [
+                                      if(loadingProgress != null) Center(child: LoadingData()),
+                                      Positioned.fill(
+                                        child: AnimatedOpacity(
+                                            duration: const Duration(milliseconds: 500),
+                                            opacity: loadingProgress == null ? 1 : 0,
+                                            child: child
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
                         if(_updatingBgImage)
                           Container(
-                            color: Colors.white,
+                            color: Colors.grey.shade100,
                             child: LoadingData(),
                           ),
                         if(widget.allowEdit)
@@ -351,22 +363,48 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                       ),
                       shape: BoxShape.circle,
                     ),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.grey.shade300,
-                      radius: profileImageRadius,
-                      backgroundImage: _appUser.urlProfileUserImage != ""
-                          ? NetworkImage(_appUser.urlProfileUserImage)
-                          : const AssetImage("assets/no_profile_image.png") as ImageProvider,
-                    ),
+                    child: ClipOval(
+                      child: Container(
+                            width: 2 * profileImageRadius,
+                            height: 2 * profileImageRadius,
+                            color: Colors.grey.shade100,
+                            child: _appUser.urlProfileUserImage == ""
+                              ? Image.asset(
+                                  "assets/no_profile_image.png",
+                                  width: 2 * profileImageRadius,
+                                  height: 2 * profileImageRadius,
+                                )
+                              : Image.network(
+                                  _appUser.urlProfileUserImage,
+                                  width: 2 * profileImageRadius,
+                                  height: 2 * profileImageRadius,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                    return Stack(
+                                      children: [
+                                        if(loadingProgress != null) Center(child: LoadingData()),
+                                        Positioned.fill(
+                                          child: AnimatedOpacity(
+                                              duration: const Duration(milliseconds: 500),
+                                              opacity: loadingProgress == null ? 1 : 0,
+                                              child: child
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                          ),
+                    )
                   ),
                 ),
                 if(_updatingProfileImage)
                   Container(
                     width: 2 * (profileImageRadius),
                     height: 2 * (profileImageRadius),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white
+                        color: Colors.grey.shade100
                     ),
                     child: LoadingData(),
                   ),

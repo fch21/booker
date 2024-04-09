@@ -1,21 +1,22 @@
 import 'package:booker/helper/strings.dart';
 import 'package:booker/main.dart';
 import 'package:booker/models/app_user.dart';
+import 'package:booker/widgets/loading_data.dart';
 import 'package:flutter/material.dart';
 
-class AppUserItem extends StatefulWidget {
+class ServiceProviderItem extends StatefulWidget {
 
   AppUser appUser;
   VoidCallback onTapItem;
   bool compact;
 
-  AppUserItem({Key? key, required this.appUser, required this.onTapItem, this.compact = false,}) : super(key: key);
+  ServiceProviderItem({Key? key, required this.appUser, required this.onTapItem, this.compact = false,}) : super(key: key);
 
   @override
-  _AppUserItemState createState() => _AppUserItemState();
+  _ServiceProviderItemState createState() => _ServiceProviderItemState();
 }
 
-class _AppUserItemState extends State<AppUserItem> {
+class _ServiceProviderItemState extends State<ServiceProviderItem> {
 
   static double profileImageRadius = 60.0;
   static double profileImageBorder = 6.0;
@@ -58,54 +59,35 @@ class _AppUserItemState extends State<AppUserItem> {
                           tag: "${widget.appUser.id}${Strings.USER_URL_PROFILE_BG_IMAGE}",
                           child: SizedBox(
                             height: 150,
-                            //width: 120,
                             child: Container(
-                                child: widget.appUser.urlProfileBgImage != ""
-                                    ? Container(
-                                        decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.horizontal(left: Radius.circular(8.0), right: Radius.circular(8.0)),
-                                          //color: Colors.black12,
-                                          color: Colors.white,
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: const BorderRadius.horizontal(left: Radius.circular(8.0), right: Radius.circular(8.0)),
-                                          child: Image.network(
-                                            widget.appUser.urlProfileBgImage,
-                                            fit: BoxFit.cover,
-                                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-
-                                              return Stack(
-                                                children: [
-                                                  if(loadingProgress != null)
-                                                    Center(
-                                                      child: CircularProgressIndicator(
-                                                        value: loadingProgress.expectedTotalBytes != null
-                                                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                                            : null,
-                                                      ),
-                                                    ),
-                                                  Positioned.fill(
-                                                    child: AnimatedOpacity(
-                                                        duration: const Duration(milliseconds: 500),
-                                                        opacity: loadingProgress == null ? 1 : 0,
-                                                        child: child
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      )
-                                    : Container(
-                                        decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.horizontal(left: Radius.circular(8.0), right: Radius.circular(8.0)),
-                                          image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: AssetImage("assets/no_image.jpeg")
-                                          )
-                                        ),
-                                      )
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.horizontal(left: Radius.circular(8.0), right: Radius.circular(8.0)),
+                                color: Colors.grey.shade100,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.horizontal(left: Radius.circular(8.0), right: Radius.circular(8.0)),
+                                child: widget.appUser.urlProfileBgImage == ""
+                                  ? Image.asset("assets/no_image.jpeg", fit: BoxFit.cover)
+                                  : Image.network(
+                                      widget.appUser.urlProfileBgImage,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                        return Stack(
+                                          children: [
+                                            if(loadingProgress != null) Center(child: LoadingData()),
+                                            Positioned.fill(
+                                              child: AnimatedOpacity(
+                                                  duration: const Duration(milliseconds: 500),
+                                                  opacity: loadingProgress == null ? 1 : 0,
+                                                  child: child
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                              ),
                             ),
                           ),
                         ),
@@ -123,14 +105,39 @@ class _AppUserItemState extends State<AppUserItem> {
                               ),
                               shape: BoxShape.circle,
                             ),
-                            child: CircleAvatar(
-                              //backgroundColor: Colors.grey.shade300,
-                              backgroundColor: Colors.white,
-                              radius: profileImageRadius,
-                              backgroundImage: widget.appUser.urlProfileUserImage != ""
-                                  ? NetworkImage(widget.appUser.urlProfileUserImage)
-                                  : const AssetImage("assets/no_profile_image.png") as ImageProvider,
-                            ),
+                            child: ClipOval(
+                              child: Container(
+                                width: 2 * profileImageRadius,
+                                height: 2 * profileImageRadius,
+                                color: Colors.grey.shade100,
+                                child: widget.appUser.urlProfileUserImage == ""
+                                    ? Image.asset(
+                                        "assets/no_profile_image.png",
+                                        width: 2 * profileImageRadius,
+                                        height: 2 * profileImageRadius,
+                                      )
+                                    : Image.network(
+                                        widget.appUser.urlProfileUserImage,
+                                        width: 2 * profileImageRadius,
+                                        height: 2 * profileImageRadius,
+                                        fit: BoxFit.cover,
+                                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                          return Stack(
+                                            children: [
+                                              if(loadingProgress != null) Center(child: LoadingData()),
+                                              Positioned.fill(
+                                                child: AnimatedOpacity(
+                                                    duration: const Duration(milliseconds: 500),
+                                                    opacity: loadingProgress == null ? 1 : 0,
+                                                    child: child
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                              ),
+                            )
                           ),
                         ),
                       ),
@@ -169,6 +176,7 @@ class _AppUserItemState extends State<AppUserItem> {
     }
 
 
+    // not ready to use
     return Stack(
       children: [
         GestureDetector(

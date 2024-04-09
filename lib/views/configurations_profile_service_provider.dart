@@ -22,6 +22,28 @@ class ConfigurationsProfileServiceProvider extends StatefulWidget {
 
 class _ConfigurationsProfileServiceProviderState extends State<ConfigurationsProfileServiceProvider> {
 
+  Future<void> _showLinkCopiedDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Link copiado", style: textStyleMediumBold,),
+          content: const Text("Esse link leva seus clientes diretamente para a sua página de agendamentos.\n\nIdeal para ser colocado na Bio do instagram, por exemplo."),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                "Entendi",
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ]
+        );
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -69,6 +91,7 @@ class _ConfigurationsProfileServiceProviderState extends State<ConfigurationsPro
                   String linkToTheUserProfile = currentAppUser!.getLinkToTheUserProfile();
                   Clipboard.setData(ClipboardData(text: linkToTheUserProfile));
                   Utils.showSnackBar(context, 'Texto copiado para a área de transferência!');
+                  _showLinkCopiedDialog();
                 },
               ),
               ClickableItem(

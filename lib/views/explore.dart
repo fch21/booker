@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:booker/helper/route_generator.dart';
-import 'package:booker/widgets/app_user_item.dart';
+import 'package:booker/widgets/service_provider_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -85,12 +85,14 @@ class _ExploreState extends State<Explore> {
       resetInitialServiceProviderId();
       AppUser? user = await AppUser.getUserFromId(id);
       if(user != null && context.mounted){
-
-        _controllerSearch.text = user.userName;
-
         //Map args = {"user" : user, "show_menu" : true};
         Map args = {"user" : user};
-        await Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: args);
+        await Navigator.pushNamed(context, RouteGenerator.CHOICE_OF_SERVICE, arguments: args).then((value){
+          //use after the Navigator to not have the loading animation not working
+          setState(() {
+            _controllerSearch.text = user.userName;
+          });
+        });
         // do not offer the possibility to go back to the explore screen
         //await Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.CHOICE_OF_SERVICE,(route) => false , arguments: args);
       }
@@ -248,7 +250,7 @@ class _ExploreState extends State<Explore> {
                         itemBuilder: (_, index) {
                           AppUser user =  users[index];
                           //return EventItemLoading();
-                          return AppUserItem(
+                          return ServiceProviderItem(
                               appUser: user,
                               onTapItem: () async {
                                 Map args = {"user" : user};
