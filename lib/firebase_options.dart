@@ -47,7 +47,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDdrR_ZEdSVjBFI5qykk7PXhMuFvGR5Gp8',
+    apiKey: 'AIzaSyCSFcC2pP6BSRCNhk9WUMUoymKdbn3Qff8',
     appId: '1:1060470892593:web:170efe9aed71f7c2380d10',
     messagingSenderId: '1060470892593',
     projectId: 'booker-context',

@@ -134,9 +134,19 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                           child: Text('Horário de início: ${DateFormat('HH:mm').format(widget.appointmentDetails.from)}', style: textStyleSmallNormal),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0, bottom: 32),
+                          padding: const EdgeInsets.only(top: 8.0),
                           child: Text('Horário de término: ${DateFormat('HH:mm').format(widget.appointmentDetails.to)}', style: textStyleSmallNormal),
                         ),
+                        if(widget.appointmentDetails.address.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0, bottom: 32),
+                            child: GestureDetector(
+                              onTap: (){
+                                Utils.openAddressOnGoogleMaps(context: context, address: widget.appointmentDetails.address);
+                              },
+                              child: Text('Endereço: ${widget.appointmentDetails.address}', style: textStyleSmallNormal)
+                            ),
+                          ),
                         const Divider(
                           thickness: 1,
                         ),

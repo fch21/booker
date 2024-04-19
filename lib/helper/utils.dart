@@ -344,4 +344,14 @@ class Utils {
     return;
   }
 
+  static Future<void> openAddressOnGoogleMaps({required BuildContext context, required String address}) async {
+    final Uri googleMapsUri = Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}");
+
+    if (await canLaunchUrl(googleMapsUri)) {
+      await launchUrl(googleMapsUri);
+    } else {
+      Utils.showSnackBar(context, 'Não foi possivel acessar o link: $googleMapsUri');
+    }
+  }
+
 }

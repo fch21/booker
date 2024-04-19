@@ -55,6 +55,7 @@ dependencies:
   image_picker: ^1.0.7
   flutter_inappwebview: ^6.0.0
   photo_view: ^0.14.0
+  google_places_flutter: ^2.0.8
 
 dev_dependencies:
   flutter_test:
@@ -100,6 +101,7 @@ flutter:
     - assets/presentation_page_user_example_2.jpg
     - assets/presentation_page_user_example_3.jpg
     - assets/presentation_page_user_example_4.jpg
+    - assets/presentation_page_user_example_5.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

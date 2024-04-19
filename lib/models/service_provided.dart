@@ -19,6 +19,7 @@ class ServiceProvided {
   int minSchedulingDelayInMinutes = 30;
   int schedulingIntervalInMinutes = 10;
   int maxSchedulingDelayInDays = 30;
+  bool isHomeService = false;
 
   ServiceProvided();
 
@@ -36,6 +37,7 @@ class ServiceProvided {
     copy.minSchedulingDelayInMinutes = minSchedulingDelayInMinutes;
     copy.schedulingIntervalInMinutes = schedulingIntervalInMinutes;
     copy.maxSchedulingDelayInDays = maxSchedulingDelayInDays;
+    copy.isHomeService = isHomeService;
 
     return copy;
   }
@@ -55,6 +57,7 @@ class ServiceProvided {
       Strings.SERVICE_MINIMUM_SCHEDULING_DELAY_IN_MINUTES: minSchedulingDelayInMinutes,
       Strings.SERVICE_SCHEDULING_INTERVAL_IN_MINUTES: schedulingIntervalInMinutes,
       Strings.SERVICE_FURTHEST_APPOINTMENT_ALLOWED_IN_DAYS: maxSchedulingDelayInDays,
+      Strings.SERVICE_IS_HOME_SERVICE: isHomeService,
     };
 
     return map;
@@ -75,6 +78,7 @@ class ServiceProvided {
       minSchedulingDelayInMinutes = documentMap[Strings.SERVICE_MINIMUM_SCHEDULING_DELAY_IN_MINUTES] ?? 30;
       schedulingIntervalInMinutes = documentMap[Strings.SERVICE_SCHEDULING_INTERVAL_IN_MINUTES] ?? 10;
       maxSchedulingDelayInDays = documentMap[Strings.SERVICE_FURTHEST_APPOINTMENT_ALLOWED_IN_DAYS] ?? 30;
+      isHomeService = documentMap[Strings.SERVICE_IS_HOME_SERVICE] ?? false;
     }
   }
 

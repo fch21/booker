@@ -70,8 +70,9 @@ class AppointmentDetails {
   ServiceProvided serviceProvided = ServiceProvided();
 
   //List<AppointmentDetailsChange> changes = [];//only used for periodic appointments, to allow changing only one
-
   //int index = 0; //only local;
+
+  String address = "";
 
   AppointmentDetails();
 
@@ -100,6 +101,7 @@ class AppointmentDetails {
     copy.serviceProvidedInitialized = serviceProvidedInitialized;
     copy.serviceProvided = serviceProvided.copy();
     //copy.changes = List.from(changes);
+    copy.address = address;
 
     return copy;
   }
@@ -132,6 +134,7 @@ class AppointmentDetails {
       Strings.APPOINTMENT_REMINDER_SENT: reminderSent,
       //Strings.APPOINTMENT_CHANGES: changesToMapList(),
       //Strings.APPOINTMENT_IS_ALL_DAY: isAllDay,
+      Strings.APPOINTMENT_ADDRESS: address,
     };
 
     return map;
@@ -143,8 +146,6 @@ class AppointmentDetails {
       Strings.APPOINTMENT_SERVICE_ID: serviceId,
       Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID: serviceProviderUserId,
       Strings.APPOINTMENT_STATUS: status,
-      Strings.APPOINTMENT_CANCELED_BY: canceledBy,
-      Strings.APPOINTMENT_CANCEL_MESSAGE: cancelMessage,
       //if(periodicalWeekDay != null)
       //  Strings.APPOINTMENT_PERIODICAL_WEEK_DAY: periodicalWeekDay,
       //if(day != null)
@@ -190,6 +191,7 @@ class AppointmentDetails {
       reminderSent = documentMap[Strings.APPOINTMENT_REMINDER_SENT] ?? false;
       //convertMapListToChanges((documentMap[Strings.APPOINTMENT_CHANGES] as List?) ?? []);
       //isAllDay = (documentSnapshot.data() as Map<String, dynamic>)[Strings.APPOINTMENT_IS_ALL_DAY] ?? false;
+      address = documentMap[Strings.APPOINTMENT_ADDRESS] ?? "";
       //print("serviceName = $serviceName");
       //print("documentMap = $documentMap");
     }
@@ -203,8 +205,6 @@ class AppointmentDetails {
       serviceId = documentMap[Strings.APPOINTMENT_SERVICE_ID] ?? "";
       serviceProviderUserId = documentMap[Strings.APPOINTMENT_SERVICE_PROVIDER_USER_ID] ?? "";
       status = documentMap[Strings.APPOINTMENT_STATUS] ?? "";
-      canceledBy = documentMap[Strings.APPOINTMENT_CANCELED_BY] ?? "";
-      cancelMessage = documentMap[Strings.APPOINTMENT_CANCEL_MESSAGE] ?? "";
       //periodicalWeekDay = documentMap[Strings.APPOINTMENT_PERIODICAL_WEEK_DAY];
       //if(documentMap[Strings.APPOINTMENT_DAY] != null) {
       //  day = Utils.dateFormatForOrdering.parse(documentMap[Strings.APPOINTMENT_DAY]);

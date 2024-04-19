@@ -16,6 +16,8 @@ import 'package:booker/widgets/loading_data.dart';
 import 'package:booker/widgets/profile_header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -386,6 +388,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           appointmentDetails.day = Utils.getDateTimeSimplified(selectedDateTime!);
           appointmentDetails.from = startingDateTime;
           appointmentDetails.to = startingDateTime.add(widget.serviceProvided.duration);
+          appointmentDetails.address = lastEnteredAddress;
 
           return await appointmentDetails.updateAppointmentDetailsInFirestore(context, client: client);
         }
@@ -431,6 +434,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
           appointmentDetails.day = Utils.getDateTimeSimplified(selectedDateTime!);
           appointmentDetails.from = startingDateTime;
           appointmentDetails.to = startingDateTime.add(widget.serviceProvided.duration);
+          appointmentDetails.address = lastEnteredAddress;
           appointmentDetails.updateAppointmentDetailsInFirestore(context, client: client);
           return true;
         }
@@ -464,6 +468,116 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
     return;
   }
 
+  Future<String?> _getAddressForHomeService() async {
+
+    String? address;
+
+    bool showErrorMessage = false;
+
+    StreamController<bool> updateDialogStreamController = StreamController.broadcast();
+    TextEditingController controllerAddress = TextEditingController(text: "");
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context){
+        return AlertDialog(
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          title: const Text("Informe seu endereço"),
+          content: StreamBuilder<bool>(
+              stream: updateDialogStreamController.stream,
+              builder: (context, snapshot) {
+                return SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Text("Pelo serviço ${widget.serviceProvided.name} ser a domicílio, é preciso informar o seu endereço.\n\nDigite o endereço completo:"),
+                      ),
+                      GooglePlaceAutoCompleteTextField(
+                        textEditingController: controllerAddress,
+                        debounceTime: 300,
+                        googleAPIKey: Strings.GOOGLE_API_KEY,
+                        isLatLngRequired: false,
+                        inputDecoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Digite seu endereço",
+                        ),
+                        getPlaceDetailWithLatLng:(_){},
+                        countries: ["br"],
+                        itemClick: (Prediction prediction) {
+                          //print("description = " + prediction.description.toString());
+                          controllerAddress.text = prediction.description ?? "";
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            controllerAddress.selection = TextSelection.fromPosition(
+                              TextPosition(offset: controllerAddress.text.length),
+                            );
+                          });
+                        },
+                        itemBuilder: (context, index, Prediction prediction) {
+                          if(showErrorMessage){
+                            showErrorMessage = false;
+                            updateDialogStreamController.add(true);
+                          }
+                          return ListTile(
+                            leading: Icon(Icons.location_on, color: standartTheme.primaryColor,),
+                            title: Text(prediction.description ?? ""),
+                          );
+                        },
+                        seperatedBuilder: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Divider(height: 1, thickness: 1),
+                        ),
+                        containerHorizontalPadding: 8,
+                        boxDecoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(width: 1, color: Colors.grey),
+                          borderRadius: const BorderRadius.all(Radius.circular(6))
+                        ),
+                      ),
+                      if(showErrorMessage)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 8.0),
+                          child: Text("Endereço inválido.", style: TextStyle(color: Colors.red),),
+                        ),
+                    ],
+                  ),
+                );
+              }
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Confirmar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
+              onPressed: () async {
+                if(controllerAddress.text.isNotEmpty){
+                  address = controllerAddress.text;
+                  Navigator.of(context).pop();
+                }
+                else{
+                  showErrorMessage = true;
+                  updateDialogStreamController.add(true);
+                }
+              },
+            ),
+          ],
+        );
+      }
+    );
+
+
+
+    return address;
+  }
+
+  String lastEnteredAddress = "";
+
   Future<void> _showMakeAppointmentDialog() async {
     if(selectedTimeOfDay != null && selectedDateTime != null){
 
@@ -471,155 +585,166 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
       TextEditingController controllerClientName = TextEditingController(text: "");
       AppUser? selectedClient;
 
+      bool userIsLogged = currentAppUser != null;
+      Widget dialog;
       //int weekday = Utils.getWeekDay(selectedDateTime!);
       //print("widget.serviceProvided.hasPeriodicAppointments = ${widget.serviceProvided.hasPeriodicAppointments}");
-      Widget unLoggedUserDialog = AlertDialog(
-        actionsAlignment: MainAxisAlignment.spaceBetween,
-        title: const Text("Faça o login"),
-        content: const Text("Para marcar um horário você precisa fazer o login"),
-        actions: <Widget>[
-          TextButton(
-            child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: Text("Login", style: TextStyle(color: widget.appUser.getUserColorResolved())),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.pushNamed(context, RouteGenerator.LOGIN);
-            },
-          ),
-        ],
-      );
-      Widget loggedUserDialog = AlertDialog(
-        actionsAlignment: MainAxisAlignment.spaceBetween,
-        title: const Text("Marcar Horário"),
-        content: widget.manuallyAddAppointment
-          ? StreamBuilder<bool>(
-            stream: updateDialogStreamController.stream,
-            builder: (context, snapshot) {
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(//widget.serviceProvided.hasPeriodicAppointments
-                        //? "Marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
-                        "Marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
-                      child: Text(
-                          selectedClient != null
-                          ? "Cliente selecionado:"
-                          : "Adicione o nome do cliente ou escolha um cliente já existente:"
-                      ),
-                    ),
-                    if(selectedClient == null)
-                      InputCustom(
-                        controller: controllerClientName,
-                        label: "Nome do cliente"
-                      ),
+      if(userIsLogged){
 
-                    if(selectedClient == null)
+        if(widget.serviceProvided.isHomeService){
+          if(widget.appointmentToChange == null){
+            String? address = await _getAddressForHomeService();
+            if(address == null) return;
+            lastEnteredAddress = address;
+          }
+          else{
+            lastEnteredAddress = widget.appointmentToChange!.address;
+          }
+        }
+
+        dialog = AlertDialog(
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          title: const Text("Marcar Horário"),
+          content: widget.manuallyAddAppointment
+              ? StreamBuilder<bool>(
+              stream: updateDialogStreamController.stream,
+              builder: (context, snapshot) {
+                return SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(//widget.serviceProvided.hasPeriodicAppointments
+                        //? "Marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
+                          "Marcar manualmente o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
+                      ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: Center(
-                          child: GestureDetector(
-                            child: const Text(
-                              "Escolher um cliente existente",
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(
-                                  builder: (_) => MyClients(
-                                    onTapUser: (client){
-                                      selectedClient = client;
-                                      updateDialogStreamController.add(true);
-                                      Navigator.of(context).pop();
-                                    },
-                                  )
-                                )
-                              );
-                            },
-                          ),
+                        padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
+                        child: Text(
+                            selectedClient != null
+                                ? "Cliente selecionado:"
+                                : "Adicione o nome do cliente ou escolha um cliente já existente:"
                         ),
                       ),
+                      if(selectedClient == null)
+                        InputCustom(
+                            controller: controllerClientName,
+                            label: "Nome do cliente"
+                        ),
 
-                    if(selectedClient != null)
-                      ClientCard(
-                        client: selectedClient!,
-                        compact: true,
-                        onTap: (){},
-                      ),
-                  ],
-                ),
-              );
-            }
+                      if(selectedClient == null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: Center(
+                            child: GestureDetector(
+                              child: const Text(
+                                "Escolher um cliente existente",
+                                style: TextStyle(color: Colors.blue),
+                              ),
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(
+                                    builder: (_) => MyClients(
+                                      onTapUser: (client){
+                                        selectedClient = client;
+                                        updateDialogStreamController.add(true);
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                )
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+
+                      if(selectedClient != null)
+                        ClientCard(
+                          client: selectedClient!,
+                          compact: true,
+                          onTap: (){},
+                        ),
+                    ],
+                  ),
+                );
+              }
           )
-          : widget.appointmentToChange == null
-            ? Text(//widget.serviceProvided.hasPeriodicAppointments
-                  //? "Marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
-                  "Marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
-              )
-            : Text("Alterar o agendamento selecionado para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
-        actions: <Widget>[
-          TextButton(
-            child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: Text("Confirmar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
-            onPressed: () async {
+              : widget.appointmentToChange == null
+              ? Text(//widget.serviceProvided.hasPeriodicAppointments
+            //? "Marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} ${(weekday == 0 || weekday == 6) ? "aos" : "às"} ${Utils.getFullWeekDayString(selectedDateTime!)}s?"
+              "Marcar o serviço ${widget.serviceProvided.name} para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"
+          )
+              : Text("Alterar o agendamento selecionado para ${selectedTimeOfDay!.format(context)} do dia ${getDateTimeFormatted(selectedDateTime!)}?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Confirmar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
+              onPressed: () async {
 
-              if(widget.manuallyAddAppointment){
-                if(controllerClientName.text != "" || selectedClient != null){
+                if(widget.manuallyAddAppointment){
+                  if(controllerClientName.text != "" || selectedClient != null){
 
+                    AppUser? client = selectedClient;
+                    if(client == null){
+                      client = AppUser();
+                      client.name = controllerClientName.text;
+                    }
+                    bool made = await _makeAppointment(client);
+                    if(mounted) Navigator.of(context).pop();
+                    if(made) await _showAppointmentMadeDialog();
+                  }
+                  else{
+                    Utils.showSnackBar(context, "Adicione o nome do cliente ou escolha um cliente existente");
+                  }
+                }
+                else if(widget.appointmentToChange != null){
                   AppUser? client = selectedClient;
                   if(client == null){
                     client = AppUser();
-                    client.name = controllerClientName.text;
+                    client.name = widget.appointmentToChange!.userName;
                   }
                   bool made = await _makeAppointment(client);
                   if(mounted) Navigator.of(context).pop();
                   if(made) await _showAppointmentMadeDialog();
                 }
                 else{
-                  Utils.showSnackBar(context, "Adicione o nome do cliente ou escolha um cliente existente");
+                  bool made = await _makeAppointment(currentAppUser!);
+                  if(mounted) Navigator.of(context).pop();
+                  if(made) await _showAppointmentMadeDialog();
                 }
-              }
-              else if(widget.appointmentToChange != null){
-                AppUser? client = selectedClient;
-                if(client == null){
-                  client = AppUser();
-                  client.name = widget.appointmentToChange!.userName;
-                }
-                bool made = await _makeAppointment(client);
-                if(mounted) Navigator.of(context).pop();
-                if(made) await _showAppointmentMadeDialog();
-              }
-              else{
-                bool made = await _makeAppointment(currentAppUser!);
-                if(mounted) Navigator.of(context).pop();
-                if(made) await _showAppointmentMadeDialog();
-              }
-            },
-          ),
-        ],
-      );
+              },
+            ),
+          ],
+        );
+      }
+      else{
+        dialog = AlertDialog(
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          title: const Text("Faça o login"),
+          content: const Text("Para marcar um horário você precisa fazer o login"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancelar", style: TextStyle(color: widget.appUser.getUserColorResolved())),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Login", style: TextStyle(color: widget.appUser.getUserColorResolved())),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushNamed(context, RouteGenerator.LOGIN);
+              },
+            ),
+          ],
+        );
+      }
 
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return currentAppUser == null
-              ? unLoggedUserDialog
-              : loggedUserDialog;
-        },
-      );
+      await showDialog(context: context, builder: (BuildContext context) => dialog);
     }
     else{
       await showDialog(

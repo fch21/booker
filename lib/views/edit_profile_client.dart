@@ -41,7 +41,9 @@ class _EditProfileClientState extends State<EditProfileClient> {
               onPressed: () async {
                 Navigator.of(dialogContext).pop();
                 await currentAppUser!.addPhoneNumberToUser(context);
-                setState(() {});
+                setState(() {
+                  _phoneController.text = currentAppUser!.phone;
+                });
               },
             ),
           ],

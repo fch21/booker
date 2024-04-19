@@ -56,6 +56,37 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
     }
   }
 
+  Future<void> _confirmIsHomeServiceDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmar'),
+          content: const Text('Ao selecionar essa opção, você vai exigir que o cliente informe o endereço ao fazer o agendamento.'),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Voltar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Confirmar'),
+              onPressed: () async {
+                setState(() {
+                  _serviceProvided.isHomeService = true;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return;
+  }
+
   Future<void> _deleteConfirmationDialog() async {
     await showDialog(
       context: context,
@@ -83,6 +114,7 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
         );
       },
     );
+    return;
   }
 
   @override
@@ -163,7 +195,7 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                   },
                   validator: (value) {
                     if(value == "" || value == null ){
-                      return AppLocalizations.of(context)!.required_field;
+                      return "${AppLocalizations.of(context)!.required_field} (caso não tenha preço, digite 0)";
                     }
                     else{
                       return null;
@@ -440,6 +472,36 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                   ),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Row(
+                  children: [
+                    const Text("Serviço a domicílio"),
+                    Switch(
+                      value: _serviceProvided.isHomeService,
+                      activeColor: standartTheme.primaryColor,
+                      onChanged: (value){
+                        if(value){
+                          _confirmIsHomeServiceDialog();
+                        }
+                        else{
+                          setState(() {
+                            _serviceProvided.isHomeService = false;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              if(_serviceProvided.isHomeService)
+                const Padding(
+                  padding: EdgeInsets.only(top: 4),
+                  child: Text(
+                    "Exigir que o cliente informe o endereço ao fazer o agendamento.",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.only(top: 32.0),
                 child: ButtonCustom(

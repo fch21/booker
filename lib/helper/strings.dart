@@ -20,6 +20,7 @@ class Strings {
 
   //google
   static const String GOOGLE_SIGN_CLIENT_ID = "1060470892593-46d486l7p1knpkeglnu2ccqqvl9igjbi.apps.googleusercontent.com";
+  static const String GOOGLE_API_KEY = "AIzaSyCSFcC2pP6BSRCNhk9WUMUoymKdbn3Qff8";
 
   //languages
   static const String ENGLISH = "English";
@@ -75,6 +76,7 @@ class Strings {
   static const String SERVICE_MINIMUM_SCHEDULING_DELAY_IN_MINUTES = "minimum_scheduling_delay_in_minutes";
   static const String SERVICE_SCHEDULING_INTERVAL_IN_MINUTES = "scheduling_interval_in_minutes";
   static const String SERVICE_FURTHEST_APPOINTMENT_ALLOWED_IN_DAYS = "furthest_appointment_allowed_in_days";
+  static const String SERVICE_IS_HOME_SERVICE = "is_home_service";
 
   static const String SUBSCRIPTION_ID = "id";
   static const String SUBSCRIPTION_USER_ID = "user_id";
@@ -120,7 +122,8 @@ class Strings {
   static const String APPOINTMENT_TO = "to";
   //static const String APPOINTMENT_IS_ALL_DAY = "is_all_day";
   static const String APPOINTMENT_REMINDER_SENT = "reminder_sent";
-  static const String APPOINTMENT_CHANGES = "changes";
+  //static const String APPOINTMENT_CHANGES = "changes";
+  static const String APPOINTMENT_ADDRESS = "address";
 
   // appointment change
   static const String APPOINTMENT_CHANGE_INDEX = "index";
