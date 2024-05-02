@@ -309,7 +309,7 @@ class _AddPaymentMethodWithStripeElementsState extends State<AddPaymentMethodWit
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: CircularProgressIndicator(
-                        color: standartTheme.primaryColor,
+                        color: standardTheme.primaryColor,
                       ),
                     )
                 ),

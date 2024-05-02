@@ -101,12 +101,12 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
                   children: [
                     Flexible(
                       child: Text("Comece agora",
-                        style: TextStyle(color: standartTheme.primaryColor, fontSize: fontSizeMedium, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: standardTheme.primaryColor, fontSize: fontSizeMedium, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
-                      child: Icon(Icons.arrow_forward, color: standartTheme.primaryColor, size: 24,),
+                      child: Icon(Icons.arrow_forward, color: standardTheme.primaryColor, size: 24,),
                     )
                   ],
                 ),
@@ -128,13 +128,13 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
             children: [
               Flexible(
                 child: Text("Agende seu horário",
-                  style: TextStyle(color: standartTheme.primaryColor, fontSize: fontSizeMedium, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: standardTheme.primaryColor, fontSize: fontSizeMedium, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
-                child: Icon(Icons.schedule, color: standartTheme.primaryColor, size: 24,),
+                child: Icon(Icons.schedule, color: standardTheme.primaryColor, size: 24,),
               )
             ],
           ),
@@ -186,7 +186,6 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Stack(
         children: [
           Column(
@@ -382,7 +381,7 @@ class _PresentationWebPageState extends State<PresentationWebPage> {
                               },
                               child: Text(
                                 Strings.BOOKER_EMAIL,
-                                style: TextStyle(color: standartTheme.primaryColor, fontSize: fontSizeMedium),
+                                style: TextStyle(color: standardTheme.primaryColor, fontSize: fontSizeMedium),
                               ),
                             ),
                           ),

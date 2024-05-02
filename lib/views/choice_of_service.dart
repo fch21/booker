@@ -51,7 +51,7 @@ class _ChoiceOfServiceState extends State<ChoiceOfService> {
   Widget _setMenuItemsWidgets(String item) {
     if (item == AppLocalizations.of(context)!.explore) {
       return MenuItem(
-        iconData: Icons.search,
+        iconData: Icons.search_rounded,
         text: item,
       );
     }
@@ -76,7 +76,6 @@ class _ChoiceOfServiceState extends State<ChoiceOfService> {
 
     //print("widget.appUser = ${widget.appUser.getUserColorResolved()}");
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text("Serviços disponíveis"),
         elevation: 0,

@@ -71,10 +71,8 @@ class _ResetPasswordState extends State<ResetPassword> {
     bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.reset_password_appbar),
-        centerTitle: true
       ),
       body: Container(
         decoration: const BoxDecoration(color: Colors.white),

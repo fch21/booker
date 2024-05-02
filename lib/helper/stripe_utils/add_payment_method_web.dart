@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class AddPaymentMethodImpl extends AddPaymentMethodInterface{
   @override
   Future<void> launch(BuildContext context) async {
-    await Navigator.pushReplacement(context,
+    await Navigator.push(context,
         MaterialPageRoute(builder: (_) => const AddPaymentMethodWithStripeElements())
     );
     return;

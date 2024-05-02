@@ -80,8 +80,7 @@ class LoginState extends State<Login> {
     if(!_imageLoaded) return LoadingData();
 
     return Scaffold(
-      appBar: Navigator.canPop(context) ? AppBar(title: const Text("Login"), centerTitle: true) : null,
-      backgroundColor: Colors.white,
+      appBar: Navigator.canPop(context) ? AppBar(title: const Text("Login")) : null,
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(

@@ -477,19 +477,21 @@ class _ServiceProvidedFormState extends State<ServiceProvidedForm> {
                 child: Row(
                   children: [
                     const Text("Serviço a domicílio"),
-                    Switch(
-                      value: _serviceProvided.isHomeService,
-                      activeColor: standartTheme.primaryColor,
-                      onChanged: (value){
-                        if(value){
-                          _confirmIsHomeServiceDialog();
-                        }
-                        else{
-                          setState(() {
-                            _serviceProvided.isHomeService = false;
-                          });
-                        }
-                      },
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Switch(
+                        value: _serviceProvided.isHomeService,
+                        onChanged: (value){
+                          if(value){
+                            _confirmIsHomeServiceDialog();
+                          }
+                          else{
+                            setState(() {
+                              _serviceProvided.isHomeService = false;
+                            });
+                          }
+                        },
+                      ),
                     ),
                   ],
                 ),

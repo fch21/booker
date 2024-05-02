@@ -28,7 +28,6 @@ class _AboutState extends State<About> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: standartTheme.backgroundColor,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.configurations_about),
       ),

@@ -33,6 +33,8 @@ class AppUser {
   //String subscriptionId = "";
 
   bool isServiceProvider = false;
+  //bool isCompany = false;
+  //String associateOfCompanyId = "";
   Map<String, dynamic> availabilityMap = {};
   List blockedClientsIds = [];
   List<Period> blockedPeriods = [];
@@ -58,6 +60,8 @@ class AppUser {
     copy.urlProfileBgImage = urlProfileBgImage;
     copy.color = color;
     copy.isServiceProvider = isServiceProvider;
+    //copy.isCompany = isCompany;
+    //copy.associateOfCompanyId = associateOfCompanyId;
     copy.availabilityMap = Map.from(availabilityMap);
     copy.blockedClientsIds = List.from(blockedClientsIds);
     copy.blockedPeriods = List.from(blockedPeriods);
@@ -73,7 +77,7 @@ class AppUser {
       colorResolved = color;
     }
     else {
-      colorResolved = standartTheme.primaryColor;
+      colorResolved = standardTheme.primaryColor;
     }
 
     return colorResolved;
@@ -124,6 +128,8 @@ class AppUser {
       //Strings.USER_SUBSCRIPTION_ID: subscriptionId,
 
       Strings.USER_IS_SERVICE_PROVIDER: isServiceProvider,
+      //Strings.USER_IS_COMPANY: isCompany,
+      //Strings.USER_ASSOCIATE_OF_THE_COMPANY_ID: associateOfCompanyId,
       Strings.USER_BLOCKED_CLIENTS_IDS: blockedClientsIds,
       Strings.USER_AVAILABILITY_MAP: convertAvailabilityMapToMap(),
       Strings.USER_BLOCKED_PERIODS: blockedPeriodsToMapList(),
@@ -142,6 +148,8 @@ class AppUser {
       Strings.USER_COLOR: color.value,
 
       Strings.USER_IS_SERVICE_PROVIDER: isServiceProvider,
+      //Strings.USER_IS_COMPANY: isCompany,
+      //Strings.USER_ASSOCIATE_OF_THE_COMPANY_ID: associateOfCompanyId,
       Strings.USER_BLOCKED_CLIENTS_IDS: blockedClientsIds,
       //Strings.USER_AVAILABILITY_MAP: availabilityMap,
       Strings.USER_AVAILABILITY_MAP: convertAvailabilityMapToMap(),
@@ -191,6 +199,8 @@ class AppUser {
       //subscriptionId = data[Strings.USER_SUBSCRIPTION_ID] ?? "";
 
       isServiceProvider = data[Strings.USER_IS_SERVICE_PROVIDER] ?? false;
+      //isCompany = data[Strings.USER_IS_COMPANY] ?? false;
+      //associateOfCompanyId = data[Strings.USER_ASSOCIATE_OF_THE_COMPANY_ID] ?? "";
       blockedClientsIds = data[Strings.USER_BLOCKED_CLIENTS_IDS] ?? [];
       //availabilityMap = (documentSnapshot.data() as Map<String, dynamic>)[Strings.USER_AVAILABILITY_MAP] ?? {};
       convertMapToAvailabilityMap(data[Strings.USER_AVAILABILITY_MAP] as Map<String, dynamic>?);
@@ -210,6 +220,8 @@ class AppUser {
     color = Color((documentSnapshot.data() as Map<String, dynamic>)[Strings.SERVICE_COLOR] ?? Colors.white.value);
 
     isServiceProvider = data[Strings.USER_IS_SERVICE_PROVIDER] ?? false;
+    //isCompany = data[Strings.USER_IS_COMPANY] ?? false;
+    //associateOfCompanyId = data[Strings.USER_ASSOCIATE_OF_THE_COMPANY_ID] ?? "";
     //availabilityMap = data[Strings.USER_AVAILABILITY_MAP] ?? {};
     convertMapToAvailabilityMap(data[Strings.USER_AVAILABILITY_MAP] as Map<String, dynamic>?);
     convertMapListToBlockedPeriods((data[Strings.USER_BLOCKED_PERIODS] as List?) ?? []);
@@ -255,7 +267,10 @@ class AppUser {
           content:IntlPhoneField(
             inputFormatters: [IntegerTextInputFormatter()],
             decoration: const InputDecoration(
-              labelText: 'Número com DDD',
+              labelText: 'N° com DDD',
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black54),
+              ),
               border: OutlineInputBorder(
                 borderSide: BorderSide(),
               ),

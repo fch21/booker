@@ -46,7 +46,6 @@ class _MyClientsState extends State<MyClients> {
     bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text("Meus clientes"),
         elevation: 0,

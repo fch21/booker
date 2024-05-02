@@ -213,7 +213,7 @@ class _ServiceProviderItemState extends State<ServiceProviderItem> {
                                           }
                                           return Center(
                                             child: CircularProgressIndicator(
-                                              color: standartTheme.primaryColor,
+                                              color: standardTheme.primaryColor,
                                               value: loadingProgress.expectedTotalBytes != null
                                                   ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                                                   : null,

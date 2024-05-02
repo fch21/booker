@@ -95,7 +95,6 @@ class _MyAppointmentsState extends State<MyAppointments> {
     //List<AppointmentDetails> periodicAppointments = widget.showOnlyPastAppointments ? pastPeriodicAppointments : futurePeriodicAppointments;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(widget.showOnlyPastAppointments ? "Histórico de agendamentos" : "Agendamentos Futuros"),
         elevation: 0,

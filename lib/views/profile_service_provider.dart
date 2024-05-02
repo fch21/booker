@@ -130,7 +130,6 @@ class _ProfileServiceProviderState extends State<ProfileServiceProvider> with Si
     bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: CustomSliderDrawer(
         appBar: SliderAppBar(
           appBarColor: appUserColor,

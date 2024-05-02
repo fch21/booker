@@ -499,7 +499,7 @@ class _CalendarState extends State<Calendar> {
     Widget body = CustomSliderDrawer(
       sliderDrawerKey: _sliderDrawerKey,
       appBar: SliderAppBar(
-          appBarColor: standartTheme.primaryColor,
+          appBarColor: standardTheme.primaryColor,
           appBarPadding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
           appBarHeight: kToolbarHeight + MediaQuery.of(context).padding.top,
           drawerIconColor: Colors.white,
@@ -511,7 +511,6 @@ class _CalendarState extends State<Calendar> {
           title:  Text(AppLocalizations.of(context)!.calendar, style: const TextStyle(color: Colors.white, fontSize: fontSizeLarge))
       ),
       slider: Scaffold(
-          backgroundColor: Colors.white,
           appBar: AppBar(
             automaticallyImplyLeading: false,
             elevation: 0,
@@ -565,7 +564,7 @@ class _CalendarState extends State<Calendar> {
                   scheduleViewSettings: ScheduleViewSettings(
                     monthHeaderSettings: MonthHeaderSettings(
                         height: 70,
-                        backgroundColor: standartTheme.primaryColor,
+                        backgroundColor: standardTheme.primaryColor,
                     )
                   ),
                   timeSlotViewSettings: const TimeSlotViewSettings(
@@ -573,7 +572,7 @@ class _CalendarState extends State<Calendar> {
                   ),
                   selectionDecoration: BoxDecoration(
                     color: Colors.transparent,
-                    border: Border.all(color: standartTheme.primaryColor, width: 2),
+                    border: Border.all(color: standardTheme.primaryColor, width: 2),
                     borderRadius: const BorderRadius.all(Radius.circular(4)),
                     shape: BoxShape.rectangle,
                   ),

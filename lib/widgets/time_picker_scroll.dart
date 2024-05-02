@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class TimePickerScroll extends StatefulWidget {
   final TimeOfDay time;
@@ -38,56 +39,77 @@ class _TimePickerScrollState extends State<TimePickerScroll> {
     return SizedBox(
       height: widget.fontSize * 6,
       width: MediaQuery.of(context).size.width,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
         children: [
-          // Hours
-          Expanded(
-            child: ListWheelScrollView.useDelegate(
-              controller: _hourController,
-              itemExtent: 60,
-              physics: const FixedExtentScrollPhysics(),
-              onSelectedItemChanged: (index) {
-                _timeOfDay = TimeOfDay(hour: index % 24, minute: _timeOfDay.minute);
-                widget.onTimeChanged(_timeOfDay);
-              },
-              childDelegate: ListWheelChildBuilderDelegate(
-                builder: (context, index) {
-                  final hour = index % 24; // Wrap around if the index exceeds 24
-                  return Center(
-                    child: Text(
-                      hour.toString().padLeft(2, '0'),
-                      style: TextStyle(color: Colors.black, fontSize: widget.fontSize),
-                    ),
-                  );
-                },
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Hours
+              Expanded(
+                child: ListWheelScrollView.useDelegate(
+                  controller: _hourController,
+                  itemExtent: 60,
+                  diameterRatio: 1.75,
+                  perspective: 0.01,
+                  squeeze: 1.75,
+                  physics: const FixedExtentScrollPhysics(),
+                  onSelectedItemChanged: (index) {
+                    _timeOfDay = TimeOfDay(hour: index % 24, minute: _timeOfDay.minute);
+                    widget.onTimeChanged(_timeOfDay);
+                  },
+                  childDelegate: ListWheelChildBuilderDelegate(
+                    builder: (context, index) {
+                      final hour = index % 24; // Wrap around if the index exceeds 24
+                      return Center(
+                        child: Text(
+                          hour.toString().padLeft(2, '0'),
+                          style: TextStyle(color: Colors.black, fontSize: widget.fontSize),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Text(':', style: TextStyle(color: Colors.black, fontSize: widget.fontSize),),
+              // Minutes
+              Expanded(
+                child: ListWheelScrollView.useDelegate(
+                  controller: _minuteController,
+                  itemExtent: 60,
+                  diameterRatio: 1.75,
+                  perspective: 0.01,
+                  squeeze: 1.75,
+                  physics: const FixedExtentScrollPhysics(),
+                  onSelectedItemChanged: (index) {
+                    _timeOfDay = TimeOfDay(hour: _timeOfDay.hour, minute: index % 60);
+                    widget.onTimeChanged(_timeOfDay);
+                  },
+                  childDelegate: ListWheelChildBuilderDelegate(
+                    builder: (context, index) {
+                      final minute = index % 60; // Wrap around if the index exceeds 60
+                      return Center(
+                        child: Text(
+                          minute.toString().padLeft(2, '0'),
+                          style: TextStyle(color: Colors.black, fontSize: widget.fontSize),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          IgnorePointer(
+            child: Center(
+              child: Container(
+                height: widget.fontSize * 1.5,
+                decoration: const BoxDecoration(
+                  color: Colors.black12,
+                  borderRadius: BorderRadius.all(Radius.circular(6)),
+                ),
               ),
             ),
-          ),
-          Text(':', style: TextStyle(color: Colors.black, fontSize: widget.fontSize),),
-          // Minutes
-          Expanded(
-            child: ListWheelScrollView.useDelegate(
-              controller: _minuteController,
-              itemExtent: 60,
-              physics: const FixedExtentScrollPhysics(),
-              onSelectedItemChanged: (index) {
-                _timeOfDay = TimeOfDay(hour: _timeOfDay.hour, minute: index % 60);
-                widget.onTimeChanged(_timeOfDay);
-              },
-              childDelegate: ListWheelChildBuilderDelegate(
-                builder: (context, index) {
-                  final minute = index % 60; // Wrap around if the index exceeds 60
-                  return Center(
-                    child: Text(
-                      minute.toString().padLeft(2, '0'),
-                      style: TextStyle(color: Colors.black, fontSize: widget.fontSize),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
+          )
         ],
       ),
     );

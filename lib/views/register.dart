@@ -90,10 +90,8 @@ class _RegisterState extends State<Register> {
     if(!_imageLoaded) return LoadingData();
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.register_appbar),
-        centerTitle: true
       ),
       body: Container(
         decoration: const BoxDecoration(color: Colors.white),

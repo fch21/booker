@@ -104,7 +104,6 @@ class _WaitingEmailVerificationState extends State<WaitingEmailVerification> {
     bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(),
       body: Container(
         decoration: const BoxDecoration(color: Colors.white),

@@ -15,7 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+//import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 //import 'dart:js' as js;
@@ -212,7 +212,7 @@ class UserSign {
                       borderRadius: BorderRadius.circular(5),
                       fieldHeight: 50,
                       fieldWidth: 35,
-                      activeColor: standartTheme.primaryColor,
+                      activeColor: standardTheme.primaryColor,
                       selectedColor: Colors.grey,
                       inactiveColor: Colors.grey,
                       activeFillColor: Colors.white,
@@ -276,7 +276,7 @@ class UserSign {
                           context: buildContext,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              content: const Text("Número de telefone salvo com sucesso!"),
+                              title: const Text("Número de telefone salvo com sucesso!"),
                               actionsAlignment: MainAxisAlignment.end,
                               actions: <Widget>[
                                 TextButton(
@@ -639,6 +639,7 @@ class UserSign {
     return loggedWithFacebook;
   }
 
+  /*
   static Future<UserCredential?> signInWithFacebook() async {
     // Inicie o fluxo de login do Facebook
     // Verifique se o SDK do Facebook está pronto
@@ -658,6 +659,7 @@ class UserSign {
 
     return null;
   }
+   */
 
   static Widget googleSignInButton(BuildContext context, {required VoidCallback onStartProcessing, required VoidCallback onEndProcessing,}) {
     return ElevatedButton.icon(
@@ -680,8 +682,9 @@ class UserSign {
         onEndProcessing();
       },
       style: ElevatedButton.styleFrom(
-        primary: Colors.white,
-        onPrimary: Colors.black,
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         elevation: 8.0,
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0))
@@ -689,6 +692,7 @@ class UserSign {
     );
   }
 
+  /*
   static Widget facebookSignInButton(BuildContext context, {required VoidCallback onStartProcessing, required VoidCallback onEndProcessing}) {
     return ElevatedButton.icon(
       icon: Padding(
@@ -720,5 +724,7 @@ class UserSign {
       ),
     );
   }
+
+   */
 
 }

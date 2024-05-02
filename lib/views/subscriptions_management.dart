@@ -362,10 +362,13 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                                           ),
                                           onTap: () {
                                             Navigator.pop(context);
+
                                             StripeFunctions.addPaymentMethod(context).then((value) async {
                                               await _getPaymentMethod();
                                               _showSubscriptionDialog(coupon: coupon, promotionCode: promotionCode);
                                             });
+
+
                                             //Navigator.pushNamed(context, RouteGenerator.ADD_PAYMENT_METHOD_WITH_STRIPE_ELEMENTS).then((value) async {
                                             //  await _getPaymentMethod();
                                             //  _showSubscriptionDialog(coupon: coupon, promotionCode: promotionCode);
@@ -401,7 +404,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
                                 Padding(
                                   padding: const EdgeInsets.fromLTRB(24,24,16,0),
                                   child: ButtonCustom(
-                                    text: (_paymentMethod != null) ? 'Assinar' : 'Adicionar forma de pagamento' ,
+                                    text: (_paymentMethod != null) ? 'Assinar' : 'Adicionar cartão' ,
                                     onPressed: _paymentMethod != null
                                       ? () async {
                                           isLoadingStreamController.add(true);
@@ -457,11 +460,11 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
 
   List<Widget> standardPremiumContentList = [
     const ListTile(
-      title: Text('Bloqueie períodos específicos da agenda.'),
+      title: Text('Bloqueie dias específicos da sua agenda.'),
       leading: Icon(Icons.event_busy),
     ),
     const ListTile(
-      title: Text('Cancele agendamentos por périodo.'),
+      title: Text('Cancele todos os agendamentos em um périodo.'),
       leading: Icon(Icons.cancel),
     ),
     const ListTile(
@@ -523,7 +526,7 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
           ),
           ...standardPremiumContentList,
           const ListTile(
-            title: Text('Acesso a todos os recursos'),
+            title: Text('Acesso a todos os recursos.'),
             leading: Icon(Icons.star),
           ),
           Padding(
@@ -669,7 +672,6 @@ class _SubscriptionManagementPageState extends State<SubscriptionManagementPage>
     bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         title: const Text('Assinatura'),

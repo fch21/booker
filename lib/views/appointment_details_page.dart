@@ -194,7 +194,7 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                                     }
                                   }
                                 },
-                                child: Text('Editar Agendamento', style: TextStyle(color: standartTheme.primaryColor, fontSize: fontSizeVerySmall),),
+                                child: Text('Editar Agendamento', style: TextStyle(color: standardTheme.primaryColor, fontSize: fontSizeVerySmall),),
                               ),
                             ),
                           ),

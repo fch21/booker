@@ -194,7 +194,6 @@ class _CalendarBlockedPeriodsState extends State<CalendarBlockedPeriods> {
     orderBlockedPeriods(blockedPeriods);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text("Períodos bloqueados"),
         elevation: 0,

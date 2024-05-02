@@ -1,6 +1,7 @@
 class Consts{
   //premium subscription price
-  static const double SUBSCRIPTION_PRICE = 9.99;
+  //static const double SUBSCRIPTION_PRICE = 9.99;
+  static const double SUBSCRIPTION_PRICE = 34.90;
 }
 
 class Strings {
@@ -55,6 +56,8 @@ class Strings {
   //static const String USER_SUBSCRIPTION_ID = "subscription_id";
 
   static const String USER_IS_SERVICE_PROVIDER = "is_service_provider";
+  static const String USER_IS_COMPANY = "is_company";
+  static const String USER_ASSOCIATE_OF_THE_COMPANY_ID = "associate_of_the_company_id";
   static const String USER_BLOCKED_CLIENTS_IDS = "blocked_clients_ids";
   static const String USER_AVAILABILITY_MAP = "availability_map";
   static const String USER_BLOCKED_PERIODS = "blocked_periods";

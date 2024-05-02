@@ -118,7 +118,7 @@ class _AvailableScheduleCardState extends State<AvailableScheduleCard> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 8, right: 16),
+              padding: const EdgeInsets.only(left: 16, right: 16),
               child: Switch(
                 value: widget.schedule.isSelected,
                 onChanged: (value) async {
@@ -131,7 +131,6 @@ class _AvailableScheduleCardState extends State<AvailableScheduleCard> {
                     widget.onChanged();
                   }
                 },
-                activeColor: widget.accentColor,
               ),
             ),
           ],

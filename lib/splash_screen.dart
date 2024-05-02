@@ -2,6 +2,7 @@
 import 'package:booker/helper/route_generator.dart';
 import 'package:booker/helper/user_sign.dart';
 import 'package:booker/main.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -32,25 +33,36 @@ class _SplashScreenState extends State<SplashScreen> {
           );
         },
         pageBuilder: (context, animation, secondaryAnimation) {
+
+
           Future.delayed(splashAnimationDuration + splashDuration, () async {
             await UserSign.getCurrentAppUser();
             if(currentAppUser?.isServiceProvider ?? false){
               if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.PROFILE_SERVICE_PROVIDER, (Route<dynamic> route) => false,);
             }
             else{
-              //if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.INITIAL_EXPLORE_PAGE, (Route<dynamic> route) => false);
-              if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.PRESENTATION_WEB_PAGE, (Route<dynamic> route) => false);
+              //only show the PRESENTATION_WEB_PAGE in the web
+              if(kIsWeb){
+                //if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.INITIAL_EXPLORE_PAGE, (Route<dynamic> route) => false);
+                if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.PRESENTATION_WEB_PAGE, (Route<dynamic> route) => false);
+              }
+              else{
+                if(context.mounted) Navigator.pushNamedAndRemoveUntil(context, RouteGenerator.INITIAL_EXPLORE_PAGE, (Route<dynamic> route) => false, arguments: false);
+              }
+
             }
           });
 
           bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
 
-          return Center(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: greaterWidthLayout ? MediaQuery.of(context).size.width/8 : 0),
-              color: Colors.white,
-              width: MediaQuery.of(context).size.width * 0.6,
-              child: Image.asset("assets/booker_icon.png", fit: BoxFit.fitWidth,),
+          return Container(
+            color: Colors.white,
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: greaterWidthLayout ? MediaQuery.of(context).size.width/8 : 0),
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Image.asset("assets/booker_icon.png", fit: BoxFit.fitWidth,),
+              ),
             ),
           );
         })

@@ -43,15 +43,47 @@ Future<void> main() async {
   runApp(App(key: appGlobalKey,));
 }
 
-final ThemeData standartTheme = ThemeData(
-  primaryColor: const Color(0xff003399),
-  backgroundColor: Colors.white,
+const Color primaryColor = Color(0xff003399);
+const Color secondaryColor = Color(0xfffaac05);
+
+final ThemeData standardTheme = ThemeData(
+  primaryColor: primaryColor,
+  scaffoldBackgroundColor: Colors.white,
   colorScheme: ColorScheme.fromSwatch().copyWith(
-    primary: const Color(0xff003399),
-    //onPrimary: Color(0xfffaac05),
-    secondary: const Color(0xfffaac05),
+    primary: primaryColor,
+    secondary: secondaryColor,
     background: Colors.white,
-  ), //Color(0xffC21200)),
+  ),
+  appBarTheme: const AppBarTheme(
+    backgroundColor: primaryColor,
+    foregroundColor: Colors.white,
+    centerTitle: true
+  ),
+  dialogTheme: DialogTheme(
+    surfaceTintColor: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+  ),
+  switchTheme: SwitchThemeData(
+    thumbColor: MaterialStateProperty.resolveWith((states){
+      if (states.contains(MaterialState.selected)) {
+        return primaryColor;
+      }
+      return Colors.white;
+    }),
+    trackColor: MaterialStateProperty.resolveWith((states){
+      if (states.contains(MaterialState.selected)) {
+        return primaryColor.withOpacity(0.4);
+      }
+      return Colors.grey;
+    }),
+  ),
+  dividerTheme: const DividerThemeData(color: Colors.black38),
+  cardTheme: const CardTheme(surfaceTintColor: Colors.white),
+  checkboxTheme: const CheckboxThemeData(side: BorderSide(color: Colors.black54)),
+  listTileTheme: const ListTileThemeData(iconColor: Colors.black54),
+  //chipTheme: ChipThemeData(backgroundColor: Colors.black26)
 );
 
 const fontSizeLarge = 24.0;
@@ -132,7 +164,7 @@ class AppState extends State<App> {
           Locale('pt', 'BR'), // Português Brasil
         ],
         title: Strings.BOOKER,
-        theme: standartTheme,
+        theme: standardTheme,
         home: const SplashScreen(),
         initialRoute: "/",
         onGenerateRoute: RouteGenerator.generateRoute,

@@ -20,7 +20,6 @@ class _ConfigurationsHomeState extends State<ConfigurationsHome> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           elevation: 0,
@@ -51,7 +50,7 @@ class _ConfigurationsHomeState extends State<ConfigurationsHome> {
                     // Padding(
                     //   padding: EdgeInsets.only(bottom: 16),
                     //   child: TextField(
-                    //     decoration: InputDecoration(prefixIcon: Icon(Icons.search), hintText: AppLocalizations.of(context)!.search),
+                    //     decoration: InputDecoration(prefixIcon: Icon(Icons.search_rounded), hintText: AppLocalizations.of(context)!.search),
                     //   ),
                     // ),
                     ClickableItem(

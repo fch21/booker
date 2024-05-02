@@ -122,6 +122,34 @@ class _EditProfileClientState extends State<EditProfileClient> {
     );
   }
 
+  void _selectIfServiceProviderIsCompanyDialog(BuildContext context) {
+
+    bool isCompany = false;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+
+        return AlertDialog(
+          title: const Text('Você quer que sua conta seja:'),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: <Widget>[
+            TextButton(
+              child: Text("Uma única pessoa"),
+              onPressed: () {
+              },
+            ),
+            TextButton(
+              child: Text("Uma empresa"),
+              onPressed: () async {
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   _validateFields() {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();

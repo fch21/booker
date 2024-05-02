@@ -46,7 +46,7 @@ class _InitialExplorePageState extends State<InitialExplorePage> with SingleTick
       appBar = null;
       body = CustomSliderDrawer(
         appBar: SliderAppBar(
-          appBarColor: standartTheme.primaryColor,
+          appBarColor: standardTheme.primaryColor,
           appBarPadding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
           appBarHeight: kToolbarHeight + MediaQuery.of(context).padding.top,
           drawerIconColor: Colors.white,
@@ -66,7 +66,6 @@ class _InitialExplorePageState extends State<InitialExplorePage> with SingleTick
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: appBar,
       body: body
     );

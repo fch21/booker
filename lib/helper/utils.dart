@@ -178,7 +178,7 @@ class Utils {
                 },
               ),
               TextButton(
-                child: Text('Detalhes da assinatura'),
+                child: Text('Ver detalhes'),
                 onPressed: () async {
                   goToSubscriptionsPage = true;
                   Navigator.of(context).pop();

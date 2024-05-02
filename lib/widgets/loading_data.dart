@@ -13,7 +13,7 @@ class LoadingData extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: CircularProgressIndicator(
-            color: color ?? standartTheme.primaryColor,
+            color: color ?? standardTheme.primaryColor,
       ),
     ));
   }

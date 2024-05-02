@@ -97,7 +97,6 @@ class _ClientPageState extends State<ClientPage> {
       appBar: AppBar(
         title: const Text('Informações do cliente'),
       ),
-      backgroundColor: Colors.white,
       body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(

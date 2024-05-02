@@ -27,6 +27,17 @@ class _ExploreState extends State<Explore> {
   final TextEditingController _controllerSearch = TextEditingController();
   //final _controller = StreamController<QuerySnapshot>.broadcast();
 
+  final FocusNode _searchFocusNode = FocusNode();
+  bool _searchIsFocused = false;
+
+  void _handleFocusChange() {
+    if (_searchFocusNode.hasFocus != _searchIsFocused) {
+      setState(() {
+        _searchIsFocused = _searchFocusNode.hasFocus;
+      });
+    }
+  }
+
 /*
   _addListenerEvents() async {
     Stream<QuerySnapshot> stream = db
@@ -105,9 +116,17 @@ class _ExploreState extends State<Explore> {
     super.initState();
     //_loadDropLists();
     //_addListenerEvents();
+    _searchFocusNode.addListener(_handleFocusChange);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       checkIfHasUserLinkAndLaunch();
     });
+  }
+
+  @override
+  void dispose() {
+    _searchFocusNode.removeListener(_handleFocusChange);
+    _searchFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -181,11 +200,13 @@ class _ExploreState extends State<Explore> {
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
             child: TextField(
+              focusNode: _searchFocusNode,
               controller: _controllerSearch,
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: Icon(Icons.search_rounded, color: _searchIsFocused ? standardTheme.primaryColor : Colors.black54,),
                 hintText: AppLocalizations.of(context)!.search,
-                hintStyle: textStyleSmallNormal
+                hintStyle: const TextStyle(fontSize: fontSizeSmall, color: Colors.black54),
+                enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black54)),
               ),
               onSubmitted: (text) {
                 //_filterEvents();
@@ -213,7 +234,7 @@ class _ExploreState extends State<Explore> {
                   if (querySnapshot.docs.isEmpty) {
                     return const Padding(
                       padding: EdgeInsets.only(top: 64),
-                      child: Text("Sem resultados"),
+                      child: Text("Sem resultados", style: TextStyle(color: Colors.black87),),
                     );
                   }
 
@@ -241,7 +262,7 @@ class _ExploreState extends State<Explore> {
                   if (users.isEmpty) {
                     return Padding(
                       padding: const EdgeInsets.only(top: 64),
-                      child: Text(_controllerSearch.text != "" ? "Sem resultados para essa pesquisa" : "Digite sua busca no campo de pesquisa"),
+                      child: Text(_controllerSearch.text != "" ? "Sem resultados para essa pesquisa" : "Digite sua busca no campo de pesquisa", style: const TextStyle(color: Colors.black87)),
                     );
                   }
                   return Expanded(

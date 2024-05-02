@@ -30,13 +30,16 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
 
   Widget dayButton(int index, String day) {
     return InkWell(
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
       onTap: () {
         setState(() {
           _availableSchedule.selectedDays[index] = !_availableSchedule.selectedDays[index];
         });
       },
       child: CircleAvatar(
-        backgroundColor: _availableSchedule.selectedDays[index] ? standartTheme.primaryColor : Colors.transparent,
+        backgroundColor: _availableSchedule.selectedDays[index] ? standardTheme.primaryColor : Colors.transparent,
         child: Text(
           day,
           style: TextStyle(
@@ -81,7 +84,7 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: const Text('Horário salvo com sucesso!'),
+          title: const Text('Horário salvo com sucesso!'),
           actionsAlignment: MainAxisAlignment.end,
           actions: <Widget>[
             TextButton(
@@ -115,7 +118,6 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
     bool greaterWidthLayout = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.profile_add_available_schedule),
       ),
@@ -126,49 +128,51 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 32.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              child: Column(
                 children: [
-                  Expanded(
-                    child: Column(
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 32),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 32),
-                          child: Text("Horário de inicio", style: textStyleSmallNormal),
+                        Expanded(
+                          child: Text("Horário de inicio", style: textStyleSmallNormal, textAlign: TextAlign.center)
                         ),
-                        TimePickerScroll(
+                        Expanded(
+                          child: Text("Horário de término", style: textStyleSmallNormal, textAlign: TextAlign.center),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        child: TimePickerScroll(
                           time: _availableSchedule.timeInterval.startTime,
                           fontSize: fontSizeLarge,
                           onTimeChanged: (timeOfDay){
                             //print("onTimeChanged = $timeOfDay");
                             _availableSchedule.timeInterval.startTime = timeOfDay;
                           }
-                        ),
-                      ],
-                    )
-                  ),
-                  Container(
-                    height: fontSizeLarge * 6,
-                    width: 1,
-                    color: Colors.grey,
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 32),
-                          child: Text("Horário de término", style: textStyleSmallNormal),
-                        ),
-                        TimePickerScroll(
-                            time: _availableSchedule.timeInterval.endTime,
-                            fontSize: fontSizeLarge,
-                            onTimeChanged: (timeOfDay){
-                              _availableSchedule.timeInterval.endTime = timeOfDay;
-                            }
-                        ),
-                      ],
-                    )
+                        )
+                      ),
+                      Container(
+                        height: fontSizeLarge * 6,
+                        width: 1,
+                        color: Colors.grey,
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                      ),
+                      Expanded(
+                        child: TimePickerScroll(
+                          time: _availableSchedule.timeInterval.endTime,
+                          fontSize: fontSizeLarge,
+                          onTimeChanged: (timeOfDay){
+                            _availableSchedule.timeInterval.endTime = timeOfDay;
+                          }
+                        )
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -190,7 +194,6 @@ class _AvailableScheduleFormState extends State<AvailableScheduleForm> {
               title: const Text('Ativo', style: textStyleMediumNormal,),
               trailing: Switch(
                 value: _availableSchedule.isSelected,
-                activeColor: standartTheme.primaryColor,
                 onChanged: (value) {
                   setState(() {
                     _availableSchedule.isSelected = value;

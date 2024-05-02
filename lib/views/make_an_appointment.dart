@@ -521,7 +521,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                             updateDialogStreamController.add(true);
                           }
                           return ListTile(
-                            leading: Icon(Icons.location_on, color: standartTheme.primaryColor,),
+                            leading: Icon(Icons.location_on, color: standardTheme.primaryColor,),
                             title: Text(prediction.description ?? ""),
                           );
                         },
@@ -786,7 +786,6 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
         backgroundColor: widget.appUser.getUserColorResolved(),
         foregroundColor: Utils.getContrastingColor(widget.appUser.getUserColorResolved()),
       ),
-      backgroundColor: Colors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -820,6 +819,7 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                           colorScheme: ColorScheme.light(
                             primary: widget.appUser.getUserColorResolved(), // header background color
                             onPrimary: Utils.getContrastingColor(widget.appUser.getUserColorResolved()) ?? Colors.black, // header text color
+                            surfaceTint: Colors.white
                           ),
                           textButtonTheme: TextButtonThemeData(
                             style: TextButton.styleFrom(
@@ -880,13 +880,17 @@ class _MakeAnAppointmentState extends State<MakeAnAppointment> {
                           bool isSelected = selectedDateTime == currentDateTime && selectedTimeOfDay == timeOfDay;
                           return ChoiceChip(
                             key: UniqueKey(),
-                            disabledColor: Colors.black26,
+                            backgroundColor: Colors.black12,
                             selectedColor: Colors.white,
+                            showCheckmark: false,
                             labelStyle: const TextStyle(color: Colors.black, fontSize: 16,),
                             label: SizedBox(width: 50, child: Center(child: Text(timeOfDay.format(context)))),
                             //elevation: isSelected ? 3 : 1,
-                            side: isSelected ? const BorderSide(width: 0, color: Colors.green) : null,
+                            side: isSelected ? const BorderSide(width: 0, color: Colors.green) : const BorderSide(width: 0, color: Colors.transparent),
                             //selectedShadowColor: Colors.green,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                             selected: isSelected,
                             onSelected: (value){
                               if(!value){

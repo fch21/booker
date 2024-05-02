@@ -103,7 +103,7 @@ class _FeatureItemState extends State<FeatureItem> {
                           children: <Widget>[
                             Hero(
                                 tag: "icon$heroKey",
-                                child: Icon(widget.icon, size: 42, color: standartTheme.primaryColor)
+                                child: Icon(widget.icon, size: 42, color: standardTheme.primaryColor)
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 24.0),
@@ -158,7 +158,7 @@ class _FeatureItemState extends State<FeatureItem> {
               children: <Widget>[
                 Hero(
                     tag: "icon$heroKey",
-                    child: Icon(widget.icon, size: 42, color: standartTheme.primaryColor)
+                    child: Icon(widget.icon, size: 42, color: standardTheme.primaryColor)
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
